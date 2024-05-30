@@ -56,7 +56,7 @@ public class AuthenticateService {
 //    }
 
     //Generate JWT Token
-    private String generateToken(String username){
+    public String generateToken(String username){
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
