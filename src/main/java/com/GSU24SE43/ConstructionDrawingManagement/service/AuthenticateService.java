@@ -1,6 +1,7 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.IntrospectResponse;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -14,11 +15,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -56,16 +59,18 @@ public class AuthenticateService {
 //    }
 
     //Generate JWT Token
-    public String generateToken(String username){
+    public String generateToken(Account account){
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(account.getUsername())
                 .issuer("dev-GSU24SE23")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(3, ChronoUnit.HOURS).toEpochMilli()
                 ))
+                .claim("accountId", account.getAccountId())
+                .claim("scope", buildScope(account))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -79,5 +84,14 @@ public class AuthenticateService {
             log.error("Cannot Create JWT", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private String buildScope(Account account){
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if(!CollectionUtils.isEmpty(account.getRoles())){
+            account.getRoles().forEach(stringJoiner::add);
+        }
+
+        return stringJoiner.toString();
     }
 }
