@@ -22,6 +22,7 @@ public class Account {
     String password;
     Date createdDate;
     String accountStatus;
+    @ElementCollection
     Set<String> roles;
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)

@@ -1,7 +1,12 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.IntrospectRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.LogoutRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.IntrospectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.InvalidatedToken;
+import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.InvalidateTokenRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -11,41 +16,42 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+
 import java.util.Date;
+import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Slf4j
 @Service
 public class AuthenticateService {
-    //Get Jwt Secret From application.properties
-    @Value("${custom.jwt.secret}")
-    private String jwtSecret;
+    //Get Jwt Secret From application.yaml
+//    @Value("${custom.jwt.secret}")
+    @Autowired
+    InvalidateTokenRepository invalidateTokenRepository;
+    private String jwtSecret = "9fpGEUpGqiplW2HJB7UDOpJScDgzJWJR5xqOP3zsJQKs8fuIQpvw37BP3hmNmb/9";
 
     //Introspect JWT Token
-    public IntrospectResponse introspectJWT(String token) throws JOSEException, ParseException {
-        JWSVerifier verifier = new MACVerifier(jwtSecret.getBytes());
-
-        SignedJWT signedJWT = SignedJWT.parse(token);
-
-        Date expiredDate = signedJWT.getJWTClaimsSet().getExpirationTime();
-
-        var verified = signedJWT.verify(verifier);
-
+    public IntrospectResponse introspectJWT(IntrospectRequest request) throws JOSEException, ParseException {
+        String token = request.getToken();
+        boolean invalid =true;
+        try {
+            verifyToken(token);
+        }catch (RuntimeException e){
+            invalid = false;
+        }
         //Check And Return Bool If  And JWT Expired
         return IntrospectResponse
                 .builder()
-                .valid(verified && expiredDate.after(new Date()))
+                .valid(invalid)
                 .build();
     }
 
@@ -59,17 +65,18 @@ public class AuthenticateService {
 //    }
 
     //Generate JWT Token
-    public String generateToken(Account account){
+    public String generateToken(Optional<Account> account) {
+        Date now = new Date();
+        Date expirationTime = new Date(now.getTime() + 3600 * 1000);
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(account.getUsername())
+                .subject(account.get().getUsername())
                 .issuer("dev-GSU24SE23")
-                .issueTime(new Date())
-                .expirationTime(new Date(
-                        Instant.now().plus(3, ChronoUnit.HOURS).toEpochMilli()
-                ))
-                .claim("accountId", account.getAccountId())
+                .issueTime(now)
+                .expirationTime(expirationTime)
+                .jwtID(UUID.randomUUID().toString())
+                .claim("accountId", account.get().getAccountId())
                 .claim("scope", buildScope(account))
                 .build();
 
@@ -86,10 +93,41 @@ public class AuthenticateService {
         }
     }
 
-    private String buildScope(Account account){
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        var signToken = verifyToken(request.getToken());
+
+        String jti = signToken.getJWTClaimsSet().getJWTID();
+        Date expTime = signToken.getJWTClaimsSet().getExpirationTime();
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jti)
+                .expiryTime(expTime)
+                .build();
+
+        invalidateTokenRepository.save(invalidatedToken);
+    }
+
+    private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+        JWSVerifier verifier = new MACVerifier(jwtSecret.getBytes());
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expiredDate = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        var verified = signedJWT.verify(verifier);
+        if (!(verified && expiredDate.after(new Date()))) {
+            throw new RuntimeException("String.valueOf(ErrorCode.UNAUTHENTICATED)");
+        }
+        if(invalidateTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())){
+            throw new RuntimeException("unauthenicated");
+        }
+
+        return signedJWT;
+    }
+
+    private String buildScope(Optional<Account> account) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-        if(!CollectionUtils.isEmpty(account.getRoles())){
-            account.getRoles().forEach(stringJoiner::add);
+        if (!CollectionUtils.isEmpty(account.get().getRoles())) {
+            account.get().getRoles().forEach(stringJoiner::add);
         }
 
         return stringJoiner.toString();
