@@ -20,8 +20,7 @@ public class Account {
     String password;
     Date createdDate;
     String accountStatus;
-    @ElementCollection
-    Set<String> roleName;
+    String roleName;
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     Staff staff;
 

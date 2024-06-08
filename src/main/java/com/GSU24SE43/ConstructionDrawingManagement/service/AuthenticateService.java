@@ -23,10 +23,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 
-import java.util.Date;
-import java.util.Optional;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -126,8 +123,8 @@ public class AuthenticateService {
 
     private String buildScope(Optional<Account> account) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-        if (!CollectionUtils.isEmpty(account.get().getRoleName())) {
-            account.get().getRoleName().forEach(stringJoiner::add);
+        if (!CollectionUtils.isEmpty(Collections.singleton(account.get().getRoleName()))) {
+            account.get().getRoleName();
         }
 
         return stringJoiner.toString();

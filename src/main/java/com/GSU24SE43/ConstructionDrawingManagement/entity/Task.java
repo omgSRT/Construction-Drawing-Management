@@ -22,9 +22,10 @@ public class Task {
     private String title;
     private String description;
     private String status;
-    private Date createDate;
     private UUID createBy;
-    private Date beginDay;
+    private Date createDate;
+    private Date beginDate;
+    private Date endDate;
     @ManyToOne
     @JoinColumn(name = "staffId")
     Staff staff;

@@ -23,8 +23,9 @@ public class Version {
 
     private String description; ;
     private Date date;
-    private Integer number;
+    private String versionNumber;
     private Date uploadDate;
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "drawingId")

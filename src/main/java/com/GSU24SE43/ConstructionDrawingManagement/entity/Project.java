@@ -23,6 +23,7 @@ public class Project {
     private String location;
     private Date creationDate;
     private Date endDate;
+    private String status;
     @ManyToOne
     @JoinColumn(name = "folderId")
     Folder folder;
