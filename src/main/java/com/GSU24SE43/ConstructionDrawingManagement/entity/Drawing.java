@@ -25,8 +25,8 @@ public class Drawing {
 
     
     @ManyToOne
-    @JoinColumn(name = "projectId")
-    Project project;
+    @JoinColumn(name = "subfolderId")
+    Subfolder subfolder;
 
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Version> versions = new ArrayList<>();
