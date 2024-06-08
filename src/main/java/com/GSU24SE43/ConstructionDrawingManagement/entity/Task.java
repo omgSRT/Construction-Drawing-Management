@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 @Entity
 @Getter
@@ -27,4 +28,16 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "staffId")
     Staff staff;
+
+    @ManyToOne
+    @JoinColumn(name ="departmentId")
+    Department department;
+
+    @ManyToOne
+    @JoinColumn(name ="drawingId")
+    Drawing drawing;
+
+    @OneToMany(mappedBy = "task")
+    List<Comment> commentList;
+
 }

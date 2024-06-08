@@ -17,6 +17,7 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private  String name;
+    private String description;
 
     @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Access> accesses = new ArrayList<>();

@@ -26,10 +26,17 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "folderId")
     Folder folder;
-    @ManyToOne
-    @JoinColumn(name = "staffId")
-    Staff staff;
+
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Drawing> drawings = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name ="departmentId")
+    Department department;
+
+    @ManyToOne
+    @JoinColumn(name = "accountId")
+    Account account;
+
 }

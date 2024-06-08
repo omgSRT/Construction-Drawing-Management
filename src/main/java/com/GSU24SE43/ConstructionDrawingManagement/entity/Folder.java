@@ -20,8 +20,7 @@ public class Folder {
     private String name;
     private Date creationDate;
     private String url;
-    @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Version> version;
+
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Project> projects;

@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -23,8 +21,10 @@ public class Account {
     Date createdDate;
     String accountStatus;
     @ElementCollection
-    Set<String> roles;
-
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    Set<String> roleName;
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     Staff staff;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Project> projectList;
 }

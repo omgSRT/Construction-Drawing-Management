@@ -23,13 +23,14 @@ public class Drawing {
     private int size;
     private String url;
 
-    @ManyToOne
-    @JoinColumn(name = "departmentId")
-    Department department;
+    
     @ManyToOne
     @JoinColumn(name = "projectId")
     Project project;
 
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Version> versions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "drawing")
+    List<Task> taskList;
 }

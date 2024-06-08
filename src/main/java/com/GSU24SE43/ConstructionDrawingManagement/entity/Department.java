@@ -19,13 +19,17 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID departmentId;
     private String name;
-    private String description;;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Staff> staffs;
+    private String description;
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Drawing> drawings;
+    List<Staff> staffList;
+
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Task> taskList;
+
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Project> projectList;
+
+
 
 }

@@ -30,10 +30,6 @@ public class Version {
     @JoinColumn(name = "drawingId")
     Drawing drawing;
 
-    @ManyToOne
-    @JoinColumn(name = "folderId")
-    Folder folder;
-
     @OneToMany(mappedBy = "version", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Access> accesses = new ArrayList<>();
 }
