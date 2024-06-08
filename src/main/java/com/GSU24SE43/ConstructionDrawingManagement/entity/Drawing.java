@@ -31,6 +31,6 @@ public class Drawing {
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Version> versions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "drawing")
+    @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Task> taskList;
 }

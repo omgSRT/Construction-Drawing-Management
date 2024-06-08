@@ -38,7 +38,7 @@ public class Task {
     @JoinColumn(name ="drawingId")
     Drawing drawing;
 
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Comment> commentList;
 
 }
