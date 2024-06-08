@@ -24,6 +24,11 @@ public enum ErrorCode {
     INVALID_TOKEN(10014, "Invalid Token", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(10015, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(10016, "You Do Not Have Permission", HttpStatus.UNAUTHORIZED),
+    NAME_NOT_BLANK(10017, "Name Cannot Be Blank", HttpStatus.BAD_REQUEST),
+    NAME_EXISTED(10018, "Name Existed", HttpStatus.BAD_REQUEST),
+    NAME_NOT_FOUND(10019, "Name Not Found", HttpStatus.BAD_REQUEST),
+    URL_NOT_BLANK(10019, "URL Cannot Be Blank", HttpStatus.BAD_REQUEST),
+    FOLDER_NOT_FOUND(10020, "Folder Not Found", HttpStatus.BAD_REQUEST)
     ;
 
     private int code;
