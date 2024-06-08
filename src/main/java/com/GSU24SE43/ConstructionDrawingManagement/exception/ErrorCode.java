@@ -28,7 +28,14 @@ public enum ErrorCode {
     NAME_EXISTED(10018, "Name Existed", HttpStatus.BAD_REQUEST),
     NAME_NOT_FOUND(10019, "Name Not Found", HttpStatus.BAD_REQUEST),
     URL_NOT_BLANK(10019, "URL Cannot Be Blank", HttpStatus.BAD_REQUEST),
-    FOLDER_NOT_FOUND(10020, "Folder Not Found", HttpStatus.BAD_REQUEST)
+    FOLDER_NOT_FOUND(10020, "Folder Not Found", HttpStatus.BAD_REQUEST),
+    PROJECT_NOT_FOUND(10021, "Project Not Found", HttpStatus.BAD_REQUEST),
+    DEPARTMENT_NOT_FOUND(10022, "Department Not Found", HttpStatus.BAD_REQUEST),
+    ACCOUNT_NOT_FOUND(10023, "Account Not Found", HttpStatus.BAD_REQUEST),
+    INVALID_CREATED_DATE_EARLIER_THAN_END_DATE(10024, "Created Date Must Be Earlier Than End Date", HttpStatus.BAD_REQUEST),
+    INVALID_CREATED_DATE_NOT_IN_FUTURE(10025, "Created Date Must Be Equal or Later Than Current Date", HttpStatus.BAD_REQUEST),
+    INVALID_END_DATE_NOT_IN_FUTURE(10026, "End Date Must Be Later Than Current Date", HttpStatus.BAD_REQUEST),
+
     ;
 
     private int code;

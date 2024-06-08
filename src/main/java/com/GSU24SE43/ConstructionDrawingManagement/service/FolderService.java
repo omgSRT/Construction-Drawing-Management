@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -28,6 +29,7 @@ public class FolderService {
     FolderRepository folderRepository;
     FolderMapper folderMapper;
 
+    //@PreAuthorize("hasRole('ADMIN')")
     public FolderResponse createFolder(FolderRequest request){
         Folder folder = folderRepository.findByName(request.getName())
                 .orElseThrow(() -> new AppException(ErrorCode.NAME_EXISTED));
@@ -42,17 +44,20 @@ public class FolderService {
         return folderRepository.findAll().stream().map(folderMapper::toFolderReponse).toList();
     }
 
+    //@PreAuthorize("hasRole('ADMIN')")
     public void deleteFolderById(UUID id){
         var folder = folderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
         folderRepository.delete(folder);
     }
 
+    //@PreAuthorize("hasRole('ADMIN')")
     public Folder findFolderById(UUID id){
         return folderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
     }
 
+    //@PreAuthorize("hasRole('ADMIN')")
     public FolderResponse updateFolderById(UUID id, FolderRequest request){
         var folder = folderRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
