@@ -19,7 +19,6 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID departmentId;
     private String name;
-    private String description;
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Staff> staffList;
