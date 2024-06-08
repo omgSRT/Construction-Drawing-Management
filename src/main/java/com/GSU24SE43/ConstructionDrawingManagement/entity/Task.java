@@ -26,6 +26,12 @@ public class Task {
     private Date createDate;
     private Date beginDate;
     private Date endDate;
+
+    //tạo mối quan hệ tự tham chiếu của task từ parentTaskId
+    @ManyToOne
+    @JoinColumn(name = "parentTaskId")
+    private Task parentTask;
+
     @ManyToOne
     @JoinColumn(name = "staffId")
     Staff staff;
