@@ -15,22 +15,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @RequiredArgsConstructor
-public class Version {
-
+public class Subfolder {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    private String name;
+    private Date createDate;
 
-    private String description; ;
-    private Date date;
-    private String versionNumber;
-    private Date uploadDate;
-    private String status;
+    @OneToMany(mappedBy = "subfolder", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Drawing> drawings = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "drawingId")
-    Drawing drawing;
-
-    @OneToMany(mappedBy = "version", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Access> accesses = new ArrayList<>();
+    @JoinColumn(name = "projectId")
+    Project project;
 }

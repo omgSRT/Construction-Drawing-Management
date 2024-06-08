@@ -32,7 +32,7 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
 
     private Info info() {
         Info info = new Info();
-        info.setTitle("Demo Send Email API");
+        info.setTitle("Construction Drawing API");
         info.setVersion("1.0.0");
         License license = new License();
         license.setName("Apache 2.0");

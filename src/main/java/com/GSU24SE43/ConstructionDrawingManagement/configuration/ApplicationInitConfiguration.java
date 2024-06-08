@@ -38,7 +38,7 @@ public class ApplicationInitConfiguration {
                 Account user = Account.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
-                        .roleName(roles)
+                        .roleName("ROLE_" + Role.ADMIN.name())
                         .build();
                 userRepository.save(user);
                 log.warn("admin user has been created with default password: admin");
