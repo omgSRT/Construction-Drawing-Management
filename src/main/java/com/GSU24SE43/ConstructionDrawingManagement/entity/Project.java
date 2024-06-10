@@ -23,6 +23,7 @@ public class Project {
     private String description;
     private String location;
     private Date creationDate;
+    private Date startDate;
     private Date endDate;
     private String status;
 

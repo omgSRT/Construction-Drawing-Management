@@ -44,7 +44,7 @@ public class ProjectService {
         Folder folder = folderRepository.findById(request.getFolderId())
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
 
-        ValidateProjectDate(request.getCreationDate(), request.getEndDate());
+        ValidateProjectDate(request.getStartDate(), request.getEndDate());
 
         Project newProject = projectMapper.toProject(request);
         newProject.setCreationDate(new Date());

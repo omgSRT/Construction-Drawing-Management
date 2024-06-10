@@ -15,7 +15,7 @@ public class ProjectRequest {
     String name;
     String description;
     String location;
-    Date creationDate;
+    Date startDate;
     Date endDate;
     UUID folderId;
     UUID departmentId;
