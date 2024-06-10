@@ -32,7 +32,9 @@ public enum ErrorCode {
     INVALID_CREATED_DATE_EARLIER_THAN_END_DATE(10022, "Created Date Must Be Earlier Than End Date", HttpStatus.BAD_REQUEST),
     INVALID_CREATED_DATE_NOT_IN_FUTURE(10023, "Created Date Must Be Equal or Later Than Current Date", HttpStatus.BAD_REQUEST),
     INVALID_END_DATE_NOT_IN_FUTURE(10024, "End Date Must Be Later Than Current Date", HttpStatus.BAD_REQUEST),
-    ;
+    ACCOUNT_NOT_EXIST(10017,"Account not exist",  HttpStatus.NOT_FOUND),
+    ACCOUNT_ARE_EXISTED(10018,"Account are existed",  HttpStatus.NOT_FOUND),
+    UNDEFINE_STATUS_ACCOUNT(10018,"Account status is not define",  HttpStatus.NOT_FOUND);
 
     private int code;
     private String message;
