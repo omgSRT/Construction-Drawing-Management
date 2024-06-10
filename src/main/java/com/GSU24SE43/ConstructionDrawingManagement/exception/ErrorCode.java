@@ -24,6 +24,10 @@ public enum ErrorCode {
     INVALID_TOKEN(10014, "Invalid Token", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(10015, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(10016, "You Do Not Have Permission", HttpStatus.UNAUTHORIZED),
+    ACCOUNT_NOT_EXIST(10017,"Account not exist",  HttpStatus.NOT_FOUND),
+    ACCOUNT_ARE_EXISTED(10018,"Account are existed",  HttpStatus.NOT_FOUND),
+    UNDEFINE_STATUS_ACCOUNT(10018,"Account status is not define",  HttpStatus.NOT_FOUND),
+
     ;
 
     private int code;
