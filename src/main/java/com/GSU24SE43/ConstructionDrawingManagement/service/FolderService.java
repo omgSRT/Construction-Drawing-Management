@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
+import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.FolderRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class FolderService {
     final FolderRepository folderRepository;
     final FolderMapper folderMapper;
+    final PaginationUtils paginationUtils = new PaginationUtils();
 
     //@PreAuthorize("hasRole('ADMIN')")
     public Folder createFolder(FolderRequest request){
@@ -37,12 +39,12 @@ public class FolderService {
         return newFolder;
     }
 
-    public List<Folder> getAllFolders() {
-        List<Folder> folders = folderRepository.findAll();
-        if(folders.isEmpty()){
-            throw new AppException(ErrorCode.EMPTY_LIST);
+    public List<Folder> getAllFolders(int page, int perPage) {
+        try {
+            return paginationUtils.convertListToPage(page, perPage, folderRepository.findAll());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return folders;
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
@@ -68,11 +70,11 @@ public class FolderService {
         return folderRepository.save(folder);
     }
 
-    public List<Folder> findFolderByNameContaining(String name){
-        List<Folder> folders = folderRepository.findByNameContaining(name);
-        if(folders.isEmpty()){
-            throw new AppException(ErrorCode.EMPTY_LIST);
+    public List<Folder> findFolderByNameContaining(String name, int page, int perPage){
+        try {
+            return paginationUtils.convertListToPage(page, perPage, folderRepository.findByNameContaining(name));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return folders;
     }
 }

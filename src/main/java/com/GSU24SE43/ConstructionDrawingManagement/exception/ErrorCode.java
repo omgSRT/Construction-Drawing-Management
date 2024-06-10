@@ -32,6 +32,7 @@ public enum ErrorCode {
     INVALID_CREATED_DATE_EARLIER_THAN_END_DATE(10022, "Created Date Must Be Earlier Than End Date", HttpStatus.BAD_REQUEST),
     INVALID_CREATED_DATE_NOT_IN_FUTURE(10023, "Created Date Must Be Equal or Later Than Current Date", HttpStatus.BAD_REQUEST),
     INVALID_END_DATE_NOT_IN_FUTURE(10024, "End Date Must Be Later Than Current Date", HttpStatus.BAD_REQUEST),
+    PERMISSION_NOT_FOUND(10025, "Permission Not Found", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;

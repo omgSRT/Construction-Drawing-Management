@@ -78,16 +78,16 @@ public class ProjectService {
     }
 
     public List<Project> findProjectByNameContaining(String name){
-        List<Project> projects = projectRepository.findByNameContaining(name);
-        if(projects.isEmpty()){
-            throw new AppException(ErrorCode.EMPTY_LIST);
-        }
-        return projects;
+//        List<Project> projects = projectRepository.findByNameContaining(name);
+//        if(projects.isEmpty()){
+//            throw new AppException(ErrorCode.EMPTY_LIST);
+//        }
+        return projectRepository.findByNameContaining(name);
     }
 
-    private void ValidateProjectDate(Date createdDate, Date endDate){
-        int result = createdDate.compareTo(endDate);
-        int result1 = createdDate.compareTo(new Date());
+    private void ValidateProjectDate(Date startDate, Date endDate){
+        int result = startDate.compareTo(endDate);
+        int result1 = startDate.compareTo(new Date());
         int result2 = endDate.compareTo(new Date());
 
         if(result >= 0){

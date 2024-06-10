@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,9 +33,10 @@ public class FolderController {
 
     @Operation(summary = "Get All Folders", description = "Get All Folders - Admin")
     @GetMapping(path = "/getall")
-    public ApiResponse<List<Folder>> getAllFolders(){
+    public ApiResponse<List<Folder>> getAllFolders(@DefaultValue(value = "1") int page,
+                                                   @DefaultValue(value = "10") int perPage){
         return ApiResponse.<List<Folder>>builder()
-                .entity(folderService.getAllFolders())
+                .entity(folderService.getAllFolders(page, perPage))
                 .build();
     }
 
@@ -69,9 +71,11 @@ public class FolderController {
 
     @Operation(summary = "Find Folders", description = "Find Folder(s) by Folder's Name")
     @GetMapping(path = "/search")
-    public ApiResponse<List<Folder>> searchFoldersByName(String name){
+    public ApiResponse<List<Folder>> searchFoldersByName(String name,
+                                                         @DefaultValue(value = "1") int page,
+                                                         @DefaultValue(value = "10") int perPage){
         return ApiResponse.<List<Folder>>builder()
-                .entity(folderService.findFolderByNameContaining(name))
+                .entity(folderService.findFolderByNameContaining(name, page, perPage))
                 .build();
     }
 }
