@@ -23,17 +23,19 @@ public enum ErrorCode {
     UNAUTHORIZED(10013, "You Do Not Have Permission", HttpStatus.UNAUTHORIZED),
     NAME_NOT_BLANK(10014, "Name Cannot Be Blank", HttpStatus.BAD_REQUEST),
     NAME_EXISTED(10015, "Name Existed", HttpStatus.BAD_REQUEST),
-    NAME_NOT_FOUND(10016, "Name Not Found", HttpStatus.BAD_REQUEST),
+    NAME_NOT_FOUND(10016, "Name Not Found", HttpStatus.NOT_FOUND),
     URL_NOT_BLANK(10017, "URL Cannot Be Blank", HttpStatus.BAD_REQUEST),
-    FOLDER_NOT_FOUND(10018, "Folder Not Found", HttpStatus.BAD_REQUEST),
-    PROJECT_NOT_FOUND(10019, "Project Not Found", HttpStatus.BAD_REQUEST),
-    DEPARTMENT_NOT_FOUND(10020, "Department Not Found", HttpStatus.BAD_REQUEST),
-    ACCOUNT_NOT_FOUND(10021, "Account Not Found", HttpStatus.BAD_REQUEST),
+    FOLDER_NOT_FOUND(10018, "Folder Not Found", HttpStatus.NOT_FOUND),
+    PROJECT_NOT_FOUND(10019, "Project Not Found", HttpStatus.NOT_FOUND),
+    DEPARTMENT_NOT_FOUND(10020, "Department Not Found", HttpStatus.NOT_FOUND),
+    ACCOUNT_NOT_FOUND(10021, "Account Not Found", HttpStatus.NOT_FOUND),
     INVALID_CREATED_DATE_EARLIER_THAN_END_DATE(10022, "Created Date Must Be Earlier Than End Date", HttpStatus.BAD_REQUEST),
     INVALID_CREATED_DATE_NOT_IN_FUTURE(10023, "Created Date Must Be Equal or Later Than Current Date", HttpStatus.BAD_REQUEST),
     INVALID_END_DATE_NOT_IN_FUTURE(10024, "End Date Must Be Later Than Current Date", HttpStatus.BAD_REQUEST),
     PERMISSION_NOT_FOUND(10025, "Permission Not Found", HttpStatus.BAD_REQUEST),
-    ;
+    ACCOUNT_NOT_EXIST(10026,"Account not exist",  HttpStatus.NOT_FOUND),
+    ACCOUNT_ARE_EXISTED(10027,"Account are existed",  HttpStatus.NOT_FOUND),
+    UNDEFINE_STATUS_ACCOUNT(10028,"Account status is not define",  HttpStatus.NOT_FOUND);
 
     private int code;
     private String message;
