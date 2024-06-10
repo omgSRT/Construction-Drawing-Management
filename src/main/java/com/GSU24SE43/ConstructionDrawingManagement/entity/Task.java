@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 @Entity
 @Getter
@@ -21,10 +22,29 @@ public class Task {
     private String title;
     private String description;
     private String status;
-    private Date createDate;
     private UUID createBy;
-    private Date beginDay;
+    private Date createDate;
+    private Date beginDate;
+    private Date endDate;
+
+    //tạo mối quan hệ tự tham chiếu của task từ parentTaskId
+    @ManyToOne
+    @JoinColumn(name = "parentTaskId")
+    private Task parentTask;
+
     @ManyToOne
     @JoinColumn(name = "staffId")
     Staff staff;
+
+    @ManyToOne
+    @JoinColumn(name ="departmentId")
+    Department department;
+
+    @ManyToOne
+    @JoinColumn(name ="drawingId")
+    Drawing drawing;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Comment> commentList;
+
 }

@@ -1,12 +1,11 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -22,9 +21,11 @@ public class Account {
     String password;
     Date createdDate;
     String accountStatus;
-    @ElementCollection
-    Set<String> roles;
-
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    String roleName;
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     Staff staff;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Project> projectList;
 }

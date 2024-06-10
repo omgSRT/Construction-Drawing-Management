@@ -3,8 +3,11 @@ package com.GSU24SE43.ConstructionDrawingManagement.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
@@ -12,22 +15,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @RequiredArgsConstructor
-public class Access {
+public class Subfolder {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private Date dateTime ;
-    private String URLLong;
+    private String name;
+    private Date createDate;
+
+    @OneToMany(mappedBy = "subfolder", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Drawing> drawings = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "staffId")
-    private Staff staff;
-
-    @ManyToOne
-    @JoinColumn(name = "permissionId")
-    private Permission permission;
-
-    @ManyToOne
-    @JoinColumn(name = "versionId")
-    private Version version;
+    @JoinColumn(name = "projectId")
+    Project project;
 }

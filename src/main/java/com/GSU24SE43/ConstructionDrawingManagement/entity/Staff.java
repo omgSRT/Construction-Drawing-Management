@@ -25,21 +25,27 @@ public class Staff {
     String phone;
     String certificate;
     String degree;
-    boolean isAdmin;
+    boolean isSupervisor;
 // chua xng
-    @ManyToOne
-    @JoinColumn(name = "supervisorId")
-    Staff supervisor;
 
+// department
     @ManyToOne
     @JoinColumn(name = "departmentId")
     Department department;
-
+// account
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "accountId")
     Account account;
-
+// task
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Task> tasks = new ArrayList<>();
+// access
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Access> accessList;
+// comment
+    @ManyToOne
+    @JoinColumn(name = "commentId")
+    Comment comment;
+
 }

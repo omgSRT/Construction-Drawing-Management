@@ -17,19 +17,20 @@ public class Drawing {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String image;
     private String name;
     private String type;
     private int size;
     private String url;
+    private String status;
 
+    
     @ManyToOne
-    @JoinColumn(name = "departmentId")
-    Department department;
-    @ManyToOne
-    @JoinColumn(name = "projectId")
-    Project project;
+    @JoinColumn(name = "subfolderId")
+    Subfolder subfolder;
 
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Version> versions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Task> taskList;
 }

@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,14 +23,24 @@ public class Project {
     private String description;
     private String location;
     private Date creationDate;
+    private Date startDate;
     private Date endDate;
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "folderId")
     Folder folder;
-    @ManyToOne
-    @JoinColumn(name = "staffId")
-    Staff staff;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Drawing> drawings = new ArrayList<>();
+    List<Subfolder> subfolders = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name ="departmentId")
+    Department department;
+
+    @ManyToOne
+    @JoinColumn(name = "accountId")
+    Account account;
+
 }
