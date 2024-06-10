@@ -1,7 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
@@ -17,7 +16,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -29,19 +27,16 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class ProjectService {
-    @Autowired
-    ProjectRepository projectRepository;
-    ProjectMapper projectMapper;
-    @Autowired
-    FolderRepository folderRepository;
-    @Autowired
-    AccountRepository accountRepository;
-    @Autowired
-    DepartmentRepository departmentRepository;
+    final ProjectRepository projectRepository;
+    final ProjectMapper projectMapper;
+    final FolderRepository folderRepository;
+    final AccountRepository accountRepository;
+    final DepartmentRepository departmentRepository;
 
-    public ProjectResponse createProject(ProjectRequest request){
-        Project project = projectRepository.findByName(request.getName())
-                .orElseThrow(() -> new AppException(ErrorCode.NAME_EXISTED));
+    public Project createProject(ProjectRequest request){
+        if(folderRepository.existsByName(request.getName())){
+            throw new AppException(ErrorCode.NAME_EXISTED);
+        }
         Department department = departmentRepository.findById(request.getDepartmentId())
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         Account account = accountRepository.findById(request.getAccountId())
@@ -54,11 +49,11 @@ public class ProjectService {
         Project newProject = projectMapper.toProject(request);
         newProject.setCreationDate(new Date());
 
-        return projectMapper.toProjectResponse(newProject);
+        return projectRepository.save(newProject);
     }
 
-    public List<ProjectResponse> getAllProjects() {
-        return projectRepository.findAll().stream().map(projectMapper::toProjectResponse).toList();
+    public List<Project> getAllProjects() {
+        return projectRepository.findAll();
     }
 
     public void deleteProjectById(UUID id){
@@ -72,14 +67,22 @@ public class ProjectService {
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
     }
 
-    public ProjectResponse updateProjectById(UUID id, ProjectRequest request){
+    public Project updateProjectById(UUID id, ProjectRequest request){
         var project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
 
         //to-do: validate request
         projectMapper.updateProject(project, request);
 
-        return projectMapper.toProjectResponse(projectRepository.save(project));
+        return projectRepository.save(project);
+    }
+
+    public List<Project> findProjectByNameContaining(String name){
+        List<Project> projects = projectRepository.findByNameContaining(name);
+        if(projects.isEmpty()){
+            throw new AppException(ErrorCode.EMPTY_LIST);
+        }
+        return projects;
     }
 
     private void ValidateProjectDate(Date createdDate, Date endDate){
