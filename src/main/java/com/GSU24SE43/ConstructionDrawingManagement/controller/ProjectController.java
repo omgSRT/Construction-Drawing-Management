@@ -12,6 +12,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.enums.SuccessReturnMessage;
 import com.GSU24SE43.ConstructionDrawingManagement.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +86,7 @@ public class ProjectController {
 
     @Operation(summary = "Find Projects", description = "Find Project(s) by Name")
     @GetMapping(path = "/search")
-    public ApiResponse<List<ProjectResponse>> searchProjectsByName(String name,
+    public ApiResponse<List<ProjectResponse>> searchProjectsByName(@NotBlank String name,
                                                                    @RequestParam(defaultValue = "1") int page,
                                                                    @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<ProjectResponse>>builder()

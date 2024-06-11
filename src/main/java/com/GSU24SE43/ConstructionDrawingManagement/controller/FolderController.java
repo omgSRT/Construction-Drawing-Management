@@ -7,6 +7,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.enums.SuccessReturnMessage;
 import com.GSU24SE43.ConstructionDrawingManagement.service.FolderService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -71,7 +72,7 @@ public class FolderController {
 
     @Operation(summary = "Find Folders", description = "Find Folder(s) by Folder's Name")
     @GetMapping(path = "/search")
-    public ApiResponse<List<Folder>> searchFoldersByName(String name,
+    public ApiResponse<List<Folder>> searchFoldersByName(@NotBlank String name,
                                                          @RequestParam(defaultValue = "1") int page,
                                                          @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<Folder>>builder()
