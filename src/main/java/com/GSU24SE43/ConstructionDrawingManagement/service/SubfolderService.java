@@ -43,8 +43,9 @@ public class SubfolderService {
 
         Subfolder newSubfolder = subfolderMapper.toSubfolder(request);
         newSubfolder.setCreateDate(new Date());
+        newSubfolder.setProject(project);
 
-        return subfolderMapper.toSubfolderResponse(newSubfolder);
+        return subfolderMapper.toSubfolderResponse(subfolderRepository.save(newSubfolder));
     }
 
     public List<SubfolderResponse> getAllSubfolders(int page, int perPage) {
@@ -56,6 +57,10 @@ public class SubfolderService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<Subfolder> getAllSubfolders() {
+        return subfolderRepository.findAll();
     }
 
     public void deleteSubfolderById(UUID id){
@@ -88,4 +93,16 @@ public class SubfolderService {
             throw new RuntimeException(e);
         }
     }
+
+    public List<SubfolderResponse> getSubfoldersByProjectId(int page, int perPage, UUID projectId){
+        try {
+            List<SubfolderResponse> subfolderResponses
+                    = subfolderRepository.findByProjectId(projectId).stream().map(subfolderMapper::toSubfolderResponse).toList();
+            subfolderResponses = paginationUtils.convertListToPage(page, perPage, subfolderResponses);
+            return subfolderResponses;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

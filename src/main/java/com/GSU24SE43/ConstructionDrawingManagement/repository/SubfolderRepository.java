@@ -12,4 +12,6 @@ public interface SubfolderRepository extends JpaRepository<Subfolder, UUID> {
     boolean existsByName(String name);
 
     List<Subfolder> findByNameContaining(String name);
+
+    List<Subfolder> findByProjectId(UUID projectId);
 }
