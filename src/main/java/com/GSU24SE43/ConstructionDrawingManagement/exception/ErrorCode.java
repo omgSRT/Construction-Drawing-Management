@@ -38,7 +38,8 @@ public enum ErrorCode {
     UNDEFINED_STATUS_ACCOUNT(10028,"Account status is not define",  HttpStatus.NOT_FOUND),
     USERNAME_TOO_SHORT(10029, "User must be least 8 character", HttpStatus.BAD_REQUEST),
     PASSWORD_TOO_SHORT(10030, "Password must be least 8 character", HttpStatus.BAD_REQUEST),
-    INVALID_STATUS(10031, "Invalid Status Input", HttpStatus.BAD_REQUEST)
+    INVALID_STATUS(10031, "Invalid Status Input", HttpStatus.BAD_REQUEST),
+    SUBFOLDER_NOT_FOUND(10032, "Subfolder Not Found", HttpStatus.NOT_FOUND)
     ;
 
     private int code;

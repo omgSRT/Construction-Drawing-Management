@@ -40,7 +40,7 @@ public class ProjectService {
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     public ProjectResponse createProject(ProjectRequest request){
-        if(folderRepository.existsByName(request.getName())){
+        if(projectRepository.existsByName(request.getName())){
             throw new AppException(ErrorCode.NAME_EXISTED);
         }
         Department department = departmentRepository.findById(request.getDepartmentId())
@@ -72,15 +72,35 @@ public class ProjectService {
         }
     }
 
+    public List<ProjectResponse> getAllActiveProjects(int page, int perPage) {
+        try {
+            List<ProjectResponse> projectResponses = projectRepository.findByStatus("ACTIVE")
+                    .stream().map(projectMapper::toProjectResponse).toList();
+            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+            return projectResponses;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void deleteProjectById(UUID id){
-        var folder = projectRepository.findById(id)
+        var project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
-        projectRepository.delete(folder);
+        projectRepository.delete(project);
     }
 
     public ProjectResponse findProjectById(UUID id){
         return projectMapper.toProjectResponse(projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND)));
+    }
+
+    public ProjectResponse findActiveProjectById(UUID id){
+        var project = projectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+        if(!project.getStatus().equals("ACTIVE")){
+            project = null;
+        }
+        return projectMapper.toProjectResponse(project);
     }
 
     public ProjectResponse updateProjectById(UUID id, ProjectUpdateRequest request){
@@ -94,10 +114,46 @@ public class ProjectService {
         return projectMapper.toProjectResponse(projectRepository.save(project));
     }
 
+    public List<ProjectResponse> findProjectByNameContainingAndStatus(String name, String status, int page, int perPage){
+        try {
+            List<ProjectResponse> projectResponses
+                    = projectRepository.findByNameContainingAndStatus(name, status).stream().map(projectMapper::toProjectResponse).toList();
+            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+            return projectResponses;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public List<ProjectResponse> findProjectByNameContaining(String name, int page, int perPage){
         try {
             List<ProjectResponse> projectResponses
                     = projectRepository.findByNameContaining(name).stream().map(projectMapper::toProjectResponse).toList();
+            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+            return projectResponses;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<ProjectResponse> findProjectByDepartmentNameAndStatus(String departmentName, String status,
+                                                                      int page, int perPage){
+        try {
+            List<ProjectResponse> projectResponses
+                    = projectRepository.findByDepartmentNameAndStatus(departmentName, status)
+                    .stream().map(projectMapper::toProjectResponse).toList();
+            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+            return projectResponses;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<ProjectResponse> findProjectByDepartmentName(String departmentName, int page, int perPage){
+        try {
+            List<ProjectResponse> projectResponses
+                    = projectRepository.findByDepartmentName(departmentName)
+                    .stream().map(projectMapper::toProjectResponse).toList();
             projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
             return projectResponses;
         } catch (Exception e) {

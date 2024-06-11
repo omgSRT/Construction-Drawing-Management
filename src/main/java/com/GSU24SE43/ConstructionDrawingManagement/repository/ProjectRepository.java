@@ -12,4 +12,12 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     boolean existsByName(String name);
 
     List<Project> findByNameContaining(String name);
+
+    List<Project> findByNameContainingAndStatus(String name, String status);
+
+    List<Project> findByDepartmentNameAndStatus(String departmentName, String status);
+
+    List<Project> findByDepartmentName(String departmentName);
+
+    List<Project> findByStatus(String status);
 }

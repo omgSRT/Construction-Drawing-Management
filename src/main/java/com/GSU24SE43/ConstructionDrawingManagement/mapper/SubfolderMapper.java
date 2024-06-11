@@ -1,6 +1,7 @@
 package com.GSU24SE43.ConstructionDrawingManagement.mapper;
 
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.SubfolderRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.SubfolderUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.SubfolderResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Subfolder;
 import org.mapstruct.Mapper;
@@ -15,5 +16,5 @@ public interface SubfolderMapper {
 
     @Mapping(target = "drawings", ignore = true)
     @Mapping(target = "project", ignore = true)
-    void updateSubfolder(@MappingTarget Subfolder subfolder, SubfolderRequest request);
+    void updateSubfolder(@MappingTarget Subfolder subfolder, SubfolderUpdateRequest request);
 }
