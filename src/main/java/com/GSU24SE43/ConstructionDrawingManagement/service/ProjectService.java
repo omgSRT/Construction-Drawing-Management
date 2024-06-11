@@ -62,20 +62,23 @@ public class ProjectService {
         return projectMapper.toProjectResponse(projectRepository.save(newProject));
     }
 
-    public List<ProjectResponse> getAllProjects(int page, int perPage) {
+    public List<ProjectResponse> getAllProjects(int page, int perPage, String status) {
         try {
-            List<ProjectResponse> projectResponses = projectRepository.findAll().stream().map(projectMapper::toProjectResponse).toList();
-            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
-            return projectResponses;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+            List<ProjectResponse> projectResponses;
+            if(status != null){
+                ProjectStatus projectStatus;
+                try {
+                    projectStatus = ProjectStatus.valueOf(status.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new AppException(ErrorCode.INVALID_STATUS);
+                }
+                projectResponses = projectRepository.findByStatus(status)
+                        .stream().map(projectMapper::toProjectResponse).toList();
+            }
+            else{
+                projectResponses = projectRepository.findAll().stream().map(projectMapper::toProjectResponse).toList();
+            }
 
-    public List<ProjectResponse> getAllActiveProjects(int page, int perPage) {
-        try {
-            List<ProjectResponse> projectResponses = projectRepository.findByStatus("ACTIVE")
-                    .stream().map(projectMapper::toProjectResponse).toList();
             projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
             return projectResponses;
         } catch (Exception e) {
@@ -89,18 +92,18 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
-    public ProjectResponse findProjectById(UUID id){
-        return projectMapper.toProjectResponse(projectRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND)));
-    }
-
-    public ProjectResponse findActiveProjectById(UUID id){
+    public ProjectResponse findProjectByIdAndStatus(UUID id, String status){
         var project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
-        if(!project.getStatus().equals("ACTIVE")){
+        if(status != null && !project.getStatus().equals(status)){
             project = null;
         }
         return projectMapper.toProjectResponse(project);
+    }
+
+    public ProjectResponse findProjectById(UUID id){
+        return projectMapper.toProjectResponse(projectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND)));
     }
 
     public ProjectResponse updateProjectById(UUID id, ProjectUpdateRequest request){
@@ -116,19 +119,21 @@ public class ProjectService {
 
     public List<ProjectResponse> findProjectByNameContainingAndStatus(String name, String status, int page, int perPage){
         try {
-            List<ProjectResponse> projectResponses
-                    = projectRepository.findByNameContainingAndStatus(name, status).stream().map(projectMapper::toProjectResponse).toList();
-            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
-            return projectResponses;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+            List<ProjectResponse> projectResponses;
+            if(status != null){
+                ProjectStatus projectStatus;
+                try {
+                    projectStatus = ProjectStatus.valueOf(status.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new AppException(ErrorCode.INVALID_STATUS);
+                }
+                projectResponses = projectRepository.findByNameContainingAndStatus(name, status).stream().map(projectMapper::toProjectResponse).toList();
+            }
+            else{
+                projectResponses
+                        = projectRepository.findByNameContaining(name).stream().map(projectMapper::toProjectResponse).toList();
+            }
 
-    public List<ProjectResponse> findProjectByNameContaining(String name, int page, int perPage){
-        try {
-            List<ProjectResponse> projectResponses
-                    = projectRepository.findByNameContaining(name).stream().map(projectMapper::toProjectResponse).toList();
             projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
             return projectResponses;
         } catch (Exception e) {
@@ -139,21 +144,22 @@ public class ProjectService {
     public List<ProjectResponse> findProjectByDepartmentNameAndStatus(String departmentName, String status,
                                                                       int page, int perPage){
         try {
-            List<ProjectResponse> projectResponses
-                    = projectRepository.findByDepartmentNameAndStatus(departmentName, status)
-                    .stream().map(projectMapper::toProjectResponse).toList();
-            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
-            return projectResponses;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+            List<ProjectResponse> projectResponses;
+            if(status != null){
+                ProjectStatus projectStatus;
+                try {
+                    projectStatus = ProjectStatus.valueOf(status.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new AppException(ErrorCode.INVALID_STATUS);
+                }
+                projectResponses = projectRepository.findByDepartmentNameAndStatus(departmentName, status)
+                        .stream().map(projectMapper::toProjectResponse).toList();
+            }
+            else{
+                projectResponses = projectRepository.findByDepartmentName(departmentName)
+                        .stream().map(projectMapper::toProjectResponse).toList();
+            }
 
-    public List<ProjectResponse> findProjectByDepartmentName(String departmentName, int page, int perPage){
-        try {
-            List<ProjectResponse> projectResponses
-                    = projectRepository.findByDepartmentName(departmentName)
-                    .stream().map(projectMapper::toProjectResponse).toList();
             projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
             return projectResponses;
         } catch (Exception e) {
