@@ -33,8 +33,8 @@ public class FolderController {
 
     @Operation(summary = "Get All Folders", description = "Get All Folders - Admin")
     @GetMapping(path = "/getall")
-    public ApiResponse<List<Folder>> getAllFolders(@DefaultValue(value = "1") int page,
-                                                   @DefaultValue(value = "10") int perPage){
+    public ApiResponse<List<Folder>> getAllFolders(@RequestParam(defaultValue = "1") int page,
+                                                   @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<Folder>>builder()
                 .entity(folderService.getAllFolders(page, perPage))
                 .build();
@@ -72,8 +72,8 @@ public class FolderController {
     @Operation(summary = "Find Folders", description = "Find Folder(s) by Folder's Name")
     @GetMapping(path = "/search")
     public ApiResponse<List<Folder>> searchFoldersByName(String name,
-                                                         @DefaultValue(value = "1") int page,
-                                                         @DefaultValue(value = "10") int perPage){
+                                                         @RequestParam(defaultValue = "1") int page,
+                                                         @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<Folder>>builder()
                 .entity(folderService.findFolderByNameContaining(name, page, perPage))
                 .build();

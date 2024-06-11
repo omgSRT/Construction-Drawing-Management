@@ -1,10 +1,10 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -12,14 +12,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProjectRequest {
+public class SubfolderRequest {
     @NotBlank(message = "Name Cannot Be Blank")
     String name;
-    String description;
-    String location;
-    Date startDate;
-    Date endDate;
-    UUID folderId;
-    UUID departmentId;
-    UUID accountId;
+    UUID projectId;
 }
