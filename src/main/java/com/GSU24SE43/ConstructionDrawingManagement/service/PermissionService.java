@@ -45,9 +45,9 @@ public class PermissionService {
     }
 
     public void deletePermissionById(UUID id){
-        var folder = permissionRepository.findById(id)
+        var permission = permissionRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
-        permissionRepository.delete(folder);
+        permissionRepository.delete(permission);
     }
 
     public Permission findPermissionById(UUID id){

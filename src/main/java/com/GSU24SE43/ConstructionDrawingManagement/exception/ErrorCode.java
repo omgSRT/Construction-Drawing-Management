@@ -35,7 +35,12 @@ public enum ErrorCode {
     PERMISSION_NOT_FOUND(10025, "Permission Not Found", HttpStatus.BAD_REQUEST),
     ACCOUNT_NOT_EXIST(10026,"Account not exist",  HttpStatus.NOT_FOUND),
     ACCOUNT_ARE_EXISTED(10027,"Account are existed",  HttpStatus.NOT_FOUND),
-    UNDEFINE_STATUS_ACCOUNT(10028,"Account status is not define",  HttpStatus.NOT_FOUND);
+    UNDEFINED_STATUS_ACCOUNT(10028,"Account status is not define",  HttpStatus.NOT_FOUND),
+    USERNAME_TOO_SHORT(10029, "User must be least 8 character", HttpStatus.BAD_REQUEST),
+    PASSWORD_TOO_SHORT(10030, "Password must be least 8 character", HttpStatus.BAD_REQUEST),
+    INVALID_STATUS(10031, "Invalid Status Input", HttpStatus.BAD_REQUEST),
+    SUBFOLDER_NOT_FOUND(10032, "Subfolder Not Found", HttpStatus.NOT_FOUND)
+    ;
 
     private int code;
     private String message;

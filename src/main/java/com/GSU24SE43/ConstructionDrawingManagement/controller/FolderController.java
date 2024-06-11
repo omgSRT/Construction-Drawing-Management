@@ -7,6 +7,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.enums.SuccessReturnMessage;
 import com.GSU24SE43.ConstructionDrawingManagement.service.FolderService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -33,8 +34,8 @@ public class FolderController {
 
     @Operation(summary = "Get All Folders", description = "Get All Folders - Admin")
     @GetMapping(path = "/getall")
-    public ApiResponse<List<Folder>> getAllFolders(@DefaultValue(value = "1") int page,
-                                                   @DefaultValue(value = "10") int perPage){
+    public ApiResponse<List<Folder>> getAllFolders(@RequestParam(defaultValue = "1") int page,
+                                                   @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<Folder>>builder()
                 .entity(folderService.getAllFolders(page, perPage))
                 .build();
@@ -71,9 +72,9 @@ public class FolderController {
 
     @Operation(summary = "Find Folders", description = "Find Folder(s) by Folder's Name")
     @GetMapping(path = "/search")
-    public ApiResponse<List<Folder>> searchFoldersByName(String name,
-                                                         @DefaultValue(value = "1") int page,
-                                                         @DefaultValue(value = "10") int perPage){
+    public ApiResponse<List<Folder>> searchFoldersByName(@NotBlank String name,
+                                                         @RequestParam(defaultValue = "1") int page,
+                                                         @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<Folder>>builder()
                 .entity(folderService.findFolderByNameContaining(name, page, perPage))
                 .build();

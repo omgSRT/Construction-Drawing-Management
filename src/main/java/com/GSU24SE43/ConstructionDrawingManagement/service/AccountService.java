@@ -69,10 +69,10 @@ public class AccountService {
                 () -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
         String status = request.getAccountStatus();
         if (!status.equals(AccountStatus.ACTIVE.name())
-                && (!status.equals(AccountStatus.UN_ACTIVE.name())
+                && (!status.equals(AccountStatus.INACTIVE.name())
                 && (!status.equals(AccountStatus.HIDDEN.name())
         ))){
-            throw new AppException(ErrorCode.UNDEFINE_STATUS_ACCOUNT);
+            throw new AppException(ErrorCode.UNDEFINED_STATUS_ACCOUNT);
         }
         accountMapper.toAccountUpdateStatusResponse(account, request);
         repository.save(account);

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +34,8 @@ public class PermissionController {
 
     @Operation(summary = "Get Permissions", description = "Get All Permissions")
     @GetMapping(path = "/getall")
-    public ApiResponse<List<Permission>> getPermissions(int page, int perPage) {
+    public ApiResponse<List<Permission>> getPermissions(@RequestParam(defaultValue = "1") int page,
+                                                        @RequestParam(defaultValue = "10") int perPage) {
         return ApiResponse.<List<Permission>>builder()
                 .entity(permissionService.getAllPermissions(page, perPage))
                 .build();

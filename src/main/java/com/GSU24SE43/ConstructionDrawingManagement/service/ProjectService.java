@@ -1,10 +1,15 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
+import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectChangeStatusRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectUpdateRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.ProjectMapper;
@@ -32,9 +37,10 @@ public class ProjectService {
     final FolderRepository folderRepository;
     final AccountRepository accountRepository;
     final DepartmentRepository departmentRepository;
+    final PaginationUtils paginationUtils = new PaginationUtils();
 
-    public Project createProject(ProjectRequest request){
-        if(folderRepository.existsByName(request.getName())){
+    public ProjectResponse createProject(ProjectRequest request){
+        if(projectRepository.existsByName(request.getName())){
             throw new AppException(ErrorCode.NAME_EXISTED);
         }
         Department department = departmentRepository.findById(request.getDepartmentId())
@@ -48,41 +54,133 @@ public class ProjectService {
 
         Project newProject = projectMapper.toProject(request);
         newProject.setCreationDate(new Date());
+        newProject.setDepartment(department);
+        newProject.setAccount(account);
+        newProject.setFolder(folder);
+        newProject.setStatus(ProjectStatus.ACTIVE.name());
 
-        return projectRepository.save(newProject);
+        return projectMapper.toProjectResponse(projectRepository.save(newProject));
     }
 
-    public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+    public List<ProjectResponse> getAllProjects(int page, int perPage, String status) {
+        try {
+            List<ProjectResponse> projectResponses;
+            if(status != null){
+                ProjectStatus projectStatus;
+                try {
+                    projectStatus = ProjectStatus.valueOf(status.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new AppException(ErrorCode.INVALID_STATUS);
+                }
+                projectResponses = projectRepository.findByStatus(status)
+                        .stream().map(projectMapper::toProjectResponse).toList();
+            }
+            else{
+                projectResponses = projectRepository.findAll().stream().map(projectMapper::toProjectResponse).toList();
+            }
+
+            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+            return projectResponses;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void deleteProjectById(UUID id){
-        var folder = projectRepository.findById(id)
+        var project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
-        projectRepository.delete(folder);
+        projectRepository.delete(project);
     }
 
-    public Project findProjectById(UUID id){
-        return projectRepository.findById(id)
+    public ProjectResponse findProjectByIdAndStatus(UUID id, String status){
+        var project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+        if(status != null && !project.getStatus().equals(status)){
+            project = null;
+        }
+        return projectMapper.toProjectResponse(project);
     }
 
-    public Project updateProjectById(UUID id, ProjectRequest request){
+    public ProjectResponse findProjectById(UUID id){
+        return projectMapper.toProjectResponse(projectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND)));
+    }
+
+    public ProjectResponse updateProjectById(UUID id, ProjectUpdateRequest request){
         var project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
 
-        //to-do: validate request
+        ValidateProjectDate(request.getStartDate(), request.getEndDate());
+
         projectMapper.updateProject(project, request);
 
-        return projectRepository.save(project);
+        return projectMapper.toProjectResponse(projectRepository.save(project));
     }
 
-    public List<Project> findProjectByNameContaining(String name){
-//        List<Project> projects = projectRepository.findByNameContaining(name);
-//        if(projects.isEmpty()){
-//            throw new AppException(ErrorCode.EMPTY_LIST);
-//        }
-        return projectRepository.findByNameContaining(name);
+    public List<ProjectResponse> findProjectByNameContainingAndStatus(String name, String status, int page, int perPage){
+        try {
+            List<ProjectResponse> projectResponses;
+            if(status != null){
+                ProjectStatus projectStatus;
+                try {
+                    projectStatus = ProjectStatus.valueOf(status.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new AppException(ErrorCode.INVALID_STATUS);
+                }
+                projectResponses = projectRepository.findByNameContainingAndStatus(name, status).stream().map(projectMapper::toProjectResponse).toList();
+            }
+            else{
+                projectResponses
+                        = projectRepository.findByNameContaining(name).stream().map(projectMapper::toProjectResponse).toList();
+            }
+
+            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+            return projectResponses;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<ProjectResponse> findProjectByDepartmentNameAndStatus(String departmentName, String status,
+                                                                      int page, int perPage){
+        try {
+            List<ProjectResponse> projectResponses;
+            if(status != null){
+                ProjectStatus projectStatus;
+                try {
+                    projectStatus = ProjectStatus.valueOf(status.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new AppException(ErrorCode.INVALID_STATUS);
+                }
+                projectResponses = projectRepository.findByDepartmentNameAndStatus(departmentName, status)
+                        .stream().map(projectMapper::toProjectResponse).toList();
+            }
+            else{
+                projectResponses = projectRepository.findByDepartmentName(departmentName)
+                        .stream().map(projectMapper::toProjectResponse).toList();
+            }
+
+            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+            return projectResponses;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ProjectResponse changeProjectStatus(ProjectChangeStatusRequest request){
+        ProjectStatus projectStatus;
+        try {
+            projectStatus = ProjectStatus.valueOf(request.getStatusName().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new AppException(ErrorCode.INVALID_STATUS);
+        }
+
+        var project = projectRepository.findById(request.getProjectId())
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+
+        project.setStatus(request.getStatusName());
+
+        return projectMapper.toProjectResponse(projectRepository.save(project));
     }
 
     private void ValidateProjectDate(Date startDate, Date endDate){

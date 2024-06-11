@@ -4,22 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
-import java.util.UUID;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProjectRequest {
+public class SubfolderUpdateRequest {
     @NotBlank(message = "Name Cannot Be Blank")
     String name;
-    String description;
-    String location;
-    Date startDate;
-    Date endDate;
-    UUID folderId;
-    UUID departmentId;
-    UUID accountId;
 }
