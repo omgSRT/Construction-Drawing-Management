@@ -2,6 +2,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.AccountStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
@@ -25,16 +26,16 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AccountService {
     AccountRepository repository;
     AccountMapper accountMapper;
     PasswordEncoder passwordEncoder;
 
-    public AccountCreateResponse accountCreateResponse(AccountCreateRequest request){
+    public AccountCreateResponse accountCreateResponse(AccountCreateRequest request) {
         Date now = new Date();
         boolean checkAccountName = repository.existsByUsername(request.getUsername());
-        if(checkAccountName){
+        if (checkAccountName) {
             throw new AppException(ErrorCode.ACCOUNT_ARE_EXISTED);
         }
         Account account = accountMapper.toAccount(request);
@@ -44,18 +45,12 @@ public class AccountService {
         account.setAccountStatus(AccountStatus.ACTIVE.name());
         String status = account.getAccountStatus();
 
-//        account.builder()
-//                .password(passwordEncoder.encode(request.getPassword()))
-//                .roleName(Role.DESIGNER.name())
-//                .createdDate(now)
-//                .accountStatus("Active")
-//                .build();
         account = repository.save(account);
 
         return accountMapper.toCreateAccountResponse(account);
     }
 
-    public AccountUpdateResponse accountUpdateResponse(UUID accountId, AccountUpdateRequest request){
+    public AccountUpdateResponse accountUpdateResponse(UUID accountId, AccountUpdateRequest request) {
         Account account = repository.findById(accountId).orElseThrow(()
                 -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
         accountMapper.updateAccount(account, request);
@@ -64,27 +59,50 @@ public class AccountService {
         return accountMapper.toAccountUpdateResponse(account);
     }
 
-    public AccountUpdateStatusResponse updateStatus(UUID id, AccountUpdateStatusRequest request){
+    public AccountUpdateStatusResponse updateStatus(UUID id, AccountUpdateStatusRequest request) {
         Account account = repository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
         String status = request.getAccountStatus();
         if (!status.equals(AccountStatus.ACTIVE.name())
                 && (!status.equals(AccountStatus.INACTIVE.name())
                 && (!status.equals(AccountStatus.HIDDEN.name())
+
+//        ))) {
+//            throw new AppException(ErrorCode.UNDEFINE_STATUS_ACCOUNT);
         ))){
             throw new AppException(ErrorCode.UNDEFINED_STATUS_ACCOUNT);
+
         }
         accountMapper.toAccountUpdateStatusResponse(account, request);
         repository.save(account);
         return accountMapper.toAccountUpdateStatusResponse(account);
     }
 
-    public List<AccountResponse> getAllAccount(){
+    public AccountUpdateResponse updateRole(UUID id, AccountUpdateRoleRequest request) {
+        Account account = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+        String roleName = request.getRoleName();
+        if (!roleName.equalsIgnoreCase(Role.DESIGNER.toString())
+                && !roleName.equalsIgnoreCase(Role.HEAD.toString())
+                && !roleName.equalsIgnoreCase(Role.ADMIN.toString())
+                && !roleName.equalsIgnoreCase(Role.COMMANDER.toString())
+        ) {
+            throw new AppException(ErrorCode.ROLE_IS_NOT_DEFINED);
+        }
+        account.setRoleName(request.getRoleName());
+        Staff staff = account.getStaff();
+        if (roleName.equals(Role.HEAD.name())) {
+            staff.setSupervisor(true);
+        } else staff.setSupervisor(false);
+
+        return accountMapper.toAccountUpdateResponse(account);
+    }
+
+    public List<AccountResponse> getAllAccount() {
         return repository.findAll().stream().map(accountMapper::toAccountResponse).toList();
     }
 
-//    @PostAuthorize("returnObject.username == authentication.name")
-    public AccountResponse getAccountInfo(){
+    //    @PostAuthorize("returnObject.username == authentication.name")
+    public AccountResponse getAccountInfo() {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         Account account = repository.findByUsername(name).orElseThrow(
@@ -93,14 +111,18 @@ public class AccountService {
         return accountMapper.toAccountResponse(account);
     }
 
-    public List<Account> searchAccount(String username ){
+    public Account getAccountByUUID(UUID accountId) {
+        return repository.findByAccountId(accountId);
+    }
+
+    public List<Account> searchAccount(String username) {
         List<Account> list = repository.findByUsernameContainingIgnoreCase(username);
         return list;
     }
-    public void deleteAccount(UUID id){
+
+    public void deleteAccount(UUID id) {
         repository.deleteById(id);
     }
-
 
 
 }
