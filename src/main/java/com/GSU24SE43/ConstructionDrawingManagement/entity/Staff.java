@@ -44,8 +44,7 @@ public class Staff {
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Access> accessList;
 // comment
-    @ManyToOne
-    @JoinColumn(name = "commentId")
-    Comment comment;
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Comment> comments;
 
 }

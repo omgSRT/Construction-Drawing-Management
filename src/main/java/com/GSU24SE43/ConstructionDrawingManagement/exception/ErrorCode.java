@@ -39,7 +39,8 @@ public enum ErrorCode {
     USERNAME_TOO_SHORT(10029, "User must be least 8 character", HttpStatus.BAD_REQUEST),
     PASSWORD_TOO_SHORT(10030, "Password must be least 8 character", HttpStatus.BAD_REQUEST),
     INVALID_STATUS(10031, "Invalid Status Input", HttpStatus.BAD_REQUEST),
-    SUBFOLDER_NOT_FOUND(10032, "Subfolder Not Found", HttpStatus.NOT_FOUND)
+    SUBFOLDER_NOT_FOUND(10032, "Subfolder Not Found", HttpStatus.NOT_FOUND),
+    CONTENT_NOT_BLANK(10033, "Content Cannot Be Blank", HttpStatus.BAD_REQUEST)
     ;
 
     private int code;
