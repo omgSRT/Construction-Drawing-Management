@@ -13,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 public class PaginationUtils {
-    public <T> List<T> convertListToPage(int page, int perPage, List<T> list) throws Exception{
+    public <T> List<T> convertListToPage(int page, int perPage, List<T> list){
         if(list.isEmpty()){
             throw new AppException(ErrorCode.EMPTY_LIST);
         }

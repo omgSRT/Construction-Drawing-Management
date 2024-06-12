@@ -1,6 +1,5 @@
-package com.GSU24SE43.ConstructionDrawingManagement.dto.request;
+package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,14 +11,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProjectRequest {
-    @NotBlank(message = "Name Cannot Be Blank")
+public class ProjectResponse {
+    UUID id;
     String name;
     String description;
     String location;
+    Date creationDate;
     Date startDate;
     Date endDate;
-    UUID folderId;
-    UUID departmentId;
-    UUID accountId;
+    String status;
 }

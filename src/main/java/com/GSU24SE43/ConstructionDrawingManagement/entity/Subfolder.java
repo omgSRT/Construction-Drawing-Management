@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class Subfolder {
     private String name;
     private Date createDate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "subfolder", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Drawing> drawings = new ArrayList<>();
 
