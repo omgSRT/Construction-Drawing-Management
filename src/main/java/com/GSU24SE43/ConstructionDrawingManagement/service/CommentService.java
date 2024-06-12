@@ -75,7 +75,7 @@ public class CommentService {
 
     public List<CommentResponse> findCommentsByStaffId(UUID staffId, int page, int perPage){
         try {
-            var comments = commentRepository.findByStaffId(staffId).stream().map(commentMapper::toCommentResponse).toList();
+            var comments = commentRepository.findByStaffStaffId(staffId).stream().map(commentMapper::toCommentResponse).toList();
             return paginationUtils.convertListToPage(page, perPage, comments);
         } catch (Exception e) {
             throw new RuntimeException(e);
