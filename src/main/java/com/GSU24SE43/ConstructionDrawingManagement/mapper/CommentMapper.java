@@ -16,5 +16,7 @@ public interface CommentMapper {
     @Mapping(source = "staff.email", target = "staffEmail")
     CommentResponse toCommentResponse(Comment comment);
 
+    @Mapping(target = "staff", ignore = true)
+    @Mapping(target = "task", ignore = true)
     void updateComment(@MappingTarget Comment comment, CommentRequest request);
 }
