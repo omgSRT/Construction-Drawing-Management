@@ -35,20 +35,19 @@ public enum ErrorCode {
     PERMISSION_NOT_FOUND(10025, "Permission Not Found", HttpStatus.BAD_REQUEST),
     ACCOUNT_NOT_EXIST(10026,"Account not exist",  HttpStatus.NOT_FOUND),
     ACCOUNT_ARE_EXISTED(10027,"Account are existed",  HttpStatus.NOT_FOUND),
-
 //    UNDEFINE_STATUS_ACCOUNT(10028,"Account status is not define",  HttpStatus.NOT_FOUND),
     STAFF_IS_EXISTED(10029,"staff is existed in db",  HttpStatus.BAD_REQUEST),
     EMAIL_IS_EXISTED(10030,"email đã được sử dụng",  HttpStatus.BAD_REQUEST),
     ROLE_IS_NOT_DEFINED(10031,"role không tồn tại",  HttpStatus.BAD_REQUEST),
-
-
-    UNDEFINED_STATUS_ACCOUNT(10028,"Account status is not define",  HttpStatus.NOT_FOUND),
-    USERNAME_TOO_SHORT(10029, "User must be least 8 character", HttpStatus.BAD_REQUEST),
-    PASSWORD_TOO_SHORT(10030, "Password must be least 8 character", HttpStatus.BAD_REQUEST),
-    INVALID_STATUS(10031, "Invalid Status Input", HttpStatus.BAD_REQUEST),
-    SUBFOLDER_NOT_FOUND(10032, "Subfolder Not Found", HttpStatus.NOT_FOUND),
-    CONTENT_NOT_BLANK(10033, "Content Cannot Be Blank", HttpStatus.BAD_REQUEST),
-    COMMENT_NOT_FOUND(10034, "Comment Not Found", HttpStatus.NOT_FOUND)
+    UNDEFINED_STATUS_ACCOUNT(10032,"Account status is not define",  HttpStatus.NOT_FOUND),
+    USERNAME_TOO_SHORT(10033, "User must be least 8 character", HttpStatus.BAD_REQUEST),
+    PASSWORD_TOO_SHORT(10034, "Password must be least 8 character", HttpStatus.BAD_REQUEST),
+    INVALID_STATUS(10035, "Invalid Status Input", HttpStatus.BAD_REQUEST),
+    SUBFOLDER_NOT_FOUND(10036, "Subfolder Not Found", HttpStatus.NOT_FOUND),
+    CONTENT_NOT_BLANK(10037, "Content Cannot Be Blank", HttpStatus.BAD_REQUEST),
+    COMMENT_NOT_FOUND(10038, "Comment Not Found", HttpStatus.NOT_FOUND),
+    STAFF_NOT_FOUND(10039, "Staff Not Found", HttpStatus.NOT_FOUND),
+    TASK_NOT_FOUND(10040, "Task Not Found", HttpStatus.NOT_FOUND)
     ;
 
 

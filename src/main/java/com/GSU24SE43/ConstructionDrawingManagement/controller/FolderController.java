@@ -52,7 +52,7 @@ public class FolderController {
 
     @Operation(summary = "Update Folder", description = "Update A Folder by ID")
     @PutMapping(path = "/update/{id}")
-    public ApiResponse<Folder> UpdateFolderById(@PathVariable UUID id, @RequestBody @Valid FolderRequest request){
+    public ApiResponse<Folder> updateFolderById(@PathVariable UUID id, @RequestBody @Valid FolderRequest request){
         return ApiResponse.<Folder>builder()
                 .message(SuccessReturnMessage.UPDATE_SUCCESS.getMessage())
                 .entity(folderService.updateFolderById(id, request))
@@ -72,11 +72,11 @@ public class FolderController {
 
     @Operation(summary = "Find Folders", description = "Find Folder(s) by Folder's Name")
     @GetMapping(path = "/search")
-    public ApiResponse<List<Folder>> searchFoldersByName(@NotBlank String name,
+    public ApiResponse<List<Folder>> searchFoldersByName(@NotBlank String folderName,
                                                          @RequestParam(defaultValue = "1") int page,
                                                          @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<Folder>>builder()
-                .entity(folderService.findFolderByNameContaining(name, page, perPage))
+                .entity(folderService.findFolderByNameContaining(folderName, page, perPage))
                 .build();
     }
 }

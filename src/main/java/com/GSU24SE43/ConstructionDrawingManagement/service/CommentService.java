@@ -2,19 +2,19 @@ package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.CommentRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.FolderRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.CommentUpdateRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.response.CommentResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Comment;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.CommentResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.CommentMapper;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.CommentRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.StaffRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +28,23 @@ public class CommentService {
     final CommentRepository commentRepository;
     final CommentMapper commentMapper;
     final PaginationUtils paginationUtils = new PaginationUtils();
+    final StaffRepository staffRepository;
+    //final TaskRepository taskRepository;
 
-    public List<CommentResponse> getAllCommentss(int page, int perPage) {
+    public CommentResponse createComment(CommentRequest request){
+        Staff staff = staffRepository.findById(request.getStaffId())
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+
+        //Task task = taskRepository.findById(request.getTaskId())
+        //            .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND))
+
+        Comment newComment = commentMapper.toComment(request);
+        newComment.setStaff(staff);
+
+        return commentMapper.toCommentResponse(commentRepository.save(newComment));
+    }
+
+    public List<CommentResponse> getAllComments(int page, int perPage) {
         try {
             var comments = commentRepository.findAll().stream().map(commentMapper::toCommentResponse).toList();
             return paginationUtils.convertListToPage(page, perPage, comments);
@@ -49,7 +64,7 @@ public class CommentService {
                                                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND)));
     }
 
-    public CommentResponse updateCommentById(UUID id, CommentRequest request){
+    public CommentResponse updateCommentById(UUID id, CommentUpdateRequest request){
         var comment = commentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
 

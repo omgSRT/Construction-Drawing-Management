@@ -1,7 +1,5 @@
-package com.GSU24SE43.ConstructionDrawingManagement.entity;
+package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

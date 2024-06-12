@@ -77,12 +77,12 @@ public class DepartmentController {
 
     @Operation(summary = "Find Departments", description = "Find Departments By Name")
     @GetMapping(path = "/search")
-    public ApiResponse<List<Department>> findDepartmentsByName(@NotBlank String name,
+    public ApiResponse<List<Department>> findDepartmentsByName(@NotBlank String departmentName,
                                                                @RequestParam(defaultValue = "1") int page,
                                                                @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<Department>>builder()
                 .message(SuccessReturnMessage.SEARCH_SUCCESS.getMessage())
-                .entity(departmentService.findDepartmentByNameContaining(name, page, perPage))
+                .entity(departmentService.findDepartmentByNameContaining(departmentName, page, perPage))
                 .build();
     }
 
