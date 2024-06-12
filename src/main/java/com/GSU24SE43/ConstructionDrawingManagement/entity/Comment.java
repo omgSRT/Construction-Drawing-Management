@@ -16,12 +16,14 @@ import java.util.UUID;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID contentId;
+    private UUID commentId;
     private String content;
     private Date createDate;
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Staff> staffList;
+    @ManyToOne
+    @JoinColumn(name = "staffId")
+    Staff staff;
+
     @ManyToOne
     @JoinColumn(name = "taskId")
     Task task;

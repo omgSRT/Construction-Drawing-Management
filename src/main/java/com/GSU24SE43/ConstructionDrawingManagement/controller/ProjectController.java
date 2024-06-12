@@ -57,12 +57,12 @@ public class ProjectController {
 
     @Operation(summary = "Find Projects", description = "Find Project(s) by Name")
     @GetMapping(path = "/search/projectName")
-    public ApiResponse<List<ProjectResponse>> searchActiveProjectsByName(@NotBlank String name,
+    public ApiResponse<List<ProjectResponse>> searchActiveProjectsByName(@NotBlank String projectName,
                                                                          @RequestParam(defaultValue = "1") int page,
                                                                          @RequestParam(defaultValue = "10") int perPage,
                                                                          @RequestParam(required = false) String status){
         return ApiResponse.<List<ProjectResponse>>builder()
-                .entity(projectService.findProjectByNameContainingAndStatus(name, status, page, perPage))
+                .entity(projectService.findProjectByNameContainingAndStatus(projectName, status, page, perPage))
                 .build();
     }
 

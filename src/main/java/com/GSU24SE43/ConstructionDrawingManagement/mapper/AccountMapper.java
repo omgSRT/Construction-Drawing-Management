@@ -14,7 +14,7 @@ public interface AccountMapper {
     Account toAccount(AccountCreateRequest request);
     AccountCreateResponse toCreateAccountResponse(Account account);
     AccountUpdateResponse toAccountUpdateResponse(Account account);
-    @Mapping(target = "roleName", ignore = true)
+//    @Mapping(target = "roleName", ignore = true)
     void updateAccount(@MappingTarget Account account, AccountUpdateRequest request);
     AccountResponse toAccountResponse(Account account);
 

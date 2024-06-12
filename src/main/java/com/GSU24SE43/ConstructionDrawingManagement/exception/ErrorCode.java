@@ -37,6 +37,7 @@ public enum ErrorCode {
     ACCOUNT_ARE_EXISTED(10027,"Account are existed",  HttpStatus.NOT_FOUND),
 
 
+
     STAFF_IS_EXISTED(10029,"staff is existed in db",  HttpStatus.BAD_REQUEST),
     EMAIL_IS_EXISTED(10030,"email đã được sử dụng",  HttpStatus.BAD_REQUEST),
     ROLE_IS_NOT_DEFINED(10031,"role không tồn tại",  HttpStatus.BAD_REQUEST),
@@ -48,6 +49,12 @@ public enum ErrorCode {
     INVALID_STATUS(10031, "Invalid Status Input", HttpStatus.BAD_REQUEST),
     SUBFOLDER_NOT_FOUND(10032, "Subfolder Not Found", HttpStatus.NOT_FOUND),
     USERNAME_IS_EXISTED(10032, "username is used", HttpStatus.BAD_REQUEST),
+
+
+    CONTENT_NOT_BLANK(10037, "Content Cannot Be Blank", HttpStatus.BAD_REQUEST),
+    COMMENT_NOT_FOUND(10038, "Comment Not Found", HttpStatus.NOT_FOUND),
+    STAFF_NOT_FOUND(10039, "Staff Not Found", HttpStatus.NOT_FOUND),
+    TASK_NOT_FOUND(10040, "Task Not Found", HttpStatus.NOT_FOUND)
 
     ;
 
