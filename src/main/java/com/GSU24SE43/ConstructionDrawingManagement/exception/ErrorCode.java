@@ -35,7 +35,15 @@ public enum ErrorCode {
     PERMISSION_NOT_FOUND(10025, "Permission Not Found", HttpStatus.BAD_REQUEST),
     ACCOUNT_NOT_EXIST(10026,"Account not exist",  HttpStatus.NOT_FOUND),
     ACCOUNT_ARE_EXISTED(10027,"Account are existed",  HttpStatus.NOT_FOUND),
-    UNDEFINE_STATUS_ACCOUNT(10028,"Account status is not define",  HttpStatus.NOT_FOUND);
+    UNDEFINE_STATUS_ACCOUNT(10028,"Account status is not define",  HttpStatus.NOT_FOUND),
+    STAFF_IS_EXISTED(10029,"staff is existed in db",  HttpStatus.BAD_REQUEST),
+    EMAIL_IS_EXISTED(10030,"email đã được sử dụng",  HttpStatus.BAD_REQUEST),
+    ROLE_IS_NOT_DEFINED(10031,"role không tồn tại",  HttpStatus.BAD_REQUEST)
+
+
+    ;
+
+
 
     private int code;
     private String message;

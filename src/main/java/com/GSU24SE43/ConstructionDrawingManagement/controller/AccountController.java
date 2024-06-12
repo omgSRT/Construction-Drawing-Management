@@ -1,9 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.controller;
 
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.AccountCreateRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.AccountSearchRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.AccountUpdateRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.AccountUpdateStatusRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.AccountRepository;
@@ -40,6 +37,12 @@ public class AccountController {
     public ApiResponse<AccountUpdateStatusResponse> updateStatus(@PathVariable UUID accountId,@RequestBody AccountUpdateStatusRequest request){
         return ApiResponse.<AccountUpdateStatusResponse>builder()
                 .entity(accountService.updateStatus(accountId,request))
+                .build();
+    }
+    @PutMapping("/update-role/{accountId}")
+    public ApiResponse<AccountUpdateResponse> updateRoleAccount(@PathVariable UUID accountId,@RequestBody AccountUpdateRoleRequest request){
+        return ApiResponse.<AccountUpdateResponse>builder()
+                .entity(accountService.updateRole(accountId,request))
                 .build();
     }
 
