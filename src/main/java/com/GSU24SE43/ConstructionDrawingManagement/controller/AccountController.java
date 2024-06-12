@@ -28,7 +28,7 @@ public class AccountController {
                 .build();
     }
     @PutMapping("/{accountId}")
-    public ApiResponse<AccountUpdateResponse> updateAccount(@PathVariable UUID accountId, @RequestBody AccountUpdateRequest request){
+    public ApiResponse<AccountUpdateResponse> updateAccount(@PathVariable UUID accountId, @RequestBody @Valid AccountUpdateRequest request){
         return ApiResponse.<AccountUpdateResponse>builder()
                 .entity(accountService.accountUpdateResponse(accountId, request))
                 .build();

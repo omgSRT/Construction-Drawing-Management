@@ -53,6 +53,9 @@ public class AccountService {
     public AccountUpdateResponse accountUpdateResponse(UUID accountId, AccountUpdateRequest request) {
         Account account = repository.findById(accountId).orElseThrow(()
                 -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+        String username = request.getUsername();
+        if (repository.existsByUsername(username))
+            throw new AppException(ErrorCode.USERNAME_IS_EXISTED);
         accountMapper.updateAccount(account, request);
         account.setPassword(passwordEncoder.encode(request.getPassword()));
         repository.save(account);
@@ -66,12 +69,8 @@ public class AccountService {
         if (!status.equals(AccountStatus.ACTIVE.name())
                 && (!status.equals(AccountStatus.INACTIVE.name())
                 && (!status.equals(AccountStatus.HIDDEN.name())
-
-//        ))) {
-//            throw new AppException(ErrorCode.UNDEFINE_STATUS_ACCOUNT);
         ))){
             throw new AppException(ErrorCode.UNDEFINED_STATUS_ACCOUNT);
-
         }
         accountMapper.toAccountUpdateStatusResponse(account, request);
         repository.save(account);
