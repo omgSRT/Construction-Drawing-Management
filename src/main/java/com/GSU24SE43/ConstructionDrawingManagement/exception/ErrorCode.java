@@ -47,7 +47,9 @@ public enum ErrorCode {
     CONTENT_NOT_BLANK(10037, "Content Cannot Be Blank", HttpStatus.BAD_REQUEST),
     COMMENT_NOT_FOUND(10038, "Comment Not Found", HttpStatus.NOT_FOUND),
     STAFF_NOT_FOUND(10039, "Staff Not Found", HttpStatus.NOT_FOUND),
-    TASK_NOT_FOUND(10040, "Task Not Found", HttpStatus.NOT_FOUND)
+    TASK_NOT_FOUND(10040, "Task Not Found", HttpStatus.NOT_FOUND),
+    UPLOAD_FAILED(10041, "Upload Fail", HttpStatus.EXPECTATION_FAILED),
+    DOWNLOAD_FAILED(10042, "Download Fail", HttpStatus.EXPECTATION_FAILED)
     ;
 
 
