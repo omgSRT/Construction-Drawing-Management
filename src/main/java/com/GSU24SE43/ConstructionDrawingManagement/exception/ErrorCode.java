@@ -49,7 +49,9 @@ public enum ErrorCode {
     STAFF_NOT_FOUND(10039, "Staff Not Found", HttpStatus.NOT_FOUND),
     TASK_NOT_FOUND(10040, "Task Not Found", HttpStatus.NOT_FOUND),
     UPLOAD_FAILED(10041, "Upload Fail", HttpStatus.EXPECTATION_FAILED),
-    DOWNLOAD_FAILED(10042, "Download Fail", HttpStatus.EXPECTATION_FAILED)
+    DOWNLOAD_FAILED(10042, "Download Fail", HttpStatus.EXPECTATION_FAILED),
+    INVALID_FILE_NAME(10043, "File Name Is Null Or Invalid", HttpStatus.BAD_REQUEST),
+    FILE_NOT_FOUND(10044, "File Not Found", HttpStatus.NOT_FOUND);
     ;
 
 
