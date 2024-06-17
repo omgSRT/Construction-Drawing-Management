@@ -11,9 +11,11 @@ import com.nimbusds.jose.JOSEException;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.*;
 import java.text.ParseException;
 import java.util.Optional;
 
@@ -55,5 +57,23 @@ public class TestController {
     public ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
         authenticateService.logout(request);
         return ApiResponse.<Void>builder().build();
+    }
+
+    @GetMapping("/randumbs")
+    public String testReturn() {
+        String filePath = "D:/Capstone/ConstructionDrawingManagement/src/main/resources/serviceAccountKey.json";
+        try (InputStream serviceAccount = new FileInputStream(filePath);
+             ByteArrayOutputStream result = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = serviceAccount.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            return result.toString("UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "An error occurred while reading the file: " + e.getMessage();
+        }
     }
 }
