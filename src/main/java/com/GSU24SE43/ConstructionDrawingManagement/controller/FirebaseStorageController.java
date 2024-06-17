@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,10 +24,11 @@ public class FirebaseStorageController {
     final FirebaseStorageService firebaseStorageService;
 
     @PostMapping("/upload")
-    public ApiResponse<String> uploadFile(@RequestParam @NonNull MultipartFile file) {
+    public ApiResponse<List<String>> uploadFile(@RequestParam @NonNull MultipartFile[] files,
+                                                @RequestParam(required = false) String folderName) {
         try {
-            String fileUrl = firebaseStorageService.uploadFile(file);
-            return ApiResponse.<String>builder()
+            List<String> fileUrl = firebaseStorageService.uploadFiles(files, folderName);
+            return ApiResponse.<List<String>>builder()
                     .entity(fileUrl)
                     .build();
         } catch (IOException e) {

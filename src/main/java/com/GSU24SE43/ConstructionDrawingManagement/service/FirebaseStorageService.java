@@ -23,6 +23,9 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -36,10 +39,12 @@ public class FirebaseStorageService {
     @EventListener
     public void initFirebaseApp(ApplicationReadyEvent event) {
         try {
-            String filePath = "D:/Capstone/ConstructionDrawingManagement/src/main/resources/serviceAccountKey.json";
-            FileInputStream serviceAccount = new FileInputStream(filePath);
+//            String filePath = "D:/Capstone/ConstructionDrawingManagement/src/main/resources/serviceAccountKey.json";
+//            FileInputStream serviceAccount = new FileInputStream(filePath);
+            InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json");
 
             // Configure FirebaseOptions with the provided credentials and Storage bucket
+            assert serviceAccount != null;
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setStorageBucket(bucketName)  // Specify Firebase Storage bucket
@@ -52,17 +57,30 @@ public class FirebaseStorageService {
         }
     }
 
-    public String uploadFile(MultipartFile file) throws IOException {
+    public List<String> uploadFiles(MultipartFile[] files, String folderName) throws IOException {
         Bucket bucket = StorageClient.getInstance().bucket();
+        List<String> imageUrls = new ArrayList<>();
+        String imageUrl = "";
 
-        String name = file.getOriginalFilename();
+        for (MultipartFile file : files) {
+            String originalFilename = file.getOriginalFilename();
+            String name;
 
-        //upload file to Firebase
-        bucket.create(name, file.getBytes(), file.getContentType());
+            if (folderName != null && !folderName.isEmpty()) {
+                name = generateFirebaseStoragePath(originalFilename, folderName);
+            } else {
+                name = generateFileName(originalFilename);
+            }
 
-        String imageUrl = String.format(imageLinkFormat, name);
+            // Upload file to Firebase Storage
+            bucket.create(name, file.getBytes(), file.getContentType());
+            name = name.replaceAll("/", "%2F");
+            imageUrl = String.format(imageLinkFormat, name);
 
-        return imageUrl;
+            imageUrls.add(imageUrl);
+        }
+
+        return imageUrls;
     }
 
     public byte[] downloadFile(String name) throws IOException {
@@ -94,12 +112,17 @@ public class FirebaseStorageService {
         blob.delete();
     }
 
-    public String getExtension(String originalFileName) {
-        return StringUtils.getFilenameExtension(originalFileName);
+    public String getNameWithoutExtension(String originalFileName){
+        return StringUtils.stripFilenameExtension(originalFileName);
+    }
+
+    public String generateFirebaseStoragePath(String originalFileName, String folderName) {
+        String generateFilename = UUID.randomUUID() +"_"+ getNameWithoutExtension(originalFileName);
+        return folderName +"/"+ generateFilename;
     }
 
     public String generateFileName(String originalFileName) {
-        return UUID.randomUUID() + getExtension(originalFileName);
+        return UUID.randomUUID() +"_"+ getNameWithoutExtension(originalFileName);
     }
 
     byte[] getByteArrays(BufferedImage bufferedImage, String format) throws IOException {
