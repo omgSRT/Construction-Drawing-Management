@@ -15,6 +15,9 @@ public class GlobalExceptionHandle {
         ApiResponse apiRespone = new ApiResponse();
         apiRespone.setCode(ErrorCode.UNDEFINED_EXCEPTION.getCode());
         apiRespone.setMessage(ErrorCode.UNDEFINED_EXCEPTION.getMessage());
+
+        System.out.println(exception.toString());
+
         return ResponseEntity.badRequest().body(apiRespone);
     }
 

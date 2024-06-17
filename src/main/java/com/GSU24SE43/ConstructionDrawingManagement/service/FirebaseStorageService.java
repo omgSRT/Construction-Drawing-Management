@@ -30,6 +30,9 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class FirebaseStorageService {
+    final static String bucketName = "drawing-management.appspot.com";
+    final static String imageLinkFormat = "https://firebasestorage.googleapis.com/v0/b/" +bucketName+ "/o/%s?alt=media";
+
     @EventListener
     public void initFirebaseApp(ApplicationReadyEvent event) {
         try {
@@ -37,7 +40,9 @@ public class FirebaseStorageService {
             FileInputStream serviceAccount = new FileInputStream(filePath);
 
             // Configure FirebaseOptions with the provided credentials and Storage bucket
-            FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(serviceAccount)).setStorageBucket("drawing-management.appspot.com")  // Specify Firebase Storage bucket
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setStorageBucket(bucketName)  // Specify Firebase Storage bucket
                     .build();
 
             // Initialize FirebaseApp with the provided options
@@ -47,39 +52,36 @@ public class FirebaseStorageService {
         }
     }
 
-    public String getImageUrl(String name) {
-        return name;
-    }
-
     public String uploadFile(MultipartFile file) throws IOException {
-
         Bucket bucket = StorageClient.getInstance().bucket();
 
-        String name = generateFileName(file.getOriginalFilename());
+        String name = file.getOriginalFilename();
 
+        //upload file to Firebase
         bucket.create(name, file.getBytes(), file.getContentType());
 
-        return name;
+        String imageUrl = String.format(imageLinkFormat, name);
+
+        return imageUrl;
     }
 
-    public String uploadFile(BufferedImage bufferedImage, String originalFileName) throws IOException {
-
-        byte[] bytes = getByteArrays(bufferedImage, getExtension(originalFileName));
-
+    public byte[] downloadFile(String name) throws IOException {
         Bucket bucket = StorageClient.getInstance().bucket();
 
-        String name = generateFileName(originalFileName);
+        Blob blob = bucket.get(name);
 
-        bucket.create(name, bytes);
+        if (blob == null) {
+            throw new AppException(ErrorCode.FILE_NOT_FOUND);
+        }
 
-        return name;
+        return blob.getContent();
     }
 
     public void deleteFirebaseFile(String name) throws IOException {
 
         Bucket bucket = StorageClient.getInstance().bucket();
 
-        if (StringUtils.isEmpty(name)) {
+        if (name.isEmpty()) {
             throw new AppException(ErrorCode.INVALID_FILE_NAME);
         }
 
@@ -92,11 +94,11 @@ public class FirebaseStorageService {
         blob.delete();
     }
 
-    String getExtension(String originalFileName) {
+    public String getExtension(String originalFileName) {
         return StringUtils.getFilenameExtension(originalFileName);
     }
 
-    String generateFileName(String originalFileName) {
+    public String generateFileName(String originalFileName) {
         return UUID.randomUUID() + getExtension(originalFileName);
     }
 

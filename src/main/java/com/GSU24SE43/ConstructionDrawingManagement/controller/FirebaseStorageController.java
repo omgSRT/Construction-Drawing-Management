@@ -4,6 +4,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ApiResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.service.FirebaseStorageService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +23,7 @@ public class FirebaseStorageController {
     final FirebaseStorageService firebaseStorageService;
 
     @PostMapping("/upload")
-    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ApiResponse<String> uploadFile(@RequestParam @NonNull MultipartFile file) {
         try {
             String fileUrl = firebaseStorageService.uploadFile(file);
             return ApiResponse.<String>builder()
@@ -37,9 +38,11 @@ public class FirebaseStorageController {
     public ResponseEntity<byte[]> downloadFile(@PathVariable String fileName) {
         try {
             byte[] fileContent = firebaseStorageService.downloadFile(fileName);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentDispositionFormData("attachment", fileName);
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .headers(headers)
                     .body(fileContent);
         } catch (IOException e) {
             throw new AppException(ErrorCode.DOWNLOAD_FAILED);
