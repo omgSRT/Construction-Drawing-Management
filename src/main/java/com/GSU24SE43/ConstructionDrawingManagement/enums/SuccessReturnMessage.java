@@ -9,7 +9,9 @@ public enum SuccessReturnMessage {
     UPDATE_SUCCESS("Update Successfully"),
     CHANGE_SUCCESS("Change Successfully"),
     DELETE_SUCCESS("Delete Successfully"),
-    CONVERT_SUCCESS("Convert Successfully")
+    CONVERT_SUCCESS("Convert Successfully"),
+    UPLOAD_SUCCESS("Upload Successfully"),
+    DOWNLOAD_SUCCESS("Download Successfully"),
     ;
 
     private String message;

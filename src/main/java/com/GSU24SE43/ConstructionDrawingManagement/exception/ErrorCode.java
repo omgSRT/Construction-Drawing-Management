@@ -35,31 +35,27 @@ public enum ErrorCode {
     PERMISSION_NOT_FOUND(10025, "Permission Not Found", HttpStatus.BAD_REQUEST),
     ACCOUNT_NOT_EXIST(10026,"Account not exist",  HttpStatus.NOT_FOUND),
     ACCOUNT_ARE_EXISTED(10027,"Account are existed",  HttpStatus.NOT_FOUND),
-
-
-
-    STAFF_IS_EXISTED(10029,"staff is existed in db",  HttpStatus.BAD_REQUEST),
-    EMAIL_IS_EXISTED(10030,"email đã được sử dụng",  HttpStatus.BAD_REQUEST),
-    ROLE_IS_NOT_DEFINED(10031,"role không tồn tại",  HttpStatus.BAD_REQUEST),
-
-
-    UNDEFINED_STATUS_ACCOUNT(10028,"Account status is not define",  HttpStatus.NOT_FOUND),
-    USERNAME_TOO_SHORT(10029, "User must be least 8 character", HttpStatus.BAD_REQUEST),
-    PASSWORD_TOO_SHORT(10030, "Password must be least 8 character", HttpStatus.BAD_REQUEST),
-    INVALID_STATUS(10031, "Invalid Status Input", HttpStatus.BAD_REQUEST),
-    SUBFOLDER_NOT_FOUND(10032, "Subfolder Not Found", HttpStatus.NOT_FOUND),
-    USERNAME_IS_EXISTED(10032, "username is used", HttpStatus.BAD_REQUEST),
-
-
+    STAFF_IS_EXISTED(10028,"staff is existed in db",  HttpStatus.BAD_REQUEST),
+    EMAIL_IS_EXISTED(10029,"email đã được sử dụng",  HttpStatus.BAD_REQUEST),
+    ROLE_IS_NOT_DEFINED(10030,"role không tồn tại",  HttpStatus.BAD_REQUEST),
+    UNDEFINED_STATUS_ACCOUNT(10031,"Account status is not define",  HttpStatus.NOT_FOUND),
+    USERNAME_TOO_SHORT(10032, "User must be least 8 character", HttpStatus.BAD_REQUEST),
+    PASSWORD_TOO_SHORT(10033, "Password must be least 8 character", HttpStatus.BAD_REQUEST),
+    INVALID_STATUS(10034, "Invalid Status Input", HttpStatus.BAD_REQUEST),
+    SUBFOLDER_NOT_FOUND(10035, "Subfolder Not Found", HttpStatus.NOT_FOUND),
+    USERNAME_IS_EXISTED(10036, "username is used", HttpStatus.BAD_REQUEST),
     CONTENT_NOT_BLANK(10037, "Content Cannot Be Blank", HttpStatus.BAD_REQUEST),
     COMMENT_NOT_FOUND(10038, "Comment Not Found", HttpStatus.NOT_FOUND),
     STAFF_NOT_FOUND(10039, "Staff Not Found", HttpStatus.NOT_FOUND),
     TASK_NOT_FOUND(10040, "Task Not Found", HttpStatus.NOT_FOUND),
-
     UPLOAD_FAILED(10041, "Upload Fail", HttpStatus.EXPECTATION_FAILED),
     DOWNLOAD_FAILED(10042, "Download Fail", HttpStatus.EXPECTATION_FAILED),
     INVALID_FILE_NAME(10043, "File Name Is Null Or Invalid", HttpStatus.BAD_REQUEST),
-    FILE_NOT_FOUND(10044, "File Not Found", HttpStatus.NOT_FOUND);
+    FILE_NOT_FOUND(10044, "File Not Found", HttpStatus.NOT_FOUND),
+    TYPE_NOT_BLANK(10045, "Type Cannot Be Blank", HttpStatus.BAD_REQUEST),
+    STATUS_NOT_BLANK(10046, "Status Cannot Be Blank", HttpStatus.BAD_REQUEST),
+    DRAWING_NOT_FOUND(10047, "Drawing Not Found", HttpStatus.NOT_FOUND),
+    ;
 
 
     private int code;
