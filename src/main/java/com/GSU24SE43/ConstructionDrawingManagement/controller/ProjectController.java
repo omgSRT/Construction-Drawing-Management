@@ -76,7 +76,7 @@ public class ProjectController {
     }
 
     @Operation(summary = "Change Status", description = "Change A Project Status by ID")
-    @PutMapping(path = "/change")
+    @PutMapping(path = "/change/status")
     public ApiResponse<ProjectResponse> changeProjectStatus(@RequestBody ProjectChangeStatusRequest request){
         return ApiResponse.<ProjectResponse>builder()
                 .message(SuccessReturnMessage.CHANGE_SUCCESS.getMessage())

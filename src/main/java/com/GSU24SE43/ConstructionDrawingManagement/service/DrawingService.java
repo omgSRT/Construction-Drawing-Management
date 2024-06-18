@@ -1,10 +1,7 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.DrawingRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.DrawingSearchBySubfolderRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.DrawingUpdateRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.PermissionRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.DrawingResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Drawing;
@@ -96,7 +93,7 @@ public class DrawingService {
         }
     }
 
-    public List<DrawingResponse> findDrawingsBySubfolderIdAndStatus(DrawingSearchBySubfolderRequest request, int page, int perPage){
+    public List<DrawingResponse> findDrawingsBySubfolderAndStatus(DrawingSearchBySubfolderRequest request, int page, int perPage){
         try {
             Subfolder subfolder = subfolderRepository.findById(request.getSubfolderId())
                     .orElseThrow(() -> new AppException(ErrorCode.SUBFOLDER_NOT_FOUND));
@@ -131,7 +128,7 @@ public class DrawingService {
         drawingRepository.delete(drawing);
     }
 
-    public DrawingResponse findPermissionById(UUID id){
+    public DrawingResponse findDrawingById(UUID id){
         return drawingMapper.toDrawingResponse(drawingRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND)));
     }
@@ -145,15 +142,16 @@ public class DrawingService {
         return drawingMapper.toDrawingResponse(drawingRepository.save(drawing));
     }
 
-    public DrawingResponse changeDrawingStatus(UUID drawingId, String status){
+    public DrawingResponse changeDrawingStatus(DrawingStatusChangeRequest request){
         DrawingStatus drawingStatus;
+        String status = request.getStatus();
         try {
             drawingStatus = DrawingStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new AppException(ErrorCode.INVALID_STATUS);
         }
 
-        var drawing = drawingRepository.findById(drawingId)
+        var drawing = drawingRepository.findById(request.getDrawingId())
                 .orElseThrow(() -> new AppException(ErrorCode.DRAWING_NOT_FOUND));
         drawing.setStatus(status);
 
