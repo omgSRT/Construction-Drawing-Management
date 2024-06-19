@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,25 +25,23 @@ public class Staff {
     String certificate;
     String degree;
     boolean isSupervisor;
-// chua xng
 
 // department
     @ManyToOne
     @JoinColumn(name = "departmentId")
     Department department;
-// account
-    @JsonIgnore
+
     @OneToOne
-    @JoinColumn(name = "accountId")
+    @JoinColumn(name = "account_Id", referencedColumnName = "accountId")
     Account account;
-// task
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Task> tasks = new ArrayList<>();
-// access
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Access> accessList;
 // comment
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Comment> comments;
+
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<DetailTask> detailTasks;
+
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Project> projects;
 
 }

@@ -12,10 +12,12 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
     Account toAccount(AccountCreateRequest request);
-    AccountCreateResponse toCreateAccountResponse(Account account);
+    AccountCreateResponse toCreateResponse(Account account);
+    @Mapping(source = "staff.staffId", target = "staffId")
     AccountUpdateResponse toAccountUpdateResponse(Account account);
 //    @Mapping(target = "roleName", ignore = true)
     void updateAccount(@MappingTarget Account account, AccountUpdateRequest request);
+    @Mapping(source = "staff.staffId", target = "staffId")
     AccountResponse toAccountResponse(Account account);
 
     void toAccountUpdateStatusResponse(@MappingTarget Account account, AccountUpdateStatusRequest request);

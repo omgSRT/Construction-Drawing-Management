@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,11 +12,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AccountCreateResponse {
-    UUID accountId;
-    String username;
-    String password;
-    Date createdDate;
-    String accountStatus;
-    String roleName;
+public class AccessResponse {
+    private UUID id;
+    private Date dateTime ;
+    private String URLLong;
+    private UUID permissionId;
+    private UUID versionId;
+    private UUID staffId;
 }

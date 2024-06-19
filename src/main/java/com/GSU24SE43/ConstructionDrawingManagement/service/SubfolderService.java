@@ -1,14 +1,10 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.SubfolderRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.SubfolderUpdateRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.SubfolderResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.*;
-import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.SubfolderMapper;
@@ -41,11 +37,11 @@ public class SubfolderService {
         Project project = projectRepository.findById(request.getProjectId())
                         .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
 
-        Subfolder newSubfolder = subfolderMapper.toSubfolder(request);
-        newSubfolder.setCreateDate(new Date());
-        newSubfolder.setProject(project);
+        Folder newFolder = subfolderMapper.toSubfolder(request);
+        newFolder.setCreateDate(new Date());
+        newFolder.setProject(project);
 
-        return subfolderMapper.toSubfolderResponse(subfolderRepository.save(newSubfolder));
+        return subfolderMapper.toSubfolderResponse(subfolderRepository.save(newFolder));
     }
 
     public List<SubfolderResponse> getAllSubfolders(int page, int perPage) {
@@ -59,7 +55,7 @@ public class SubfolderService {
         }
     }
 
-    public List<Subfolder> getAllSubfolders() {
+    public List<Folder> getAllSubfolders() {
         return subfolderRepository.findAll();
     }
 

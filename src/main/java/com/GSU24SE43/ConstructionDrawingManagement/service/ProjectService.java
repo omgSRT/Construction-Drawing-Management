@@ -6,7 +6,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Directory;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
@@ -15,7 +15,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.ProjectMapper;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.AccountRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.DepartmentRepository;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.FolderRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.DirectoryRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.ProjectRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ import java.util.UUID;
 public class ProjectService {
     final ProjectRepository projectRepository;
     final ProjectMapper projectMapper;
-    final FolderRepository folderRepository;
+    final DirectoryRepository directoryRepository;
     final AccountRepository accountRepository;
     final DepartmentRepository departmentRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
@@ -47,7 +47,7 @@ public class ProjectService {
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         Account account = accountRepository.findById(request.getAccountId())
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
-        Folder folder = folderRepository.findById(request.getFolderId())
+        Directory directory = directoryRepository.findById(request.getFolderId())
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
 
         ValidateProjectDate(request.getStartDate(), request.getEndDate());
@@ -56,7 +56,7 @@ public class ProjectService {
         newProject.setCreationDate(new Date());
         newProject.setDepartment(department);
         newProject.setAccount(account);
-        newProject.setFolder(folder);
+        newProject.setDirectory(directory);
         newProject.setStatus(ProjectStatus.ACTIVE.name());
 
         return projectMapper.toProjectResponse(projectRepository.save(newProject));

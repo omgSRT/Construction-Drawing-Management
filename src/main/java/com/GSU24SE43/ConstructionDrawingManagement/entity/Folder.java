@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
@@ -19,10 +21,13 @@ public class Folder {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    private Date creationDate;
-    private String url;
+    private Date createDate;
 
     @JsonIgnore
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Project> projects;
+    List<Drawing> drawings = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "projectId")
+    Project project;
 }

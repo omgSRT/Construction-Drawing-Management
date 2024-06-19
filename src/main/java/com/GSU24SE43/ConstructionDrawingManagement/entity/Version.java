@@ -32,5 +32,5 @@ public class Version {
     Drawing drawing;
 
     @OneToMany(mappedBy = "version", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Access> accesses = new ArrayList<>();
+    List<Log> logs = new ArrayList<>();
 }

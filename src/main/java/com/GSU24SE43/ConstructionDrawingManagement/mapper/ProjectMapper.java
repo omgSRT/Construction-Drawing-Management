@@ -14,8 +14,7 @@ public interface ProjectMapper {
 
     ProjectResponse toProjectResponse(Project project);
 
-    @Mapping(target = "subfolders", ignore = true)
-    @Mapping(target = "folder", ignore = true)
+    @Mapping(target = "folders", ignore = true)
     @Mapping(target = "department", ignore = true)
     @Mapping(target = "account", ignore = true)
     void updateProject(@MappingTarget Project project, ProjectUpdateRequest request);

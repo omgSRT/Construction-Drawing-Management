@@ -59,7 +59,12 @@ public enum ErrorCode {
     UPLOAD_FAILED(10041, "Upload Fail", HttpStatus.EXPECTATION_FAILED),
     DOWNLOAD_FAILED(10042, "Download Fail", HttpStatus.EXPECTATION_FAILED),
     INVALID_FILE_NAME(10043, "File Name Is Null Or Invalid", HttpStatus.BAD_REQUEST),
-    FILE_NOT_FOUND(10044, "File Not Found", HttpStatus.NOT_FOUND);
+    FILE_NOT_FOUND(10044, "File Not Found", HttpStatus.NOT_FOUND),
+    ACCESS_NOT_FOUND(10043, "Access not found", HttpStatus.BAD_REQUEST),
+    VERSION_NOT_FOUND(10043, "Version not found", HttpStatus.BAD_REQUEST),
+
+    ;
+
 
 
     private int code;
