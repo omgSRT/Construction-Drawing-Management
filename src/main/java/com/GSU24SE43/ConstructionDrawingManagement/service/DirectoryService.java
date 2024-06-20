@@ -2,11 +2,11 @@ package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.FolderRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Directory;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
-import com.GSU24SE43.ConstructionDrawingManagement.mapper.FolderMapper;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.FolderRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.mapper.DirectoryMapper;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.DirectoryRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,27 +21,27 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Slf4j
 @Service
-public class FolderService {
-    final FolderRepository folderRepository;
-    final FolderMapper folderMapper;
+public class DirectoryService {
+    final DirectoryRepository directoryRepository;
+    final DirectoryMapper directoryMapper;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     //@PreAuthorize("hasRole('ADMIN')")
-    public Folder createFolder(FolderRequest request){
-        if(folderRepository.existsByName(request.getName())){
+    public Directory createFolder(FolderRequest request){
+        if(directoryRepository.existsByName(request.getName())){
             throw new AppException(ErrorCode.NAME_EXISTED);
         }
 
-        Folder newFolder = folderMapper.toFolder(request);
-        newFolder.setCreationDate(new Date());
-        folderRepository.save(newFolder);
+        Directory newDirectory = directoryMapper.toFolder(request);
+        newDirectory.setCreationDate(new Date());
+        directoryRepository.save(newDirectory);
 
-        return newFolder;
+        return newDirectory;
     }
 
-    public List<Folder> getAllFolders(int page, int perPage) {
+    public List<Directory> getAllFolders(int page, int perPage) {
         try {
-            return paginationUtils.convertListToPage(page, perPage, folderRepository.findAll());
+            return paginationUtils.convertListToPage(page, perPage, directoryRepository.findAll());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -49,30 +49,30 @@ public class FolderService {
 
     //@PreAuthorize("hasRole('ADMIN')")
     public void deleteFolderById(UUID id){
-        var folder = folderRepository.findById(id)
+        var folder = directoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
-        folderRepository.delete(folder);
+        directoryRepository.delete(folder);
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    public Folder findFolderById(UUID id){
-        return folderRepository.findById(id)
+    public Directory findFolderById(UUID id){
+        return directoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    public Folder updateFolderById(UUID id, FolderRequest request){
-        var folder = folderRepository.findById(id)
+    public Directory updateFolderById(UUID id, FolderRequest request){
+        var folder = directoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
 
-        folderMapper.updateFolder(folder, request);
+        directoryMapper.updateFolder(folder, request);
 
-        return folderRepository.save(folder);
+        return directoryRepository.save(folder);
     }
 
-    public List<Folder> findFolderByNameContaining(String name, int page, int perPage){
+    public List<Directory> findFolderByNameContaining(String name, int page, int perPage){
         try {
-            return paginationUtils.convertListToPage(page, perPage, folderRepository.findByNameContaining(name));
+            return paginationUtils.convertListToPage(page, perPage, directoryRepository.findByNameContaining(name));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -2,9 +2,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.DepartmentRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.FolderRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.DepartmentMapper;

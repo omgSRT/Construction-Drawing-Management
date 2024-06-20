@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.*;
-
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 @Entity
 @Getter
 @Setter
@@ -13,14 +14,15 @@ import java.util.*;
 @AllArgsConstructor
 @ToString
 @RequiredArgsConstructor
-public class Permission {
+public class Directory {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    private String description;
+    private Date creationDate;
+    private String url;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Access> accesses = new ArrayList<>();
+    @OneToMany(mappedBy = "directory", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Project> projects;
 }

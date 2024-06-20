@@ -55,7 +55,10 @@ public enum ErrorCode {
     TYPE_NOT_BLANK(10045, "Type Cannot Be Blank", HttpStatus.BAD_REQUEST),
     STATUS_NOT_BLANK(10046, "Status Cannot Be Blank", HttpStatus.BAD_REQUEST),
     DRAWING_NOT_FOUND(10047, "Drawing Not Found", HttpStatus.NOT_FOUND),
+    ACCESS_NOT_FOUND(10048, "Access not found", HttpStatus.BAD_REQUEST),
+    VERSION_NOT_FOUND(10049, "Version not found", HttpStatus.BAD_REQUEST),
     ;
+
 
 
     private int code;

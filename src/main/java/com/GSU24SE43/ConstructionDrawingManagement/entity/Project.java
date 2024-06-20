@@ -28,12 +28,12 @@ public class Project {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "folderId")
-    Folder folder;
+    @JoinColumn(name = "directoryId")
+    Directory directory;
 
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Subfolder> subfolders = new ArrayList<>();
+    List<Folder> folders = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name ="departmentId")
@@ -42,5 +42,13 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "accountId")
     Account account;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Task> tasks;
+
+    @ManyToOne
+    @JoinColumn(name = "projectId")
+    Staff staff;
+
 
 }

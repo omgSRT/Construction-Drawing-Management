@@ -22,6 +22,6 @@ public class AccountResponse {
     Date createdDate;
     String accountStatus;
     String roleName;
-    Staff staff;
+    UUID staffId;
     List<Project> projectList;
 }

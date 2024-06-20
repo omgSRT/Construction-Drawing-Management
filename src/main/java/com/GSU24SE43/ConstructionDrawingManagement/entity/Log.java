@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 @Entity
 @Getter
@@ -12,20 +13,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @RequiredArgsConstructor
-public class Access {
+public class Log {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private Date dateTime ;
-    private String URLLong;
+    private Date accessDateTime ;
+    private String descriptionLog;
+
 
     @ManyToOne
-    @JoinColumn(name = "staffId")
-    private Staff staff;
-
-    @ManyToOne
-    @JoinColumn(name = "permissionId")
-    private Permission permission;
+    @JoinColumn(name = "detailTaskId")
+    DetailTask detailTask;
 
     @ManyToOne
     @JoinColumn(name = "versionId")

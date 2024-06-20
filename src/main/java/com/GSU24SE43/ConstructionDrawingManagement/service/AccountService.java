@@ -41,13 +41,14 @@ public class AccountService {
         Account account = accountMapper.toAccount(request);
         account.setPassword(passwordEncoder.encode(request.getPassword()));
         account.setRoleName(Role.DESIGNER.name());
-        account.setCreatedDate(now);
+//        account.setCreatedDate(now);
+        account.setCreatedDate(new Date());
         account.setAccountStatus(AccountStatus.ACTIVE.name());
         String status = account.getAccountStatus();
 
         account = repository.save(account);
 
-        return accountMapper.toCreateAccountResponse(account);
+        return accountMapper.toCreateResponse(account);
     }
 
     public AccountUpdateResponse accountUpdateResponse(UUID accountId, AccountUpdateRequest request) {

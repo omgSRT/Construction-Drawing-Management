@@ -14,15 +14,13 @@ import java.util.UUID;
 @ToString
 @RequiredArgsConstructor
 public class Task {
-    // con thiếu  nối nhiều nhiều giữa staff và task
-    // và nối task vòng lại
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String title;
     private String description;
     private String status;
-    private UUID createBy;
     private Date createDate;
     private Date beginDate;
     private Date endDate;
@@ -32,9 +30,6 @@ public class Task {
     @JoinColumn(name = "parentTaskId")
     private Task parentTask;
 
-    @ManyToOne
-    @JoinColumn(name = "staffId")
-    Staff staff;
 
     @ManyToOne
     @JoinColumn(name ="departmentId")
@@ -46,5 +41,13 @@ public class Task {
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Comment> commentList;
+
+    @ManyToOne
+    @JoinColumn(name ="projectId")
+    Project project;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<DetailTask> detailTasks;
+
 
 }

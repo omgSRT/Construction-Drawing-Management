@@ -11,5 +11,9 @@ spring:
       dialect: org.hibernate.dialect.MySQLDialect
       ddl-auto: update
     show-sql: true
-  profiles:
-    active: dev
+#  profiles:
+#    active: dev
+
+#spring:
+#  profiles:
+#    active: @activatedProperties@

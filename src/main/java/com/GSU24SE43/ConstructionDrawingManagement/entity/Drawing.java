@@ -26,12 +26,12 @@ public class Drawing {
 
     
     @ManyToOne
-    @JoinColumn(name = "subfolderId")
-    Subfolder subfolder;
+    @JoinColumn(name = "folderId")
+    Folder folder;
 
     @JsonIgnore
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Version> versions = new ArrayList<>();
+    List<Version> versions;
 
     @JsonIgnore
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)

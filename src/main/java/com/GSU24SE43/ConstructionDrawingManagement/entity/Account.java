@@ -22,10 +22,15 @@ public class Account {
     Date createdDate;
     String accountStatus;
     String roleName;
+
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     Staff staff;
 
     @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Project> projectList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "account")
+    List<Notification> notifications;
 }
