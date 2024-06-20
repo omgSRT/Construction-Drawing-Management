@@ -15,7 +15,6 @@ public class ProjectUpdateRequest {
     @NotBlank(message = "Name Cannot Be Blank")
     String name;
     String description;
-    String location;
     Date startDate;
     Date endDate;
 }

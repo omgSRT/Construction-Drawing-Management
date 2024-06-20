@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SubfolderResponse {
+public class FolderResponse {
     UUID id;
     String name;
     Date createDate;

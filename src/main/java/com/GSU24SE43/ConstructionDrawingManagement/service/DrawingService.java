@@ -11,7 +11,7 @@
 //import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 //import com.GSU24SE43.ConstructionDrawingManagement.mapper.DrawingMapper;
 //import com.GSU24SE43.ConstructionDrawingManagement.repository.DrawingRepository;
-//import com.GSU24SE43.ConstructionDrawingManagement.repository.SubfolderRepository;
+//import com.GSU24SE43.ConstructionDrawingManagement.repository.FolderRepository;
 //import lombok.AccessLevel;
 //import lombok.RequiredArgsConstructor;
 //import lombok.experimental.FieldDefaults;
@@ -28,7 +28,7 @@
 //public class DrawingService {
 //    DrawingRepository drawingRepository;
 //    DrawingMapper drawingMapper;
-//    SubfolderRepository subfolderRepository;
+//    FolderRepository subfolderRepository;
 //    PaginationUtils paginationUtils = new PaginationUtils();
 //
 //    public DrawingResponse createDrawing(DrawingRequest request){

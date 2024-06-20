@@ -57,6 +57,8 @@ public enum ErrorCode {
     DRAWING_NOT_FOUND(10047, "Drawing Not Found", HttpStatus.NOT_FOUND),
     ACCESS_NOT_FOUND(10048, "Access not found", HttpStatus.BAD_REQUEST),
     VERSION_NOT_FOUND(10049, "Version not found", HttpStatus.BAD_REQUEST),
+    STAFF_OR_ACCOUNT_NOT_FOUND(10050, "Staff Or Account Not Found", HttpStatus.BAD_REQUEST),
+    ONLY_ADMIN_CREATE_PROJECT(10051, "Only Admin Can Create Projects", HttpStatus.UNAUTHORIZED)
     ;
 
 

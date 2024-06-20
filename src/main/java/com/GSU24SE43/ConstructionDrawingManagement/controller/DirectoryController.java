@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/Directory")
+@RequestMapping("/directory")
 @Slf4j
 public class DirectoryController {
     private final DirectoryService directoryService;

@@ -15,7 +15,6 @@ public class ProjectResponse {
     UUID id;
     String name;
     String description;
-    String location;
     Date creationDate;
     Date startDate;
     Date endDate;

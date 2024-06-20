@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface SubfolderRepository extends JpaRepository<Folder, UUID> {
+public interface FolderRepository extends JpaRepository<Folder, UUID> {
     boolean existsByName(String name);
 
     List<Folder> findByNameContaining(String name);

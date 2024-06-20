@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -16,10 +17,12 @@ public class ProjectRequest {
     @NotBlank(message = "Name Cannot Be Blank")
     String name;
     String description;
-    String location;
     Date startDate;
     Date endDate;
     UUID folderId;
     UUID departmentId;
+    @Nullable
     UUID accountId;
+    @Nullable
+    UUID staffId;
 }
