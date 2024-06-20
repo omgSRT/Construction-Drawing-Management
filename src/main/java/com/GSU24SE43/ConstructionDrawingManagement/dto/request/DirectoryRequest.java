@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class FolderRequest {
+public class DirectoryRequest {
     @NotBlank(message = "Name Cannot Be Blank")
     private String name;
     @NotBlank(message = "URL Cannot Be Blank")

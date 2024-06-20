@@ -25,7 +25,7 @@ public class Folder {
 
     @JsonIgnore
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Drawing> drawings = new ArrayList<>();
+    List<Drawing> drawings;
 
     @ManyToOne
     @JoinColumn(name = "projectId")

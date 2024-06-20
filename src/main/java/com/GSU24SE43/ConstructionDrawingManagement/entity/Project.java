@@ -33,7 +33,7 @@ public class Project {
 
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Folder> folders = new ArrayList<>();
+    List<Folder> folders;
 
     @ManyToOne
     @JoinColumn(name ="departmentId")
