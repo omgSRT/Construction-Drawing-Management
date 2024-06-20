@@ -29,7 +29,7 @@ public class Drawing {
     Folder folder;
 
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Version> versions = new ArrayList<>();
+    List<Version> versions;
 
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Task> taskList;
