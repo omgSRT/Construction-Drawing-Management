@@ -17,8 +17,8 @@ public class Log {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private Date dateTime ;
-    private String URLLong;
+    private Date accessDateTime ;
+    private String descriptionLog;
 
 
     @ManyToOne

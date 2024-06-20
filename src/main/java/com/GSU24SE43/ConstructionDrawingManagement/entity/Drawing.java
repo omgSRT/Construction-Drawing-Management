@@ -25,7 +25,7 @@ public class Drawing {
 
     
     @ManyToOne
-    @JoinColumn(name = "FolderId")
+    @JoinColumn(name = "folderId")
     Folder folder;
 
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)

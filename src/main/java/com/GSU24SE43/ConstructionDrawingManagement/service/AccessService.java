@@ -48,7 +48,7 @@ public class AccessService {
 
 
 //        access.setVersion(version);
-        log.setDateTime(now);
+        log.setAccessDateTime(now);
 //        access.setURLLong("Ngày " + now + " người dùng: " + staff.getFullName() + " đã được cấp quyền" );
 
         log = accessRepository.save(log);
