@@ -6,6 +6,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.StaffUpdateReques
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.StaffCreateResponse2;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.StaffUpdateResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
@@ -48,6 +49,7 @@ public class StaffService {
         String role_account = account.getRoleName();
         boolean checkEmail = staffRepository.existsByEmail(request.getEmail());
         if (checkEmail) throw new AppException(ErrorCode.EMAIL_IS_EXISTED);
+        Department department = departmentRepository.findById(request.getDepartmentId()).orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
 
         Staff staff = new Staff();
         staff.setAccount(account);
@@ -57,6 +59,7 @@ public class StaffService {
         staff.setAddress(request.getAddress());
         staff.setPhone(request.getPhone());
         staff.setCertificate(request.getCertificate());
+        staff.setDepartment(department);
 
         if(role_account.equals(Role.HEAD.name())){
             staff.setSupervisor(true);
@@ -71,8 +74,10 @@ public class StaffService {
         );
         UUID deparmentId = request.getDepartmentId();
         boolean checkDeparmentId = departmentRepository.existsByDepartmentId(deparmentId);
+        Department department = departmentRepository.findById(deparmentId).orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         if (!checkDeparmentId) throw new AppException(ErrorCode.DEPARTMENT_NOT_FOUND);
         mapper.toStaffUpdateResponse(staff ,request);
+        staff.setDepartment(department);
         staffRepository.save(staff);
         return mapper.toStaffUpdateResponse(staff);
     }
@@ -92,7 +97,9 @@ public class StaffService {
     }
 
     public void deleteStaff(UUID id){
+
         staffRepository.deleteById(id);
+
     }
 
 

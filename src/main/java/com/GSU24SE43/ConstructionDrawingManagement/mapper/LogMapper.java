@@ -12,7 +12,7 @@ import org.mapstruct.MappingTarget;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface AccessMapper {
+public interface LogMapper {
 //    AccessMapper INSTANCE = Mappers.getMapper(AccessMapper.class);
 
     AccessCreateResponse toAccessCreateResponse(Log log);

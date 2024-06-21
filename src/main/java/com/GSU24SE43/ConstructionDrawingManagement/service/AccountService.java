@@ -32,8 +32,8 @@ public class AccountService {
     AccountMapper accountMapper;
     PasswordEncoder passwordEncoder;
 
+    //thiếu notification
     public AccountCreateResponse accountCreateResponse(AccountCreateRequest request) {
-        Date now = new Date();
         boolean checkAccountName = repository.existsByUsername(request.getUsername());
         if (checkAccountName) {
             throw new AppException(ErrorCode.ACCOUNT_ARE_EXISTED);
@@ -41,10 +41,8 @@ public class AccountService {
         Account account = accountMapper.toAccount(request);
         account.setPassword(passwordEncoder.encode(request.getPassword()));
         account.setRoleName(Role.DESIGNER.name());
-//        account.setCreatedDate(now);
         account.setCreatedDate(new Date());
         account.setAccountStatus(AccountStatus.ACTIVE.name());
-        String status = account.getAccountStatus();
 
         account = repository.save(account);
 

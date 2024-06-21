@@ -1,6 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.AccessCreateRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.LogCreateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.AccessUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.AccessCreateResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.AccessResponse;
@@ -10,8 +10,8 @@ import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Version;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
-import com.GSU24SE43.ConstructionDrawingManagement.mapper.AccessMapper;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.AccessRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.mapper.LogMapper;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.LogRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.StaffRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.VersionRepository;
 import lombok.AccessLevel;
@@ -21,29 +21,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AccessService {
-    AccessRepository accessRepository;
+public class LogService {
+    LogRepository logRepository;
     VersionRepository versionRepository;
     StaffRepository staffRepository;
-    AccessMapper accessMapper;
+    LogMapper logMapper;
 
-    public AccessCreateResponse create(AccessCreateRequest request) {
+    public AccessCreateResponse create(LogCreateRequest request) {
         Date now = new Date();
         UUID staffId = request.getStaffId();
-        Set<UUID> permissionIds= request.getPermissons();
-
-//        UUID versionId = request.getVersionId();
 
         Staff staff = staffRepository.findById(staffId).orElseThrow(
                 () -> new AppException(ErrorCode.STAFF_NOT_FOUND));
-//        Version version = versionRepository.findById(versionId).orElseThrow(
-//                () -> new AppException(ErrorCode.PERMISSION_NOT_FOUND));
+
         Log log = new Log();
 
 
@@ -51,17 +46,16 @@ public class AccessService {
         log.setAccessDateTime(now);
 //        access.setURLLong("Ngày " + now + " người dùng: " + staff.getFullName() + " đã được cấp quyền" );
 
-        log = accessRepository.save(log);
-        AccessCreateResponse response = accessMapper.toAccessCreateResponse(log);
+        log = logRepository.save(log);
+        AccessCreateResponse response = logMapper.toAccessCreateResponse(log);
 
-//        response.setPermissionId();
 //        response.setVersionId(access.getVersion().getId());
 
         return response;
     }
 
     public AccessUpdateResponse updateAccess(UUID accessId, AccessUpdateRequest request) {
-        Log log = accessRepository.findById(accessId).orElseThrow(
+        Log log = logRepository.findById(accessId).orElseThrow(
                 () -> new AppException(ErrorCode.ACCESS_NOT_FOUND)
         );
 
@@ -77,26 +71,26 @@ public class AccessService {
         );
 //        access.setPermission(permission);
         log.setVersion(version);
-        accessRepository.save(log);
-        return accessMapper.toAccessUpdateResponse(log);
+        logRepository.save(log);
+        return logMapper.toAccessUpdateResponse(log);
 
     }
 
     public void delete(UUID accessId) {
-        accessRepository.deleteById(accessId);
+        logRepository.deleteById(accessId);
     }
 
     public List<Log> getAllAccess() {
-        return accessRepository.findAll();
+        return logRepository.findAll();
     }
 
     public List<AccessResponse> getAll(){
-        return accessMapper.toAccessResponseList(getAllAccess());
+        return logMapper.toAccessResponseList(getAllAccess());
     }
 
     public AccessResponse getById(UUID accessId) {
-        Log log = accessRepository.findById(accessId).orElseThrow(() -> new AppException(ErrorCode.ACCESS_NOT_FOUND));
-        AccessResponse response = accessMapper.toAccessResponse(log);
+        Log log = logRepository.findById(accessId).orElseThrow(() -> new AppException(ErrorCode.ACCESS_NOT_FOUND));
+        AccessResponse response = logMapper.toAccessResponse(log);
 //        response.setPermissionId(access.getPermission().getId());
 
         return response;

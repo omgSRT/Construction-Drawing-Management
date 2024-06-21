@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StaffUpdateResponse {
-    UUID accountId;
+    UUID staffId;
     UUID departmentId;
     String fullName;
     String email;
