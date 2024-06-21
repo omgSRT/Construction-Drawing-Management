@@ -60,7 +60,10 @@ public enum ErrorCode {
     STAFF_OR_ACCOUNT_NOT_FOUND(10050, "Staff Or Account Not Found", HttpStatus.BAD_REQUEST),
     ONLY_ADMIN_CREATE_PROJECT(10051, "Only Admin Can Create Projects", HttpStatus.UNAUTHORIZED),
     EMAIL_SEND_NOT_BLANK(10052, "Emails To Be Sent Cannot Be Blank", HttpStatus.BAD_REQUEST),
-    EMAIL_CONTENT_NOT_BLANK(10053, "Either subject, body, or attachments must not be blank or empty", HttpStatus.BAD_REQUEST)
+    EMAIL_CONTENT_NOT_BLANK(10053, "Either subject, body, or attachments must not be blank or empty", HttpStatus.BAD_REQUEST),
+    INVALID_URL(10054, "URL must be valid", HttpStatus.BAD_REQUEST),
+    SEND_MAIL_FAILED(10055, "Mail Sent Failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    ILLEGAL_STATE_EXCEPTION(10056, "Cannot Invoke or Support Such Method", HttpStatus.INTERNAL_SERVER_ERROR)
     ;
 
 

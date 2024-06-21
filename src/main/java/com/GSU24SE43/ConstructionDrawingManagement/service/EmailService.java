@@ -1,6 +1,5 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.EmailRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import jakarta.mail.MessagingException;
@@ -28,11 +27,14 @@ public class EmailService {
     @Value("${spring.mail.username}")
     String username;
 
-    public void sendEmail(EmailRequest request){
+    public void sendEmail(List<String> emails,
+                          String body,
+                          String subject,
+                          List<MultipartFile> attachments){
         try {
-            boolean hasSubject = request.getSubject() != null && !request.getSubject().trim().isEmpty();
-            boolean hasBody = request.getBody() != null && !request.getBody().trim().isEmpty();
-            boolean hasAttachments = request.getAttachments() != null && !request.getAttachments().isEmpty();
+            boolean hasSubject = subject != null && !subject.trim().isEmpty();
+            boolean hasBody = body != null && !body.trim().isEmpty();
+            boolean hasAttachments = attachments != null && !attachments.isEmpty();
 
             if (!hasSubject && !hasBody && !hasAttachments) {
                 throw new AppException(ErrorCode.EMAIL_CONTENT_NOT_BLANK);
@@ -42,11 +44,10 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
             helper.setFrom(username);
-            helper.setText(request.getBody());
-            helper.setSubject(request.getSubject());
+            helper.setText(body);
+            helper.setSubject(subject);
 
-            if(request.getAttachments() != null) {
-                List<MultipartFile> attachments = request.getAttachments();
+            if(attachments != null) {
                 for (MultipartFile attachment : attachments) {
                     if (attachment.isEmpty()) {
                         System.out.println("Empty attachment: " + attachment.getOriginalFilename());
@@ -60,17 +61,14 @@ public class EmailService {
                 }
             }
 
-            for (String toEmail : request.getEmails()) {
+            for (String toEmail : emails) {
                 helper.setTo(toEmail);
                 mailSender.send(message);
             }
             System.out.println("All Mails Sent Successfully");
         }
-        catch (MailException e) {
-            throw new RuntimeException("Failed to send email", e);
-        }
-        catch (MessagingException e){
-            throw new RuntimeException(e.getMessage(), e);
+        catch (MailException | MessagingException e) {
+            throw new AppException(ErrorCode.SEND_MAIL_FAILED);
         }
     }
 }
