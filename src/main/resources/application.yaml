@@ -11,6 +11,19 @@ spring:
       dialect: org.hibernate.dialect.MySQLDialect
       ddl-auto: update
     show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: drawing.system.team@gmail.com
+    password: rfcilnorstiuynlo
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 #  profiles:
 #    active: dev
 

@@ -58,7 +58,9 @@ public enum ErrorCode {
     ACCESS_NOT_FOUND(10048, "Access not found", HttpStatus.BAD_REQUEST),
     VERSION_NOT_FOUND(10049, "Version not found", HttpStatus.BAD_REQUEST),
     STAFF_OR_ACCOUNT_NOT_FOUND(10050, "Staff Or Account Not Found", HttpStatus.BAD_REQUEST),
-    ONLY_ADMIN_CREATE_PROJECT(10051, "Only Admin Can Create Projects", HttpStatus.UNAUTHORIZED)
+    ONLY_ADMIN_CREATE_PROJECT(10051, "Only Admin Can Create Projects", HttpStatus.UNAUTHORIZED),
+    EMAIL_SEND_NOT_BLANK(10052, "Emails To Be Sent Cannot Be Blank", HttpStatus.BAD_REQUEST),
+    EMAIL_CONTENT_NOT_BLANK(10053, "Either subject, body, or attachments must not be blank or empty", HttpStatus.BAD_REQUEST)
     ;
 
 

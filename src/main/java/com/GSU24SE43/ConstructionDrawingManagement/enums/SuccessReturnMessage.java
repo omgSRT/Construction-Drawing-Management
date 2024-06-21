@@ -12,6 +12,7 @@ public enum SuccessReturnMessage {
     CONVERT_SUCCESS("Convert Successfully"),
     UPLOAD_SUCCESS("Upload Successfully"),
     DOWNLOAD_SUCCESS("Download Successfully"),
+    SEND_SUCCESS("Send Successfully")
     ;
 
     private String message;
