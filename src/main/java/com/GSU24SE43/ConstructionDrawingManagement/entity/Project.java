@@ -1,6 +1,7 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,6 +45,7 @@ public class Project {
     Account account;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = { "project" }, allowSetters = true)
     List<Task> tasks;
 
     @ManyToOne

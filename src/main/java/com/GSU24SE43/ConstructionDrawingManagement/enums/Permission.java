@@ -11,6 +11,6 @@ public enum Permission {
 
     ;
 
-    String message;
-    Permission(String message){this.message = message;}
+    private String message;
+    private Permission(String message){this.message = message;}
 }

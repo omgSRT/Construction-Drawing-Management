@@ -62,7 +62,7 @@ public enum ErrorCode {
     FILE_NOT_FOUND(10044, "File Not Found", HttpStatus.NOT_FOUND),
     ACCESS_NOT_FOUND(10043, "Access not found", HttpStatus.BAD_REQUEST),
     VERSION_NOT_FOUND(10043, "Version not found", HttpStatus.BAD_REQUEST),
-
+    TASK_PARENT_NOT_FOUND(10043, "Task parent not found", HttpStatus.BAD_REQUEST),
     ;
 
 
