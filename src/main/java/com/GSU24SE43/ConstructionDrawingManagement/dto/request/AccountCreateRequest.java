@@ -14,7 +14,5 @@ public class AccountCreateRequest {
     String username;
     @Size(min = 8, message = "Password must be least 8 character")
     String password;
-//    Date createDate;
-//    String accountStatus;
-//    String rolename;
+
 }

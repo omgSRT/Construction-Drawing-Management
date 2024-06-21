@@ -1,6 +1,7 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -32,7 +33,8 @@ public class Staff {
     Department department;
 
     @OneToOne
-    @JoinColumn(name = "account_Id", referencedColumnName = "accountId")
+    @JsonIgnoreProperties(value = { "staff" }, allowSetters = true)
+    @JoinColumn(name = "account_Id")
     Account account;
 // comment
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
