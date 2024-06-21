@@ -1,6 +1,7 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -30,7 +31,8 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Project> projectList;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "account")
+    //@JsonIgnore
+    @JsonIgnoreProperties(value = { "account" }, allowSetters = true)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Notification> notifications;
 }
