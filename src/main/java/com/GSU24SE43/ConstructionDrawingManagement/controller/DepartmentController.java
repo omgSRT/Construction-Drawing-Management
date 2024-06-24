@@ -81,5 +81,4 @@ public class DepartmentController {
                 .entity(departmentService.findDepartmentByNameContaining(departmentName, page, perPage))
                 .build();
     }
-
 }

@@ -10,13 +10,11 @@ import com.GSU24SE43.ConstructionDrawingManagement.entity.Directory;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.ProjectMapper;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.AccountRepository;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.DepartmentRepository;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.DirectoryRepository;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.ProjectRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -37,6 +35,7 @@ public class ProjectService {
     final DirectoryRepository directoryRepository;
     final AccountRepository accountRepository;
     final DepartmentRepository departmentRepository;
+    final StaffRepository staffRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     public ProjectResponse createProject(ProjectRequest request){
@@ -45,10 +44,28 @@ public class ProjectService {
         }
         Department department = departmentRepository.findById(request.getDepartmentId())
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
-        Account account = accountRepository.findById(request.getAccountId())
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
-        Directory directory = directoryRepository.findById(request.getFolderId())
-                .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
+        Account account = null;
+        Directory directory = null;
+        if(request.getStaffId() == null && request.getAccountId() == null){
+            throw new AppException(ErrorCode.STAFF_OR_ACCOUNT_NOT_FOUND);
+        }
+        if(request.getAccountId() != null){
+            account = accountRepository.findById(request.getAccountId())
+                    .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+            try {
+                Role role = Role.valueOf(account.getRoleName());
+                if(role != Role.ADMIN){
+                    throw new AppException(ErrorCode.ONLY_ADMIN_CREATE_PROJECT);
+                }
+            } catch (IllegalArgumentException e) {
+                throw new AppException(ErrorCode.INVALID_STATUS);
+            }
+        }
+        if(request.getStaffId() != null){
+            directory = directoryRepository.findById(request.getFolderId())
+                    .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
+        }
 
         ValidateProjectDate(request.getStartDate(), request.getEndDate());
 

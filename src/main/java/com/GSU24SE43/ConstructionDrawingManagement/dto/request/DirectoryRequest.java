@@ -4,17 +4,14 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProjectUpdateRequest {
+public class DirectoryRequest {
     @NotBlank(message = "Name Cannot Be Blank")
-    String name;
-    String description;
-    Date startDate;
-    Date endDate;
+    private String name;
+    @NotBlank(message = "URL Cannot Be Blank")
+    private String url;
 }

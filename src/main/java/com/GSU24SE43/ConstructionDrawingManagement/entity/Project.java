@@ -22,7 +22,6 @@ public class Project {
     private UUID id;
     private String name;
     private String description;
-    private String location;
     private Date creationDate;
     private Date startDate;
     private Date endDate;
@@ -34,7 +33,7 @@ public class Project {
 
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Folder> folders = new ArrayList<>();
+    List<Folder> folders;
 
     @ManyToOne
     @JoinColumn(name ="departmentId")
@@ -44,6 +43,7 @@ public class Project {
     @JoinColumn(name = "accountId")
     Account account;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = { "project" }, allowSetters = true)
     List<Task> tasks;

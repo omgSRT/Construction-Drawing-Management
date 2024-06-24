@@ -3,7 +3,6 @@ package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -11,8 +10,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SubfolderResponse {
+public class DrawingResponse {
     UUID id;
     String name;
-    Date createDate;
+    String type;
+    int size;
+    String url;
+    String status;
 }

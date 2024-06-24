@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SubfolderUpdateRequest {
+public class FolderUpdateRequest {
     @NotBlank(message = "Name Cannot Be Blank")
     String name;
 }

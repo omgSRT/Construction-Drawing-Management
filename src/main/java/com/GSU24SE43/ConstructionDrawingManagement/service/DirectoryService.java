@@ -1,7 +1,7 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.FolderRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.DirectoryRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Directory;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
@@ -27,7 +27,7 @@ public class DirectoryService {
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     //@PreAuthorize("hasRole('ADMIN')")
-    public Directory createFolder(FolderRequest request){
+    public Directory createDirectory(DirectoryRequest request){
         if(directoryRepository.existsByName(request.getName())){
             throw new AppException(ErrorCode.NAME_EXISTED);
         }
@@ -39,7 +39,7 @@ public class DirectoryService {
         return newDirectory;
     }
 
-    public List<Directory> getAllFolders(int page, int perPage) {
+    public List<Directory> getAllDirectories(int page, int perPage) {
         try {
             return paginationUtils.convertListToPage(page, perPage, directoryRepository.findAll());
         } catch (Exception e) {
@@ -48,20 +48,20 @@ public class DirectoryService {
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    public void deleteFolderById(UUID id){
+    public void deleteDirectoryById(UUID id){
         var folder = directoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
         directoryRepository.delete(folder);
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    public Directory findFolderById(UUID id){
+    public Directory findDirectoryById(UUID id){
         return directoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    public Directory updateFolderById(UUID id, FolderRequest request){
+    public Directory updateDirectoryById(UUID id, DirectoryRequest request){
         var folder = directoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
 
@@ -70,7 +70,7 @@ public class DirectoryService {
         return directoryRepository.save(folder);
     }
 
-    public List<Directory> findFolderByNameContaining(String name, int page, int perPage){
+    public List<Directory> findDirectoryByNameContaining(String name, int page, int perPage){
         try {
             return paginationUtils.convertListToPage(page, perPage, directoryRepository.findByNameContaining(name));
         } catch (Exception e) {

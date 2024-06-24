@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,7 +13,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FolderRequest {
     @NotBlank(message = "Name Cannot Be Blank")
-    private String name;
-    @NotBlank(message = "URL Cannot Be Blank")
-    private String url;
+    String name;
+    UUID projectId;
 }

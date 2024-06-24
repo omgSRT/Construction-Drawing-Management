@@ -10,17 +10,6 @@ import java.nio.file.AccessDeniedException;
 
 @ControllerAdvice
 public class GlobalExceptionHandle {
-    @ExceptionHandler(Exception.class)
-    ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException exception){
-        ApiResponse apiRespone = new ApiResponse();
-        apiRespone.setCode(ErrorCode.UNDEFINED_EXCEPTION.getCode());
-        apiRespone.setMessage(ErrorCode.UNDEFINED_EXCEPTION.getMessage());
-
-        System.out.println(exception.toString());
-
-        return ResponseEntity.badRequest().body(apiRespone);
-    }
-
     @ExceptionHandler(AppException.class)
     ResponseEntity<ApiResponse> handleAppException(AppException exception){
         ErrorCode error = exception.getErrorCode();
@@ -58,5 +47,16 @@ public class GlobalExceptionHandle {
         apiResponse.setMessage(errorCode.getMessage());
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+    }
+
+    @ExceptionHandler({Exception.class})
+    ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException exception){
+        ApiResponse apiRespone = new ApiResponse();
+        apiRespone.setCode(ErrorCode.UNDEFINED_EXCEPTION.getCode());
+        apiRespone.setMessage(ErrorCode.UNDEFINED_EXCEPTION.getMessage());
+
+        System.out.println(exception.toString());
+
+        return ResponseEntity.badRequest().body(apiRespone);
     }
 }

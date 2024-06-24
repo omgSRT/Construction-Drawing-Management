@@ -11,12 +11,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProjectResponse {
+public class FolderResponse {
     UUID id;
     String name;
-    String description;
-    Date creationDate;
-    Date startDate;
-    Date endDate;
-    String status;
+    Date createDate;
 }

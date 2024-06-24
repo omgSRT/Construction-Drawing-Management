@@ -40,6 +40,7 @@ public class CommentService {
 
         Comment newComment = commentMapper.toComment(request);
         newComment.setStaff(staff);
+        //newComment.setTask(task);
 
         return commentMapper.toCommentResponse(commentRepository.save(newComment));
     }
