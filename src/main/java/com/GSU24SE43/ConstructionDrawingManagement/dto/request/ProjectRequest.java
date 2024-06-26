@@ -19,7 +19,6 @@ public class ProjectRequest {
     String description;
     Date startDate;
     Date endDate;
-    UUID folderId;
     UUID departmentId;
     @Nullable
     UUID accountId;
