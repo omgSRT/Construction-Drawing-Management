@@ -11,8 +11,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
     Notification toNotification(NotificationRequest request);
-
-    @Mapping(target = "account", ignore = true)
-    @Mapping(target = "task", ignore = true)
+    
     NotificationResponse toNotificationResponse(Notification notification);
 }
