@@ -30,4 +30,7 @@ public class Folder {
     @ManyToOne
     @JoinColumn(name = "projectId")
     Project project;
+
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Staff_Folder> staff_folders;
 }

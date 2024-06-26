@@ -1,23 +1,22 @@
-package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
+package com.GSU24SE43.ConstructionDrawingManagement.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TaskCreateResponse {
-    UUID id;
-    UUID parentTaskId;
+public class TaskParentUpdateRequest {
+//    UUID projectId;
+//    UUID departmentId;
+//    UUID accountId;
     String title;
     String description;
-    String status;
-    Date createDate;
     Date beginDate;
     Date endDate;
+
 }

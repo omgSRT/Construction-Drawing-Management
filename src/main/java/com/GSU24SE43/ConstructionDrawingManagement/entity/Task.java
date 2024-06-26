@@ -7,6 +7,7 @@ import lombok.*;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
@@ -22,6 +23,7 @@ public class Task {
     private String title;
     private String description;
     private String status;
+    private int priority;
     private Date createDate;
     private Date beginDate;
     private Date endDate;
@@ -29,31 +31,40 @@ public class Task {
     //tạo mối quan hệ tự tham chiếu của task từ parentTaskId
     @ManyToOne
     @JoinColumn(name = "parentTaskId")
+    @JsonIgnoreProperties(value = {"tasks"}, allowSetters = true)
     private Task parentTask;
 
+    @OneToMany(mappedBy = "parentTask", cascade = CascadeType.ALL, orphanRemoval = true )
+    @JsonIgnoreProperties(value = {"parentTask"}, allowSetters = true)
+    private List<Task> tasks;
 
     @ManyToOne
-    @JoinColumn(name ="departmentId")
-    @JsonIgnoreProperties(value = { "taskList" }, allowSetters = true)
+    @JoinColumn(name = "departmentId")
+    @JsonIgnoreProperties(value = {"taskList"}, allowSetters = true)
     Department department;
 
     @ManyToOne
-    @JoinColumn(name ="drawingId")
-    @JsonIgnoreProperties(value = { "taskList" }, allowSetters = true)
+    @JoinColumn(name = "drawingId")
+    @JsonIgnoreProperties(value = {"taskList"}, allowSetters = true)
     Drawing drawing;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = { "task" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"task"}, allowSetters = true)
     List<Comment> commentList;
 
     @ManyToOne
-    @JoinColumn(name ="projectId")
-    @JsonIgnoreProperties(value = { "tasks" }, allowSetters = true)
+    @JoinColumn(name = "projectId")
+    @JsonIgnoreProperties(value = {"tasks"}, allowSetters = true)
     Project project;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = { "task" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"task"}, allowSetters = true)
     List<DetailTask> detailTasks;
+
+    @ManyToOne
+    @JoinColumn(name = "accountId")
+    @JsonIgnoreProperties(value = {"tasks"}, allowSetters = true)
+    Account account;
 
 
 }

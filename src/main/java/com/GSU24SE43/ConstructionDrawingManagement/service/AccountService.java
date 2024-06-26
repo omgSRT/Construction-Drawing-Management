@@ -68,7 +68,7 @@ public class AccountService {
         if (!status.equals(AccountStatus.ACTIVE.name())
                 && (!status.equals(AccountStatus.INACTIVE.name())
                 && (!status.equals(AccountStatus.HIDDEN.name())
-        ))){
+        ))) {
             throw new AppException(ErrorCode.UNDEFINED_STATUS_ACCOUNT);
         }
         accountMapper.toAccountUpdateStatusResponse(account, request);
@@ -80,7 +80,10 @@ public class AccountService {
         Account account = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
         String roleName = request.getRoleName();
         if (!roleName.equalsIgnoreCase(Role.DESIGNER.toString())
-                && !roleName.equalsIgnoreCase(Role.HEAD.toString())
+                && !roleName.equalsIgnoreCase(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.toString())
+                && !roleName.equalsIgnoreCase(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.toString())
+                && !roleName.equalsIgnoreCase(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.toString())
+                && !roleName.equalsIgnoreCase(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.toString())
                 && !roleName.equalsIgnoreCase(Role.ADMIN.toString())
                 && !roleName.equalsIgnoreCase(Role.COMMANDER.toString())
         ) {
@@ -88,7 +91,10 @@ public class AccountService {
         }
         account.setRoleName(request.getRoleName());
         Staff staff = account.getStaff();
-        if (roleName.equals(Role.HEAD.name())) {
+        if (roleName.equals(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.name())
+                && roleName.equals(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.name())
+                && roleName.equals(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.name())
+                && roleName.equals(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.name())) {
             staff.setSupervisor(true);
         } else staff.setSupervisor(false);
 

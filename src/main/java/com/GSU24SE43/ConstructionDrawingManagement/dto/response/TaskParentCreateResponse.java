@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskParentCreateResponse {
+    UUID id;
     UUID projectId;
     UUID departmentId;
     String title;
@@ -20,5 +22,6 @@ public class TaskParentCreateResponse {
     Date createDate;
     Date beginDate;
     Date endDate;
+
 
 }

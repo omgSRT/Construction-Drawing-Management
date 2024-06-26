@@ -67,7 +67,10 @@ public enum ErrorCode {
     EMAIL_CONTENT_NOT_BLANK(10053, "Either subject, body, or attachments must not be blank or empty", HttpStatus.BAD_REQUEST),
     INVALID_URL(10054, "URL must be valid", HttpStatus.BAD_REQUEST),
     SEND_MAIL_FAILED(10055, "Mail Sent Failed", HttpStatus.INTERNAL_SERVER_ERROR),
-    ILLEGAL_STATE_EXCEPTION(10056, "Cannot Invoke or Support Such Method", HttpStatus.INTERNAL_SERVER_ERROR)
+    ILLEGAL_STATE_EXCEPTION(10056, "Cannot Invoke or Support Such Method", HttpStatus.INTERNAL_SERVER_ERROR),
+    WRONG_BEGINDATE_OR_ENDDATE(10057,"The end date must be after the beginning date",HttpStatus.BAD_REQUEST),
+    PRIORITY_INVALID(10058,"priority is invalid",HttpStatus.BAD_REQUEST),
+    PRIORITY_IS_DUPLICATE(10058,"priority is duplicated",HttpStatus.BAD_REQUEST),
     ;
 
 

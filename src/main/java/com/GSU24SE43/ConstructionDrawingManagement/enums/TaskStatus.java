@@ -7,6 +7,8 @@ public enum TaskStatus {
     NO_RECIPIENT("No one apply this task"),
     PROCESSING("Task is processing"),
     DONE("Task is done"),
+    ACTIVE("Task is active"),
+    INACTIVE("Task is inactive")
     ;
     private String message;
 

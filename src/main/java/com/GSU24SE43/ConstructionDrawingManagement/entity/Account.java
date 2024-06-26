@@ -35,4 +35,8 @@ public class Account {
     @JsonIgnoreProperties(value = { "account" }, allowSetters = true)
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Notification> notifications;
+
+    @JsonIgnoreProperties(value = { "account" }, allowSetters = true)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Task> tasks;
 }

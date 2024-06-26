@@ -39,12 +39,13 @@ public class StaffService {
     @Autowired
     DepartmentRepository departmentRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
-    public StaffCreateResponse2 create(Account account,StaffCreateRequest request){
+
+    public StaffCreateResponse2 create(Account account, StaffCreateRequest request) {
         UUID accountID = request.getAccountId();
         UUID departmentID = request.getDepartmentId();
         boolean checkAccountId = accountRepository.existsByAccountId(accountID);
         boolean checkDepartmentId = departmentRepository.existsByDepartmentId(departmentID);
-        if(!checkAccountId) throw new AppException(ErrorCode.ACCOUNT_NOT_EXIST);
+        if (!checkAccountId) throw new AppException(ErrorCode.ACCOUNT_NOT_EXIST);
         if (!checkDepartmentId) throw new AppException(ErrorCode.DEPARTMENT_NOT_FOUND);
         String role_account = account.getRoleName();
         boolean checkEmail = staffRepository.existsByEmail(request.getEmail());
@@ -61,14 +62,17 @@ public class StaffService {
         staff.setCertificate(request.getCertificate());
         staff.setDepartment(department);
 
-        if(role_account.equals(Role.HEAD.name())){
+        if (role_account.equals(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.name())
+                && role_account.equals(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.name())
+                && role_account.equals(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.name())
+                && role_account.equals(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.name())) {
             staff.setSupervisor(true);
         }
 
         return mapper.toStaffCreateResponse2(staffRepository.save(staff));
     }
 
-    public StaffUpdateResponse update(UUID id, StaffUpdateRequest request){
+    public StaffUpdateResponse update(UUID id, StaffUpdateRequest request) {
         Staff staff = staffRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.STAFF_IS_EXISTED)
         );
@@ -76,13 +80,13 @@ public class StaffService {
         boolean checkDeparmentId = departmentRepository.existsByDepartmentId(deparmentId);
         Department department = departmentRepository.findById(deparmentId).orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         if (!checkDeparmentId) throw new AppException(ErrorCode.DEPARTMENT_NOT_FOUND);
-        mapper.toStaffUpdateResponse(staff ,request);
+        mapper.toStaffUpdateResponse(staff, request);
         staff.setDepartment(department);
         staffRepository.save(staff);
         return mapper.toStaffUpdateResponse(staff);
     }
 
-    public List<Staff> getAll(){
+    public List<Staff> getAll() {
 //        try {
 //            return paginationUtils.convertListToPage(page,perPage, staffRepository.findAll());
 //        }catch (Exception e){
@@ -92,11 +96,11 @@ public class StaffService {
 
     }
 
-    public List<Staff> searchStaff(String fullname){
+    public List<Staff> searchStaff(String fullname) {
         return staffRepository.findByFullNameContainingIgnoreCase(fullname);
     }
 
-    public void deleteStaff(UUID id){
+    public void deleteStaff(UUID id) {
 
         staffRepository.deleteById(id);
 
