@@ -21,5 +21,6 @@ public class DrawingRequest {
     @NotBlank(message = "URL Cannot Be Blank")
     @Pattern(regexp = "^(http|https)://.*$", message = "URL must be valid")
     String url;
-    UUID subfolderId;
+    UUID folderId;
+    UUID taskId;
 }

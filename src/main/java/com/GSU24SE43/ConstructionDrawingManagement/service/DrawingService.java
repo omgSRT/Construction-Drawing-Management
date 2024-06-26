@@ -6,6 +6,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.response.DrawingResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Drawing;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.DrawingStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
@@ -13,6 +14,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.DrawingMapper;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.DrawingRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.FolderRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.TaskRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,14 +32,18 @@ public class DrawingService {
     DrawingRepository drawingRepository;
     DrawingMapper drawingMapper;
     FolderRepository folderRepository;
+    TaskRepository taskRepository;
     PaginationUtils paginationUtils = new PaginationUtils();
 
     public DrawingResponse createDrawing(DrawingRequest request){
-        Folder folder = folderRepository.findById(request.getSubfolderId())
+        Folder folder = folderRepository.findById(request.getFolderId())
                 .orElseThrow(() -> new AppException(ErrorCode.SUBFOLDER_NOT_FOUND));
+        Task task = taskRepository.findById(request.getTaskId())
+                .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND));
 
         Drawing newDrawing = drawingMapper.toDrawing(request);
         newDrawing.setFolder(folder);
+        newDrawing.setTask(task);
         newDrawing.setStatus(DrawingStatus.PROCESSING.name());
 
         return drawingMapper.toDrawingResponse(drawingRepository.save(newDrawing));

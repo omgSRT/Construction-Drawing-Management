@@ -43,10 +43,9 @@ public class Task {
     @JsonIgnoreProperties(value = {"taskList"}, allowSetters = true)
     Department department;
 
-    @ManyToOne
-    @JoinColumn(name = "drawingId")
-    @JsonIgnoreProperties(value = {"taskList"}, allowSetters = true)
-    Drawing drawing;
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = {"task"}, allowSetters = true)
+    List<Drawing> drawingList;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"task"}, allowSetters = true)
