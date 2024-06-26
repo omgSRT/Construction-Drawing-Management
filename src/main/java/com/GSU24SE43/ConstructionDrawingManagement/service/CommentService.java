@@ -6,11 +6,13 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.CommentUpdateRequ
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.CommentResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Comment;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.CommentMapper;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.CommentRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.StaffRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.TaskRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,18 +31,18 @@ public class CommentService {
     final CommentMapper commentMapper;
     final PaginationUtils paginationUtils = new PaginationUtils();
     final StaffRepository staffRepository;
-    //final TaskRepository taskRepository;
+    final TaskRepository taskRepository;
 
     public CommentResponse createComment(CommentRequest request){
         Staff staff = staffRepository.findById(request.getStaffId())
                 .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
-        //Task task = taskRepository.findById(request.getTaskId())
-        //            .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND))
+        Task task = taskRepository.findById(request.getTaskId())
+                    .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND));
 
         Comment newComment = commentMapper.toComment(request);
         newComment.setStaff(staff);
-        //newComment.setTask(task);
+        newComment.setTask(task);
 
         return commentMapper.toCommentResponse(commentRepository.save(newComment));
     }

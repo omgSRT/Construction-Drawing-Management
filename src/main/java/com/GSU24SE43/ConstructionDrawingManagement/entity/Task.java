@@ -65,5 +65,7 @@ public class Task {
     @JsonIgnoreProperties(value = {"tasks"}, allowSetters = true)
     Account account;
 
-
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = {"task"}, allowSetters = true)
+    List<Notification> notifications;
 }

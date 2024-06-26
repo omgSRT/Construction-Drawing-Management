@@ -19,9 +19,9 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
+    boolean isRead;
     String title;
     String url;
-    String status;
     String message;
     Date createDate;
 
@@ -30,5 +30,10 @@ public class Notification {
     @JsonIgnoreProperties(value = { "notifications" }, allowSetters = true)
     @JoinColumn(name = "accountId")
     Account account;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = {"notifications"}, allowSetters = true)
+    @JoinColumn(name = "taskId")
+    Task task;
 
 }
