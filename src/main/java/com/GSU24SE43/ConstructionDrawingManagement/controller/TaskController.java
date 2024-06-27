@@ -23,13 +23,13 @@ public class TaskController {
     TaskService taskService;
 
     @PostMapping("/create")
-    public ApiResponse<TaskParentCreateResponse> createTaskParent(@RequestBody TaskParentCreateRequest request){
+    public ApiResponse<TaskParentCreateResponse> createTaskParentByAdmin(@RequestBody TaskParentCreateRequest request){
         return ApiResponse.<TaskParentCreateResponse>builder()
                 .entity(taskService.createTaskParentByAdmin(request))
                 .build();
     }
     @PostMapping("/{parentTaskId}")
-    public ApiResponse<TaskChildCreateResponse> createChildTask(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateRequest request){
+    public ApiResponse<TaskChildCreateResponse> createChildTaskByAdmin(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateRequest request){
         return ApiResponse.<TaskChildCreateResponse>builder()
                 .entity(taskService.createChildTaskByAdmin(parentTaskId,request))
                 .build();

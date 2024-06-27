@@ -73,7 +73,6 @@ public class TaskService {
         //        taskChild.setProject(project);
         boolean check = checkDuplicate(parentTaskId, request.getPriority());
 
-        taskChild.setPriority(request.getPriority());
         if (request.getPriority() > 4 || request.getPriority() <= 0){
             throw new AppException(ErrorCode.PRIORITY_INVALID);
         }else if (check) {
@@ -83,6 +82,7 @@ public class TaskService {
             taskChild.setStatus(TaskStatus.ACTIVE.name());
             taskParent.setStatus(TaskStatus.PROCESSING.name());
         } else taskChild.setStatus(TaskStatus.INACTIVE.name());
+        taskChild.setPriority(request.getPriority());
         taskRepository.save(taskChild);
         return taskMapper.toCreateResponse(taskChild);
     }
@@ -97,12 +97,13 @@ public class TaskService {
         }
         return check;
     }
+
+
     
 
 
 
     public List<Task> getAll() {
-
         return taskRepository.findAll();
     }
 
