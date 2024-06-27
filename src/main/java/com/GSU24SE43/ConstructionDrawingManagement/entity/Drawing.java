@@ -33,7 +33,7 @@ public class Drawing {
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Version> versions;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Task> taskList;
+    @ManyToOne
+    @JoinColumn(name = "taskId")
+    Task task;
 }

@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.controller;
 
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.CommentRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.CommentUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ApiResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.CommentResponse;
@@ -20,6 +21,15 @@ import java.util.UUID;
 @Slf4j
 public class CommentController {
     final CommentService commentService;
+
+    @Operation(summary = "Create Comment", description = "Create A Brand New Comment")
+    @PostMapping(path = "/create")
+    public ApiResponse<CommentResponse> createComment(@RequestBody @Valid CommentRequest request){
+        return ApiResponse.<CommentResponse>builder()
+                .message(SuccessReturnMessage.CREATE_SUCCESS.getMessage())
+                .entity(commentService.createComment(request))
+                .build();
+    }
 
     @Operation(summary = "Get All Comments", description = "Get All Folders")
     @GetMapping(path = "/getall")

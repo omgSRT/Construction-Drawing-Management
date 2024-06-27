@@ -6,7 +6,6 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Directory;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
@@ -32,7 +31,6 @@ import java.util.UUID;
 public class ProjectService {
     final ProjectRepository projectRepository;
     final ProjectMapper projectMapper;
-    final DirectoryRepository directoryRepository;
     final AccountRepository accountRepository;
     final DepartmentRepository departmentRepository;
     final StaffRepository staffRepository;
@@ -45,7 +43,6 @@ public class ProjectService {
         Department department = departmentRepository.findById(request.getDepartmentId())
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         Account account = null;
-        Directory directory = null;
         if(request.getStaffId() == null && request.getAccountId() == null){
             throw new AppException(ErrorCode.STAFF_OR_ACCOUNT_NOT_FOUND);
         }
@@ -62,10 +59,6 @@ public class ProjectService {
                 throw new AppException(ErrorCode.INVALID_STATUS);
             }
         }
-        if(request.getStaffId() != null){
-            directory = directoryRepository.findById(request.getFolderId())
-                    .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
-        }
 
         ValidateProjectDate(request.getStartDate(), request.getEndDate());
 
@@ -73,7 +66,6 @@ public class ProjectService {
         newProject.setCreationDate(new Date());
         newProject.setDepartment(department);
         newProject.setAccount(account);
-        newProject.setDirectory(directory);
         newProject.setStatus(ProjectStatus.ACTIVE.name());
 
         return projectMapper.toProjectResponse(projectRepository.save(newProject));

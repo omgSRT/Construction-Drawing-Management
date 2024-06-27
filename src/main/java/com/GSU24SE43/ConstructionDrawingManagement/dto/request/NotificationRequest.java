@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -12,15 +13,14 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DrawingRequest {
-    @NotBlank(message = "Name Cannot Be Blank")
-    String name;
-    @NotBlank(message = "Type Cannot Be Blank")
-    String type;
-    int size;
+public class NotificationRequest {
+    @NotBlank(message = "Title Cannot Be Blank")
+    String title;
     @NotBlank(message = "URL Cannot Be Blank")
     @Pattern(regexp = "^(http|https)://.*$", message = "URL must be valid")
     String url;
-    UUID folderId;
+    @NotBlank(message = "Message Cannot Be Blank")
+    String message;
+    List<UUID> accountIds;
     UUID taskId;
 }

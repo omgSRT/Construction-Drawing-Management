@@ -27,10 +27,6 @@ public class Project {
     private Date endDate;
     private String status;
 
-    @ManyToOne
-    @JoinColumn(name = "directoryId")
-    Directory directory;
-
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Folder> folders;
