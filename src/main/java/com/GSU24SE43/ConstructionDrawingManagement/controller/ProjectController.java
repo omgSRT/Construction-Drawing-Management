@@ -103,4 +103,13 @@ public class ProjectController {
                 .entity(projectResponse)
                 .build();
     }
+
+    @Operation(summary = "Delete Project", description = "Change A Project to Inactive Status by ID")
+    @PutMapping(path = "/change/{projectId}")
+    public ApiResponse<ProjectResponse> changeProjectToHiddenStatusById(@PathVariable UUID projectId){
+        return ApiResponse.<ProjectResponse>builder()
+                .message(SuccessReturnMessage.DELETE_SUCCESS.getMessage())
+                .entity(projectService.changeProjectToInactiveStatus(projectId))
+                .build();
+    }
 }

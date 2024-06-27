@@ -3,7 +3,6 @@ package com.GSU24SE43.ConstructionDrawingManagement.service;
 import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.DrawingResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Drawing;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
@@ -98,9 +97,9 @@ public class DrawingService {
         }
     }
 
-    public List<DrawingResponse> findDrawingsBySubfolderAndStatus(DrawingSearchBySubfolderRequest request, int page, int perPage){
+    public List<DrawingResponse> findDrawingsByFolderAndStatus(DrawingSearchByFolderRequest request, int page, int perPage){
         try {
-            Folder folder = folderRepository.findById(request.getSubfolderId())
+            Folder folder = folderRepository.findById(request.getFolderId())
                     .orElseThrow(() -> new AppException(ErrorCode.SUBFOLDER_NOT_FOUND));
 
             List<DrawingResponse> drawingResponses;
@@ -159,6 +158,14 @@ public class DrawingService {
         var drawing = drawingRepository.findById(request.getDrawingId())
                 .orElseThrow(() -> new AppException(ErrorCode.DRAWING_NOT_FOUND));
         drawing.setStatus(status);
+
+        return drawingMapper.toDrawingResponse(drawingRepository.save(drawing));
+    }
+
+    public DrawingResponse changeDrawingToInactiveStatus(UUID drawingId){
+        var drawing = drawingRepository.findById(drawingId)
+                .orElseThrow(() -> new AppException(ErrorCode.DRAWING_NOT_FOUND));
+        drawing.setStatus(ProjectStatus.INACTIVE.name());
 
         return drawingMapper.toDrawingResponse(drawingRepository.save(drawing));
     }

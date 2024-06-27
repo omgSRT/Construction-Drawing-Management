@@ -11,8 +11,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DrawingSearchBySubfolderRequest {
+public class DrawingSearchByFolderRequest {
     @NotBlank(message = "Status Cannot Be Blank")
     String status;
-    UUID subfolderId;
+    UUID folderId;
 }
