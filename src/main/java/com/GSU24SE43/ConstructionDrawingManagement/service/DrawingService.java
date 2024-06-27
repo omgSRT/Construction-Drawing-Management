@@ -100,7 +100,7 @@ public class DrawingService {
     public List<DrawingResponse> findDrawingsByFolderAndStatus(DrawingSearchByFolderRequest request, int page, int perPage){
         try {
             Folder folder = folderRepository.findById(request.getFolderId())
-                    .orElseThrow(() -> new AppException(ErrorCode.SUBFOLDER_NOT_FOUND));
+                    .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
 
             List<DrawingResponse> drawingResponses;
             String status = request.getStatus();
