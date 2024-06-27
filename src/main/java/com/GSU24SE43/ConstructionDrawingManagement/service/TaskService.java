@@ -73,21 +73,27 @@ public class TaskService {
         Task taskChild = taskMapper.toTaskByAdmin(request);
         taskChild.setParentTask(taskParent);
         taskChild.setCreateDate(new Date());
-        taskChild.setDepartment(department);
+
         //        taskChild.setProject(project);
-        boolean checkPriority = checkDuplicatePriority(parentTaskId, request.getPriority());
-        boolean checkHead = checkDuplicateHead(parentTaskId);
-        if (checkHead) {
-            throw new AppException(ErrorCode.DUPLICATE_HEAD);
-        }
+
         if (request.getPriority() > 4 || request.getPriority() <= 0) {
             throw new AppException(ErrorCode.PRIORITY_INVALID);
-        } else if (checkPriority) {
+        }
+        if(checkDuplicatePriority(parentTaskId, request.getPriority())){
             throw new AppException(ErrorCode.PRIORITY_IS_DUPLICATE);
-        } else if (request.getPriority() == 1) {
+        }
+        // check k trung department
+        if (checkDuplicateHead(parentTaskId,request.getDepartmentId())) {
+            throw new AppException(ErrorCode.DUPLICATE_HEAD);
+        }
+        if (request.getPriority() == 1) {
             taskChild.setStatus(TaskStatus.ACTIVE.name());
             taskParent.setStatus(TaskStatus.PROCESSING.name());
         } else taskChild.setStatus(TaskStatus.INACTIVE.name());
+
+
+
+        taskChild.setDepartment(department);
         taskChild.setPriority(request.getPriority());
         taskRepository.save(taskChild);
         return taskMapper.toCreateResponse(taskChild);
@@ -97,39 +103,20 @@ public class TaskService {
         boolean check = false;
         Task parentTask = taskRepository.findById(taskParentId).orElseThrow(
                 () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
-        for (int i = 1; i < parentTask.getTasks().size(); i++) {
+        for (int i = 0; i < parentTask.getTasks().size(); i++) {
             if (parentTask.getTasks().get(i).getPriority() == priority)
                 check = true;
         }
         return check;
     }
 
-    public boolean checkDuplicateHead(UUID taskParentId){
-        boolean check = false;
-        Set<UUID> departmentIds = new HashSet<>();
+    public boolean checkDuplicateHead(UUID taskParentId,UUID departmentId){
         Task parentTask = taskRepository.findById(taskParentId).orElseThrow(
                 () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
-        List<Task> tasks = parentTask.getTasks();
-        for (int i = 0; i< parentTask.getTasks().size(); i++){
-            for (int j = i++; j< parentTask.getTasks().size(); j++){
-                if(parentTask.getTasks().get(i).getDepartment().getDepartmentId().equals(
-                        parentTask.getTasks().get(j).getDepartment().getDepartmentId())
-                ) return true;
-            }
-        }
 
+        return  parentTask.getTasks().stream()
+                .anyMatch(task -> task.getDepartment().getDepartmentId() == departmentId);
 
-//        for (Task task: tasks) {
-//            if (task.getDepartment() !=null){
-//                UUID departmentId = task.getDepartment().getDepartmentId();
-//                if(departmentIds.contains(departmentId)){
-//                    return true;
-//                }
-//                departmentIds.add(departmentId);
-//            }
-//        }
-
-        return false;
     }
 
     public TaskParentCreateByHeadResponse createTaskByHead(TaskParentCreateByHeadRequest request) {
