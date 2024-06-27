@@ -11,15 +11,15 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TaskChildCreateResponse {
+public class TaskParentCreateByHeadResponse {
     UUID id;
-    UUID parentTaskId;
     UUID projectId;
+    UUID departmentId;
     String title;
     String description;
     String status;
-    int priority;
     Date createDate;
     Date beginDate;
     Date endDate;
+
 }

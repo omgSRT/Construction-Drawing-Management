@@ -69,8 +69,9 @@ public enum ErrorCode {
     PRIORITY_INVALID(10059,"priority is invalid",HttpStatus.BAD_REQUEST),
     PRIORITY_IS_DUPLICATE(10060,"priority is duplicated",HttpStatus.BAD_REQUEST),
     TITLE_NOT_BLANK(10061, "Title Cannot Be Blank", HttpStatus.BAD_REQUEST),
-    MESSAGE_NOT_BLANK(10061, "Message Cannot Be Blank", HttpStatus.BAD_REQUEST),
-    NOTIFICATION_NOT_FOUND(10061, "Notification Not Found", HttpStatus.NOT_FOUND),
+    MESSAGE_NOT_BLANK(10062, "Message Cannot Be Blank", HttpStatus.BAD_REQUEST),
+    NOTIFICATION_NOT_FOUND(10063, "Notification Not Found", HttpStatus.NOT_FOUND),
+    DUPLICATE_HEAD(10064, "Heads of department are duplicate", HttpStatus.NOT_FOUND),
     ;
 
 
