@@ -1,14 +1,8 @@
 package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskChildCreateByHeadRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskChildCreateRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskParentCreateByHeadRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskParentCreateRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.TaskChildCreateByHeadResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.TaskChildCreateResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.TaskParentCreateByHeadResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.TaskParentCreateResponse;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
@@ -116,7 +110,6 @@ public class TaskService {
 
         return  parentTask.getTasks().stream()
                 .anyMatch(task -> task.getDepartment().getDepartmentId() == departmentId);
-
     }
 
     public TaskParentCreateByHeadResponse createTaskByHead(TaskParentCreateByHeadRequest request) {
@@ -162,6 +155,10 @@ public class TaskService {
         taskRepository.save(taskChild);
         return taskMapper.toTaskChildCreateByHeadResponse(taskChild);
     }
+
+//    public TaskParentUpdateByAdminResponse updateTaskParentByAdmin(UUID parentTaskId, TaskParentUpdateByAdminRequest request){
+//
+//    }
 
     public List<Task> getAll() {
         return taskRepository.findAll();
