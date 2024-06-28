@@ -1,10 +1,10 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -32,5 +32,6 @@ public class Folder {
     Project project;
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Staff_Folder> staff_folders;
+    @JsonIgnoreProperties(value = { "folder" }, allowSetters = true)
+    List<StaffFolder> staff_folders;
 }

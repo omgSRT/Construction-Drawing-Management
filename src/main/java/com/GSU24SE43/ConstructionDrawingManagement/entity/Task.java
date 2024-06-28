@@ -37,7 +37,7 @@ public class Task {
     @OneToMany(mappedBy = "parentTask", cascade = CascadeType.ALL, orphanRemoval = true )
     @JsonIgnoreProperties(value = {"parentTask"}, allowSetters = true)
     private List<Task> tasks;
-//(fetch = FetchType.LAZY)
+
     @ManyToOne
     @JoinColumn(name = "departmentId")
     @JsonIgnoreProperties(value = {"taskList"}, allowSetters = true)

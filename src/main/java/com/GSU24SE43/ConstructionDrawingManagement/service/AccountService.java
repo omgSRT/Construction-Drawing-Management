@@ -52,8 +52,8 @@ public class AccountService {
     public AccountUpdateResponse accountUpdateResponse(UUID accountId, AccountUpdateRequest request) {
         Account account = repository.findById(accountId).orElseThrow(()
                 -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
-        String username = request.getUsername();
-        if (repository.existsByUsername(username))
+//        String username = request.getUsername();
+        if (repository.existsByUsername(request.getUsername()))
             throw new AppException(ErrorCode.USERNAME_IS_EXISTED);
         accountMapper.updateAccount(account, request);
         account.setPassword(passwordEncoder.encode(request.getPassword()));

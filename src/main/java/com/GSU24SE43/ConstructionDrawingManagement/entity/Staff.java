@@ -1,6 +1,5 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,6 +46,7 @@ public class Staff {
     List<Project> projects;
 
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Staff_Folder> staff_folders;
+    @JsonIgnoreProperties(value = { "staff" }, allowSetters = true)
+    List<StaffFolder> staff_folders;
 
 }

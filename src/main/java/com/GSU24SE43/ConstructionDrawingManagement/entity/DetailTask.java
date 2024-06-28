@@ -1,6 +1,7 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
 import com.GSU24SE43.ConstructionDrawingManagement.enums.Permission;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,12 +25,15 @@ public class DetailTask {
 
     @ManyToOne
     @JoinColumn(name = "taskId")
+    @JsonIgnoreProperties(value = {"detailTasks"}, allowSetters = true)
     Task task;
 
     @ManyToOne
     @JoinColumn(name = "staffId")
+    @JsonIgnoreProperties(value = {"detailTasks"}, allowSetters = true)
     Staff staff;
 
     @OneToMany(mappedBy = "detailTask", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = {"detailTask"}, allowSetters = true)
     List<Log> logs;
 }

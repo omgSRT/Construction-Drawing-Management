@@ -59,7 +59,7 @@ public class TaskService {
 //        Project project = projectRepository.findById(request.getProjectId()).orElseThrow(
 //                () -> new AppException(ErrorCode.PROJECT_NOT_FOUND)
 //        );
-        //thiếu check 2 phòng trùng nhau
+
         Date beginDate = request.getBeginDate();
         Date endDate = request.getEndDate();
         if (endDate.before(beginDate)) throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
