@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,17 +21,17 @@ public class Version {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    private String description; ;
-    private Date date;
+    private String description;
     private String versionNumber;
     private Date uploadDate;
     private String status;
+    private String url;
 
     @ManyToOne
     @JoinColumn(name = "drawingId")
     Drawing drawing;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "version", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Log> logs;
 }

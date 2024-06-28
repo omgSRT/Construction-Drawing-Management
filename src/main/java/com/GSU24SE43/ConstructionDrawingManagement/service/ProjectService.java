@@ -192,6 +192,14 @@ public class ProjectService {
         return projectMapper.toProjectResponse(projectRepository.save(project));
     }
 
+    public ProjectResponse changeProjectToInactiveStatus(UUID projectId){
+        var project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+        project.setStatus(ProjectStatus.INACTIVE.name());
+
+        return projectMapper.toProjectResponse(projectRepository.save(project));
+    }
+
     private void ValidateProjectDate(Date startDate, Date endDate){
         int result = startDate.compareTo(endDate);
         int result1 = startDate.compareTo(new Date());

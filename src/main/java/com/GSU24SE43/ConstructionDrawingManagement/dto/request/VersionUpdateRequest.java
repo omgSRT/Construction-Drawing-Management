@@ -1,18 +1,18 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DrawingSearchBySubfolderRequest {
-    @NotBlank(message = "Status Cannot Be Blank")
-    String status;
-    UUID subfolderId;
+public class VersionUpdateRequest {
+    String description;
+    @NotBlank(message = "URL Cannot Be Blank")
+    @Pattern(regexp = "^(http|https)://.*$", message = "URL must be valid")
+    String url;
 }

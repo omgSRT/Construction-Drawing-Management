@@ -31,7 +31,7 @@ public class DrawingController {
                 .build();
     }
 
-    @Operation(summary = "Get All Projects", description = "Get All Projects")
+    @Operation(summary = "Get All Drawings", description = "Get All Drawings")
     @GetMapping(path = "/getall")
     public ApiResponse<List<DrawingResponse>> getAllDrawings(@RequestParam(defaultValue = "1") int page,
                                                              @RequestParam(defaultValue = "10") int perPage,
@@ -53,13 +53,13 @@ public class DrawingController {
     }
 
 
-    @Operation(summary = "Find Projects", description = "Find Project(s) by Subfolder")
+    @Operation(summary = "Find Drawings", description = "Find Drawing(s) by Folder")
     @GetMapping(path = "/search/projectName")
-    public ApiResponse<List<DrawingResponse>> searchDrawingBySubfolder(@RequestBody @Valid DrawingSearchBySubfolderRequest request,
+    public ApiResponse<List<DrawingResponse>> searchDrawingByFolder(@RequestBody @Valid DrawingSearchByFolderRequest request,
                                                                          @RequestParam(defaultValue = "1") int page,
                                                                          @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<DrawingResponse>>builder()
-                .entity(drawingService.findDrawingsBySubfolderAndStatus(request, page, perPage))
+                .entity(drawingService.findDrawingsByFolderAndStatus(request, page, perPage))
                 .build();
     }
 
@@ -77,6 +77,15 @@ public class DrawingController {
         return ApiResponse.<DrawingResponse>builder()
                 .message(SuccessReturnMessage.CHANGE_SUCCESS.getMessage())
                 .entity(drawingService.changeDrawingStatus(request))
+                .build();
+    }
+
+    @Operation(summary = "Delete Drawing", description = "Change A Drawing Status To Inactive by ID")
+    @PutMapping(path = "/change/status/{drawingId}")
+    public ApiResponse<DrawingResponse> changeDrawingToHiddenStatus(@PathVariable UUID drawingId){
+        return ApiResponse.<DrawingResponse>builder()
+                .message(SuccessReturnMessage.DELETE_SUCCESS.getMessage())
+                .entity(drawingService.changeDrawingToInactiveStatus(drawingId))
                 .build();
     }
 
