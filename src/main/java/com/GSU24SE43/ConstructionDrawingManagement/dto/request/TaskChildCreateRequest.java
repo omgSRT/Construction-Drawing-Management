@@ -12,9 +12,7 @@ import java.util.UUID;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskChildCreateRequest {
-//    UUID parentTask;
     UUID departmentId;
-    UUID projectId;
     String title;
     String description;
     int priority;

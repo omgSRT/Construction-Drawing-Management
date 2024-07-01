@@ -33,7 +33,7 @@ public class DetailTaskService {
     TaskRepository taskRepository;
     DetailTaskMapper detailTaskMapper;
 
-    public DetailTaskCreateResponse createDetailTaskByHead(DetailTaskCreateRequest request){
+    public DetailTaskCreateResponse createDetailTask(DetailTaskCreateRequest request){
         Staff staff = staffRepository.findById(request.getStaffId()).orElseThrow(
                 () -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 //        Task task = taskRepository.findById(request.getTaskId()).orElseThrow(
@@ -48,6 +48,7 @@ public class DetailTaskService {
         detailTaskRepository.save(detailTask);
         return detailTaskMapper.toCreateResponse(detailTask);
     }
+
 
     public DetailTaskUpdateResponse detailTaskParentUpdate(UUID detailTaskId, DetailTaskUpdateRequest request){
         DetailTask detailTask = detailTaskRepository.findById(detailTaskId).orElseThrow(
@@ -74,6 +75,5 @@ public class DetailTaskService {
     public void delete(UUID detailTaskId){
         detailTaskRepository.deleteById(detailTaskId);
     }
-
 
 }

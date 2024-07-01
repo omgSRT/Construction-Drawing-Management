@@ -23,7 +23,7 @@ public class DetailTaskController {
     @PostMapping("/create-by-head")
     public ApiResponse<DetailTaskCreateResponse> createDetailTaskByHead(@RequestBody DetailTaskCreateRequest request){
         return ApiResponse.<DetailTaskCreateResponse>builder()
-                .entity(detailTaskService.createDetailTaskByHead(request))
+                .entity(detailTaskService.createDetailTask(request))
                 .build();
     }
 

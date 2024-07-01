@@ -1,9 +1,10 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.request;
 
+import com.GSU24SE43.ConstructionDrawingManagement.enums.Permission;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -11,13 +12,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TaskParentCreateRequest {
-    UUID projectId;
-//    UUID departmentId;
-//    UUID accountId;
-    String title;
-    String description;
-    Date beginDate;
-    Date endDate;
+public class DetailTaskCreateByAdminRequest {
 
+    UUID departmentId;
+    List<Permission> permissionList;
 }

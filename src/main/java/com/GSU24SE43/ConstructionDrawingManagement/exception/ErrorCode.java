@@ -75,6 +75,8 @@ public enum ErrorCode {
 
     DETAIL_TASK_NOT_FOUND(10064, "Detail task is not found", HttpStatus.NOT_FOUND),
     STAFF_FOLDER_NOT_FOUND(10064, "staff's folder is not found", HttpStatus.NOT_FOUND),
+    TASK_CHILD_NOT_FOUND(10064, "task child is not found", HttpStatus.NOT_FOUND),
+    UNDEFINE_STATUS_TASK(10064, "task child is not found", HttpStatus.BAD_REQUEST),
     ;
 
 

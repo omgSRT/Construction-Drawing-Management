@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -11,11 +12,11 @@ import java.util.Date;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskParentUpdateByAdminResponse {
-//    UUID projectId;
-//    UUID departmentId;
+    UUID projectId;
     String title;
     String description;
     Date beginDate;
     Date endDate;
+    String status;
 
 }

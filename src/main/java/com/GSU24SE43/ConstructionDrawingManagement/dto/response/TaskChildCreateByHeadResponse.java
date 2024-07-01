@@ -18,7 +18,7 @@ public class TaskChildCreateByHeadResponse {
     String title;
     String description;
     String status;
-//    int priority;
+    int priority;
     Date createDate;
     Date beginDate;
     Date endDate;

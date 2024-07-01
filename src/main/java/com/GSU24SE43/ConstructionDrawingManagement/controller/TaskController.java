@@ -1,12 +1,13 @@
 package com.GSU24SE43.ConstructionDrawingManagement.controller;
 
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskChildCreateByHeadRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskChildCreateRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskParentCreateByHeadRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskParentCreateRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ApiResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.TaskChildCreateResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.TaskParentCreateResponse;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
 import com.GSU24SE43.ConstructionDrawingManagement.service.TaskService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,18 +23,49 @@ import java.util.UUID;
 public class TaskController {
     TaskService taskService;
 
-    @PostMapping("/create")
+    @Operation(summary = "Create task parent by admin", description = "Create task parent by admin")
+    @PostMapping("/createTaskParentByAdmin")
     public ApiResponse<TaskParentCreateResponse> createTaskParentByAdmin(@RequestBody TaskParentCreateRequest request){
         return ApiResponse.<TaskParentCreateResponse>builder()
                 .entity(taskService.createTaskParentByAdmin(request))
                 .build();
     }
-    @PostMapping("/{parentTaskId}")
+    @Operation(summary = "Create task child by admin", description = "Create task child by admin")
+    @PostMapping("/createTaskChildByAdmin/{parentTaskId}")
     public ApiResponse<TaskChildCreateResponse> createChildTaskByAdmin(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateRequest request){
         return ApiResponse.<TaskChildCreateResponse>builder()
                 .entity(taskService.createChildTaskByAdmin(parentTaskId,request))
                 .build();
     }
+    @Operation(summary = "Create task parent by head", description = "Create task parent by head")
+    @PostMapping("/createTaskParentByHead")
+    public ApiResponse<TaskParentCreateByHeadResponse> createTaskParentByHead(@RequestBody TaskParentCreateByHeadRequest request){
+        return ApiResponse.<TaskParentCreateByHeadResponse>builder()
+                .entity(taskService.createTaskParentByHead(request))
+                .build();
+    }
+    @Operation(summary = "Create task child by head", description = "Create task child by head")
+    @PostMapping("/createTaskChildByHead/{parentTaskId}")
+    public ApiResponse<TaskChildCreateByHeadResponse> createChildTaskByHead(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateByHeadRequest request){
+        return ApiResponse.<TaskChildCreateByHeadResponse>builder()
+                .entity(taskService.createTaskChildByHead(parentTaskId,request))
+                .build();
+    }
+    @Operation(summary = "Update status task parent ", description = "Update status task parent")
+    @PostMapping("/updateStatusTaskParent/{parentTaskId}")
+    public ApiResponse<TaskParentUpdateByAdminResponse> updateStatusParentTask(@PathVariable UUID parentTaskId, @RequestParam String status){
+        return ApiResponse.<TaskParentUpdateByAdminResponse>builder()
+                .entity(taskService.updateStatusTaskParent(parentTaskId,status))
+                .build();
+    }
+    @Operation(summary = "Update status task child ", description = "Update status task child")
+    @PostMapping("/updateStatusTaskChild/{childTaskId}")
+    public ApiResponse<TaskChildUpdateByAdminResponse> updateStatusChildTask(@PathVariable UUID childTaskId, @RequestParam String status){
+        return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
+                .entity(taskService.updateStatusTaskChild(childTaskId,status))
+                .build();
+    }
+
     @GetMapping("/getAll")
     public ApiResponse<List<Task>> getAll(){
         return ApiResponse.<List<Task>>builder()
