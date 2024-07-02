@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class DepartmentService {
     final DepartmentMapper departmentMapper;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
+    @PreAuthorize("hasRole('ADMIN')")
     public Department createDepartment(DepartmentRequest request){
         if(departmentRepository.existsByName(request.getName())){
             throw new AppException(ErrorCode.NAME_EXISTED);
@@ -35,6 +37,7 @@ public class DepartmentService {
         return departmentRepository.save(newDepartment);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Department> getAllDepartment(int page, int perPage){
         try {
             return paginationUtils.convertListToPage(page, perPage, departmentRepository.findAll());
@@ -43,17 +46,20 @@ public class DepartmentService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteDepartmentById(UUID id){
         var department = departmentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         departmentRepository.delete(department);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public Department findDepartmentById(UUID id){
         return departmentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public Department updateDepartmentById(UUID id, DepartmentRequest request){
         var department = departmentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
@@ -63,6 +69,7 @@ public class DepartmentService {
         return departmentRepository.save(department);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Department> findDepartmentByNameContaining(String name, int page, int perPage){
         try {
             return paginationUtils.convertListToPage(page, perPage, departmentRepository.findByNameContaining(name));

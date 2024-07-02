@@ -17,6 +17,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class CommentService {
     final StaffRepository staffRepository;
     final TaskRepository taskRepository;
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
     public CommentResponse createComment(CommentRequest request){
         Staff staff = staffRepository.findById(request.getStaffId())
                 .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
@@ -47,6 +49,7 @@ public class CommentService {
         return commentMapper.toCommentResponse(commentRepository.save(newComment));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<CommentResponse> getAllComments(int page, int perPage) {
         try {
             var comments = commentRepository.findAll().stream().map(commentMapper::toCommentResponse).toList();
@@ -56,17 +59,20 @@ public class CommentService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public void deleteCommentById(UUID id){
         var comment = commentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
         commentRepository.delete(comment);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public CommentResponse findCommentById(UUID id){
         return commentMapper.toCommentResponse(commentRepository.findById(id)
                                                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND)));
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
     public CommentResponse updateCommentById(UUID id, CommentUpdateRequest request){
         var comment = commentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
@@ -76,6 +82,7 @@ public class CommentService {
         return commentMapper.toCommentResponse(commentRepository.save(comment));
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
     public List<CommentResponse> findCommentsByStaffId(UUID staffId, int page, int perPage){
         try {
             var comments = commentRepository.findByStaffStaffId(staffId).stream().map(commentMapper::toCommentResponse).toList();
@@ -85,6 +92,7 @@ public class CommentService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
     public List<CommentResponse> findCommentsByTaskId(UUID taskId, int page, int perPage){
         try {
             var comments = commentRepository.findByTaskId(taskId).stream().map(commentMapper::toCommentResponse).toList();

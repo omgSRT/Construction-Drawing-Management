@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -48,6 +49,7 @@ public class VersionService {
         return versionMapper.toVersionResponse(versionRepository.save(newVersion));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<VersionResponse> getAllVersions(int page, int perPage, String status) {
         List<VersionResponse> versionResponseList;
         if(status != null){
@@ -69,6 +71,7 @@ public class VersionService {
         return versionResponseList;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
     public List<VersionResponse> getAllVersionsByDrawingId(int page, int perPage, String status, UUID drawingId) {
         List<VersionResponse> versionResponseList;
         if(status != null){
@@ -90,6 +93,7 @@ public class VersionService {
         return versionResponseList;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteVersionById(UUID versionId){
         var version = versionRepository.findById(versionId)
                 .orElseThrow(() -> new AppException(ErrorCode.VERSION_NOT_FOUND));
@@ -104,11 +108,13 @@ public class VersionService {
         return versionMapper.toVersionResponse(versionRepository.save(version));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public VersionResponse findVersionById(UUID versionId){
         return versionMapper.toVersionResponse(versionRepository.findById(versionId)
                 .orElseThrow(() -> new AppException(ErrorCode.VERSION_NOT_FOUND)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public VersionResponse changeVersionStatus(UUID versionId){
         var version = versionRepository.findById(versionId)
                 .orElseThrow(() -> new AppException(ErrorCode.VERSION_NOT_FOUND));
