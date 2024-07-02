@@ -77,4 +77,14 @@ public class FolderController {
                 .entity(FolderService.getFoldersByProjectId(page, perPage, projectId))
                 .build();
     }
+
+    @Operation(summary = "Get Folders", description = "Get Folders by Folder Name")
+    @GetMapping(path = "/get/project/{name}")
+    public ApiResponse<List<FolderResponse>> getFoldersByFolderName(@RequestParam(defaultValue = "1") int page,
+                                                                   @RequestParam(defaultValue = "10") int perPage,
+                                                                   @PathVariable String name){
+        return ApiResponse.<List<FolderResponse>>builder()
+                .entity(FolderService.findFolderByNameContaining(name, page, perPage))
+                .build();
+    }
 }
