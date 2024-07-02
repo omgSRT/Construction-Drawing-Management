@@ -110,8 +110,8 @@ public class AccountService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         Account account = repository.findByUsername(name).orElseThrow(
-                () -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST)
-        );
+                        () -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST)
+                );
         return accountMapper.toAccountResponse(account);
     }
 
