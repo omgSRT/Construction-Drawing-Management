@@ -7,6 +7,9 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.response.CommentResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Comment;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.CommentStatus;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.DrawingStatus;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.VersionStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.CommentMapper;
@@ -45,14 +48,30 @@ public class CommentService {
         Comment newComment = commentMapper.toComment(request);
         newComment.setStaff(staff);
         newComment.setTask(task);
+        newComment.setStatus(CommentStatus.ACTIVE.name());
 
         return commentMapper.toCommentResponse(commentRepository.save(newComment));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<CommentResponse> getAllComments(int page, int perPage) {
+    public List<CommentResponse> getAllComments(int page, int perPage, String status) {
         try {
-            var comments = commentRepository.findAll().stream().map(commentMapper::toCommentResponse).toList();
+            List<CommentResponse> comments;
+            if(!status.isBlank()){
+                CommentStatus commentStatus;
+                status = status.toUpperCase();
+                try {
+                    commentStatus = CommentStatus.valueOf(status);
+                } catch (IllegalArgumentException e) {
+                    throw new AppException(ErrorCode.INVALID_STATUS);
+                }
+                comments = commentRepository.findByStatus(status).stream()
+                        .map(commentMapper::toCommentResponse).toList();
+            }
+            else{
+                comments = commentRepository.findAll().stream().map(commentMapper::toCommentResponse).toList();
+            }
+
             return paginationUtils.convertListToPage(page, perPage, comments);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -64,6 +83,20 @@ public class CommentService {
         var comment = commentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
         commentRepository.delete(comment);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public CommentResponse changeCommentStatusToHidden(UUID commentId){
+        var comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
+//        comment.setStatus(
+//                CommentStatus.ACTIVE.name().equalsIgnoreCase(comment.getStatus())
+//                        ? CommentStatus.INACTIVE.name()
+//                        : CommentStatus.ACTIVE.name()
+//        );
+        comment.setStatus(CommentStatus.INACTIVE.name());
+
+        return commentMapper.toCommentResponse(commentRepository.save(comment));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -83,20 +116,53 @@ public class CommentService {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
-    public List<CommentResponse> findCommentsByStaffId(UUID staffId, int page, int perPage){
+    public List<CommentResponse> findCommentsByStaffId(UUID staffId, String status, int page, int perPage){
         try {
-            var comments = commentRepository.findByStaffStaffId(staffId).stream().map(commentMapper::toCommentResponse).toList();
-            return paginationUtils.convertListToPage(page, perPage, comments);
+            List<CommentResponse> commentResponses;
+            if(!status.isBlank()){
+                CommentStatus commentStatus;
+                status = status.toUpperCase();
+                try {
+                    commentStatus = CommentStatus.valueOf(status);
+                } catch (IllegalArgumentException e) {
+                    throw new AppException(ErrorCode.INVALID_STATUS);
+                }
+
+                commentResponses = commentRepository.findByStaffStaffIdAndStatus(staffId, status).stream()
+                        .map(commentMapper::toCommentResponse).toList();
+            }
+            else{
+                commentResponses = commentRepository.findByStaffStaffId(staffId).stream()
+                        .map(commentMapper::toCommentResponse).toList();
+            }
+
+            return paginationUtils.convertListToPage(page, perPage, commentResponses);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
-    public List<CommentResponse> findCommentsByTaskId(UUID taskId, int page, int perPage){
+    public List<CommentResponse> findCommentsByTaskId(UUID taskId, String status, int page, int perPage){
         try {
-            var comments = commentRepository.findByTaskId(taskId).stream().map(commentMapper::toCommentResponse).toList();
-            return paginationUtils.convertListToPage(page, perPage, comments);
+            List<CommentResponse> commentResponses;
+            if(!status.isBlank()){
+                CommentStatus commentStatus;
+                status = status.toUpperCase();
+                try {
+                    commentStatus = CommentStatus.valueOf(status);
+                } catch (IllegalArgumentException e) {
+                    throw new AppException(ErrorCode.INVALID_STATUS);
+                }
+
+                commentResponses = commentRepository.findByTaskIdAndStatus(taskId, status).stream()
+                        .map(commentMapper::toCommentResponse).toList();
+            }
+            else{
+                commentResponses = commentRepository.findByTaskId(taskId).stream().map(commentMapper::toCommentResponse).toList();
+            }
+
+            return paginationUtils.convertListToPage(page, perPage, commentResponses);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

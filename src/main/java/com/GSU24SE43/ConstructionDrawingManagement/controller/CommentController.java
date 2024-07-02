@@ -34,9 +34,10 @@ public class CommentController {
     @Operation(summary = "Get All Comments", description = "Get All Folders")
     @GetMapping(path = "/getall")
     public ApiResponse<List<CommentResponse>> getAllComments(@RequestParam(defaultValue = "1") int page,
-                                                             @RequestParam(defaultValue = "10") int perPage){
+                                                             @RequestParam(defaultValue = "10") int perPage,
+                                                             @RequestParam(required = false) String status){
         return ApiResponse.<List<CommentResponse>>builder()
-                .entity(commentService.getAllComments(page, perPage))
+                .entity(commentService.getAllComments(page, perPage, status))
                 .build();
     }
 
@@ -73,9 +74,10 @@ public class CommentController {
     @GetMapping(path = "/getall/task/{taskId}")
     public ApiResponse<List<CommentResponse>> getCommentsByTaskId(@RequestParam(defaultValue = "1") int page,
                                                                   @RequestParam(defaultValue = "10") int perPage,
-                                                                  @RequestParam UUID taskId){
+                                                                  @RequestParam UUID taskId,
+                                                                  @RequestParam(required = false) String status){
         return ApiResponse.<List<CommentResponse>>builder()
-                .entity(commentService.findCommentsByTaskId(taskId, page, perPage))
+                .entity(commentService.findCommentsByTaskId(taskId, status, page, perPage))
                 .build();
     }
 
@@ -83,9 +85,19 @@ public class CommentController {
     @GetMapping(path = "/getall/staff/{staffId}")
     public ApiResponse<List<CommentResponse>> getCommentsByStaffId(@RequestParam(defaultValue = "1") int page,
                                                                   @RequestParam(defaultValue = "10") int perPage,
-                                                                  @RequestParam UUID staffId){
+                                                                  @RequestParam UUID staffId,
+                                                                   @RequestParam(required = false) String status){
         return ApiResponse.<List<CommentResponse>>builder()
-                .entity(commentService.findCommentsByStaffId(staffId, page, perPage))
+                .entity(commentService.findCommentsByStaffId(staffId, status, page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Change Comment Status", description = "Change Comment Status To Hidden")
+    @PutMapping(path = "/change/status/{commentId}")
+    public ApiResponse<CommentResponse> changeCommentStatusToHidden(@PathVariable UUID commentId){
+        return ApiResponse.<CommentResponse>builder()
+                .message(SuccessReturnMessage.CHANGE_SUCCESS.getMessage())
+                .entity(commentService.changeCommentStatusToHidden(commentId))
                 .build();
     }
 }

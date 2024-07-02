@@ -56,12 +56,13 @@ public class DrawingService {
             List<DrawingResponse> drawingResponses;
             if(!status.isBlank()){
                 DrawingStatus drawingStatus;
+                status = status.toUpperCase();
                 try {
-                    drawingStatus = DrawingStatus.valueOf(status.toUpperCase());
+                    drawingStatus = DrawingStatus.valueOf(status);
                 } catch (IllegalArgumentException e) {
                     throw new AppException(ErrorCode.INVALID_STATUS);
                 }
-                drawingResponses = drawingRepository.findByStatus(status)
+                drawingResponses = drawingRepository.findByStatus(status.toUpperCase())
                         .stream().map(drawingMapper::toDrawingResponse).toList();
             }
             else{
@@ -81,8 +82,9 @@ public class DrawingService {
             List<DrawingResponse> drawingResponses;
             if(!status.isBlank()){
                 DrawingStatus drawingStatus;
+                status = status.toUpperCase();
                 try {
-                    drawingStatus = DrawingStatus.valueOf(status.toUpperCase());
+                    drawingStatus = DrawingStatus.valueOf(status);
                 } catch (IllegalArgumentException e) {
                     throw new AppException(ErrorCode.INVALID_STATUS);
                 }
@@ -111,8 +113,9 @@ public class DrawingService {
             String status = request.getStatus();
             if(!status.isBlank()){
                 DrawingStatus drawingStatus;
+                status = status.toUpperCase();
                 try {
-                    drawingStatus = DrawingStatus.valueOf(status.toUpperCase());
+                    drawingStatus = DrawingStatus.valueOf(status);
                 } catch (IllegalArgumentException e) {
                     throw new AppException(ErrorCode.INVALID_STATUS);
                 }
@@ -157,9 +160,9 @@ public class DrawingService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public DrawingResponse changeDrawingStatus(DrawingStatusChangeRequest request){
         DrawingStatus drawingStatus;
-        String status = request.getStatus();
+        String status = request.getStatus().toUpperCase();
         try {
-            drawingStatus = DrawingStatus.valueOf(status.toUpperCase());
+            drawingStatus = DrawingStatus.valueOf(status);
         } catch (IllegalArgumentException e) {
             throw new AppException(ErrorCode.INVALID_STATUS);
         }

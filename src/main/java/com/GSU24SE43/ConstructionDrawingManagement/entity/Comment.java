@@ -16,9 +16,10 @@ import java.util.UUID;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID commentId;
-    private String content;
-    private Date createDate;
+    UUID commentId;
+    String content;
+    Date createDate;
+    String status;
 
     @ManyToOne
     @JoinColumn(name = "staffId")

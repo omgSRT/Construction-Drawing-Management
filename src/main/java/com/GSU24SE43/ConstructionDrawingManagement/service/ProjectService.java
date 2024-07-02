@@ -79,8 +79,9 @@ public class ProjectService {
             List<ProjectResponse> projectResponses;
             if(status != null){
                 ProjectStatus projectStatus;
+                status = status.toUpperCase();
                 try {
-                    projectStatus = ProjectStatus.valueOf(status.toUpperCase());
+                    projectStatus = ProjectStatus.valueOf(status);
                 } catch (IllegalArgumentException e) {
                     throw new AppException(ErrorCode.INVALID_STATUS);
                 }
@@ -108,7 +109,7 @@ public class ProjectService {
     public ProjectResponse findProjectByIdAndStatus(UUID id, String status){
         var project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
-        if(status != null && !project.getStatus().equals(status)){
+        if(status != null && !project.getStatus().equals(status.toUpperCase())){
             project = null;
         }
         return projectMapper.toProjectResponse(project);
@@ -137,8 +138,9 @@ public class ProjectService {
             List<ProjectResponse> projectResponses;
             if(status != null){
                 ProjectStatus projectStatus;
+                status = status.toUpperCase();
                 try {
-                    projectStatus = ProjectStatus.valueOf(status.toUpperCase());
+                    projectStatus = ProjectStatus.valueOf(status);
                 } catch (IllegalArgumentException e) {
                     throw new AppException(ErrorCode.INVALID_STATUS);
                 }
@@ -163,8 +165,9 @@ public class ProjectService {
             List<ProjectResponse> projectResponses;
             if(status != null){
                 ProjectStatus projectStatus;
+                status = status.toUpperCase();
                 try {
-                    projectStatus = ProjectStatus.valueOf(status.toUpperCase());
+                    projectStatus = ProjectStatus.valueOf(status);
                 } catch (IllegalArgumentException e) {
                     throw new AppException(ErrorCode.INVALID_STATUS);
                 }
@@ -195,7 +198,7 @@ public class ProjectService {
         var project = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
 
-        project.setStatus(request.getStatusName());
+        project.setStatus(request.getStatusName().toUpperCase());
 
         return projectMapper.toProjectResponse(projectRepository.save(project));
     }
