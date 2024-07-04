@@ -90,8 +90,10 @@ public class TaskService {
         Task parentTask = taskRepository.findById(taskParentId).orElseThrow(
                 () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
         for (int i = 0; i < parentTask.getTasks().size(); i++) {
-            if (parentTask.getTasks().get(i).getPriority() == priority)
+            if (parentTask.getTasks().get(i).getPriority() == priority) {
                 check = true;
+                break;
+            }
         }
         return check;
     }
@@ -185,20 +187,17 @@ public class TaskService {
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
     public Task checkTask(UUID taskId){
-        Task taskParent = taskRepository.findById(taskId).orElseThrow(
+        return taskRepository.findById(taskId).orElseThrow(
                 () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
-        return taskParent;
     }
     public Project checkProject(UUID projectId){
-        Project project = projectRepository.findById(projectId).orElseThrow(
+        return projectRepository.findById(projectId).orElseThrow(
                 () -> new AppException(ErrorCode.PROJECT_NOT_FOUND)
         );
-        return project;
     }
     public Department checkDepartment(UUID departmentId){
-        Department department = departmentRepository.findById(departmentId).orElseThrow(
+        return departmentRepository.findById(departmentId).orElseThrow(
                 () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
-        return department;
     }
     public void checkStatusTask(String status, Task taskParent) {
         if (!status.equals(TaskStatus.NO_RECIPIENT.name())

@@ -5,14 +5,14 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.AccessUpdateReque
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.AccessCreateResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.AccessResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.AccessUpdateResponse;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.DetailTask;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Log;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Version;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.LogMapper;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.DetailTaskRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.LogRepository;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.StaffRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.VersionRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,71 +29,72 @@ import java.util.*;
 public class LogService {
     LogRepository logRepository;
     VersionRepository versionRepository;
-    StaffRepository staffRepository;
+    DetailTaskRepository detailTaskRepository;
     LogMapper logMapper;
 
     public AccessCreateResponse create(LogCreateRequest request) {
         Date now = new Date();
-        UUID staffId = request.getStaffId();
+        Version version = checkVersion(request.getVersionId());
+        DetailTask detailTask = checkDetailTask(request.getDetailTaskId());
 
-        Staff staff = staffRepository.findById(staffId).orElseThrow(
-                () -> new AppException(ErrorCode.STAFF_NOT_FOUND));
+        Log log = Log.builder()
+                .version(version)
+                .detailTask(detailTask)
+                .accessDateTime(now)
+                .descriptionLog(
+                        "Ngày "+ now + "\nNhân viên: " + detailTask.getStaff().getFullName()
+                        + "\nMã ID: " + detailTask.getStaff().getStaffId() + "\nĐã được cấp quyền: "
+                        + detailTask.getPermissions()
+                )
+                .build();
 
-        Log log = new Log();
-
-
-//        access.setVersion(version);
-        log.setAccessDateTime(now);
-//        access.setURLLong("Ngày " + now + " người dùng: " + staff.getFullName() + " đã được cấp quyền" );
-
-        log = logRepository.save(log);
-        AccessCreateResponse response = logMapper.toAccessCreateResponse(log);
-
-//        response.setVersionId(access.getVersion().getId());
-
-        return response;
+        logRepository.save(log);
+        return logMapper.toAccessCreateResponse(log);
     }
 
-    public AccessUpdateResponse updateAccess(UUID accessId, AccessUpdateRequest request) {
-        Log log = logRepository.findById(accessId).orElseThrow(
-                () -> new AppException(ErrorCode.ACCESS_NOT_FOUND)
-        );
-
-//        boolean checkVersion = versionRepository.existsById(request.getVersionId());
-
-//        if (!checkVersion) throw new AppException(ErrorCode.VERSION_NOT_FOUND);
-
-//        Permission permission = permissionRepository.findById(request.getPermissionId()).orElseThrow(
-//                () -> new AppException(ErrorCode.PERMISSION_NOT_FOUND)
-//        );
-        Version version = versionRepository.findById(request.getVersionId()).orElseThrow(
-                () -> new AppException(ErrorCode.VERSION_NOT_FOUND)
-        );
-//        access.setPermission(permission);
+    public AccessUpdateResponse updateLog(UUID logId, AccessUpdateRequest request) {
+        Log log = checkLog(logId);
+        Version version = checkVersion(request.getVersionId());
+        DetailTask detailTask = checkDetailTask(request.getDetailTaskId());
         log.setVersion(version);
+        log.setDescriptionLog(request.getDescriptionLog());
+        log.setDetailTask(detailTask);
         logRepository.save(log);
         return logMapper.toAccessUpdateResponse(log);
 
     }
+    public Version checkVersion(UUID versionId){
+        return versionRepository.findById(versionId).orElseThrow(
+                () -> new AppException(ErrorCode.VERSION_NOT_FOUND)
+        );
+    }
+    public DetailTask checkDetailTask(UUID detailTaskId){
+        return detailTaskRepository.findById(detailTaskId).orElseThrow(
+                () -> new AppException(ErrorCode.DETAIL_TASK_NOT_FOUND)
+        );
+    }
+    public Log checkLog(UUID logId){
+        return logRepository.findById(logId).orElseThrow(
+                () -> new AppException(ErrorCode.LOG_NOT_FOUND)
+        );
+    }
 
     public void delete(UUID accessId) {
+        checkLog(accessId);
         logRepository.deleteById(accessId);
     }
 
-    public List<Log> getAllAccess() {
+    public List<Log> getAllLog() {
         return logRepository.findAll();
     }
 
     public List<AccessResponse> getAll(){
-        return logMapper.toAccessResponseList(getAllAccess());
+        return logMapper.toAccessResponseList(getAllLog());
     }
 
-    public AccessResponse getById(UUID accessId) {
-        Log log = logRepository.findById(accessId).orElseThrow(() -> new AppException(ErrorCode.ACCESS_NOT_FOUND));
-        AccessResponse response = logMapper.toAccessResponse(log);
-//        response.setPermissionId(access.getPermission().getId());
-
-        return response;
+    public AccessResponse getById(UUID logId) {
+        Log log = checkLog(logId);
+        return logMapper.toAccessResponse(log);
     }
 
 

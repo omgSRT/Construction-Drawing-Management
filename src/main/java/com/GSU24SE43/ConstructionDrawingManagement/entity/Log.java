@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,9 +24,11 @@ public class Log {
 
     @ManyToOne
     @JoinColumn(name = "detailTaskId")
+    @JsonIgnoreProperties(value = { "logs" }, allowSetters = true)
     DetailTask detailTask;
 
     @ManyToOne
     @JoinColumn(name = "versionId")
+    @JsonIgnoreProperties(value = { "logs" }, allowSetters = true)
     private Version version;
 }

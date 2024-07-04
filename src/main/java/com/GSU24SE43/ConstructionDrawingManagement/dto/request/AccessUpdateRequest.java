@@ -11,6 +11,7 @@ import java.util.UUID;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AccessUpdateRequest {
-    UUID permissionId;
+    private String descriptionLog;
+    UUID detailTaskId;
     UUID versionId;
 }

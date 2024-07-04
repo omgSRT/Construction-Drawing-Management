@@ -14,9 +14,8 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AccessUpdateResponse {
     UUID id;
-    Date dateTime;
-    String URLLong;
-    UUID staffId;
-    UUID permissionId;
+    Date accessDateTime;
+    String descriptionLog;
+    UUID detailTaskId;
     UUID versionId;
 }
