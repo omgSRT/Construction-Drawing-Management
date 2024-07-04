@@ -63,9 +63,9 @@ public class StaffService {
         staff.setDepartment(department);
 
         if (role_account.equals(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.name())
-                && role_account.equals(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.name())
-                && role_account.equals(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.name())
-                && role_account.equals(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.name())) {
+                || role_account.equals(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.name())
+                || role_account.equals(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.name())
+                || role_account.equals(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.name())) {
             staff.setSupervisor(true);
         }
 

@@ -72,11 +72,11 @@ public enum ErrorCode {
     MESSAGE_NOT_BLANK(10062, "Message Cannot Be Blank", HttpStatus.BAD_REQUEST),
     NOTIFICATION_NOT_FOUND(10063, "Notification Not Found", HttpStatus.NOT_FOUND),
     DUPLICATE_HEAD(10064, "Heads of department are duplicate", HttpStatus.NOT_FOUND),
-
-    DETAIL_TASK_NOT_FOUND(10064, "Detail task is not found", HttpStatus.NOT_FOUND),
-    STAFF_FOLDER_NOT_FOUND(10064, "staff's folder is not found", HttpStatus.NOT_FOUND),
-    TASK_CHILD_NOT_FOUND(10064, "task child is not found", HttpStatus.NOT_FOUND),
-    UNDEFINE_STATUS_TASK(10064, "task child is not found", HttpStatus.BAD_REQUEST),
+    DETAIL_TASK_NOT_FOUND(10065, "Detail task is not found", HttpStatus.NOT_FOUND),
+    STAFF_FOLDER_NOT_FOUND(10066, "staff's folder is not found", HttpStatus.NOT_FOUND),
+    TASK_CHILD_NOT_FOUND(10067, "task child is not found", HttpStatus.NOT_FOUND),
+    UNDEFINE_STATUS_TASK(10068, "undefine status task", HttpStatus.BAD_REQUEST),
+    LOG_NOT_FOUND(10069, "log is not found", HttpStatus.NOT_FOUND),
     ;
 
 

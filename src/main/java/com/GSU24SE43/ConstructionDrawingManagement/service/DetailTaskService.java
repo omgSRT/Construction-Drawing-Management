@@ -36,12 +36,12 @@ public class DetailTaskService {
     public DetailTaskCreateResponse createDetailTask(DetailTaskCreateRequest request){
         Staff staff = staffRepository.findById(request.getStaffId()).orElseThrow(
                 () -> new AppException(ErrorCode.STAFF_NOT_FOUND));
-//        Task task = taskRepository.findById(request.getTaskId()).orElseThrow(
-//                () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
+        Task task = taskRepository.findById(request.getTaskId()).orElseThrow(
+                () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
 
         DetailTask detailTask = DetailTask
                 .builder()
-//                .task(task)
+                .task(task)
                 .staff(staff)
                 .permissions(request.getPermissionList())
                 .build();

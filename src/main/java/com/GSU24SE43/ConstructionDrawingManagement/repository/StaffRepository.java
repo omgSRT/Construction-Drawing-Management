@@ -12,5 +12,6 @@ public interface StaffRepository extends JpaRepository<Staff, UUID> {
     boolean existsByFullName(String fullname);
     List<Staff> findByFullNameContainingIgnoreCase(String fullname);
     boolean existsByEmail(String email);
+    Staff findByAccount_AccountId(UUID accountId);
 
 }

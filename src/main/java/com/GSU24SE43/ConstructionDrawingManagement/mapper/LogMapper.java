@@ -15,6 +15,8 @@ import java.util.List;
 public interface LogMapper {
 //    AccessMapper INSTANCE = Mappers.getMapper(AccessMapper.class);
 
+    @Mapping(source = "detailTask.detailTaskId", target = "detailTaskId")
+    @Mapping(source = "version.id", target = "versionId")
     AccessCreateResponse toAccessCreateResponse(Log log);
 
     void updateAccess(@MappingTarget Log log, AccessUpdateRequest request);
@@ -22,12 +24,15 @@ public interface LogMapper {
 //    @Mapping(source = "staff.staffId", target = "staffId")
 //    @Mapping(source = "permission", target = "permissionId")
     @Mapping(source = "version.id", target = "versionId")
+    @Mapping(source = "detailTask.detailTaskId", target = "detailTaskId")
     AccessUpdateResponse toAccessUpdateResponse(Log log);
 
 //    @Mapping(source = "permission.id", target = "permissionId")
 //    @Mapping(source = "staff.staffId", target = "staffId")
     @Mapping(source = "version.id", target = "versionId")
+    @Mapping(source = "detailTask.detailTaskId", target = "detailTaskId")
     AccessResponse toAccessResponse(Log log);
+
 
     List<AccessResponse> toAccessResponseList(List<Log> logs);
 

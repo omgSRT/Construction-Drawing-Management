@@ -2,6 +2,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.AccountStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
@@ -10,6 +11,8 @@ import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.AccountMapper;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.AccountRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.DepartmentRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.StaffRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -31,8 +35,9 @@ public class AccountService {
     AccountRepository repository;
     AccountMapper accountMapper;
     PasswordEncoder passwordEncoder;
+    StaffRepository staffRepository;
+    DepartmentRepository departmentRepository;
 
-    //thiếu notification
     public AccountCreateResponse accountCreateResponse(AccountCreateRequest request) {
         boolean checkAccountName = repository.existsByUsername(request.getUsername());
         if (checkAccountName) {
@@ -52,7 +57,6 @@ public class AccountService {
     public AccountUpdateResponse accountUpdateResponse(UUID accountId, AccountUpdateRequest request) {
         Account account = repository.findById(accountId).orElseThrow(()
                 -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
-//        String username = request.getUsername();
         if (repository.existsByUsername(request.getUsername()))
             throw new AppException(ErrorCode.USERNAME_IS_EXISTED);
         accountMapper.updateAccount(account, request);
@@ -79,6 +83,7 @@ public class AccountService {
     public AccountUpdateResponse updateRole(UUID id, AccountUpdateRoleRequest request) {
         Account account = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
         String roleName = request.getRoleName();
+        if(checkDuplicateHead(id, request.getRoleName())) throw new AppException(ErrorCode.DUPLICATE_HEAD);
         if (!roleName.equalsIgnoreCase(Role.DESIGNER.toString())
                 && !roleName.equalsIgnoreCase(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.toString())
                 && !roleName.equalsIgnoreCase(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.toString())
@@ -92,14 +97,21 @@ public class AccountService {
         account.setRoleName(request.getRoleName());
         Staff staff = account.getStaff();
         if (roleName.equals(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.name())
-                && roleName.equals(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.name())
-                && roleName.equals(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.name())
-                && roleName.equals(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.name())) {
+                || roleName.equals(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.name())
+                || roleName.equals(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.name())
+                || roleName.equals(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.name())) {
             staff.setSupervisor(true);
         } else staff.setSupervisor(false);
-
+        repository.save(account);
         return accountMapper.toAccountUpdateResponse(account);
     }
+    public boolean checkDuplicateHead(UUID accountId, String role){
+        Staff staff1 = staffRepository.findByAccount_AccountId(accountId);
+        Department department = departmentRepository.findById(staff1.getDepartment().getDepartmentId()).orElseThrow(
+                () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
+        return department.getStaffList().stream().anyMatch(staff -> Objects.equals(staff.getAccount().getRoleName(), role));
+    }
+
 
     public List<AccountResponse> getAllAccount() {
         return repository.findAll().stream().map(accountMapper::toAccountResponse).toList();
@@ -120,8 +132,7 @@ public class AccountService {
     }
 
     public List<Account> searchAccount(String username) {
-        List<Account> list = repository.findByUsernameContainingIgnoreCase(username);
-        return list;
+        return repository.findByUsernameContainingIgnoreCase(username);
     }
 
     public void deleteAccount(UUID id) {
