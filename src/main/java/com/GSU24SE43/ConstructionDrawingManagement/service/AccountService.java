@@ -54,6 +54,7 @@ public class AccountService {
         return accountMapper.toCreateResponse(account);
     }
 
+
     public AccountUpdateResponse accountUpdateResponse(UUID accountId, AccountUpdateRequest request) {
         Account account = repository.findById(accountId).orElseThrow(()
                 -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
