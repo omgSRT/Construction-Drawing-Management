@@ -3,12 +3,14 @@ package com.GSU24SE43.ConstructionDrawingManagement.controller;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.AccountRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +24,7 @@ public class AccountController {
     AccountService accountService;
 
     @PostMapping("/create-account")
-    public ApiResponse<AccountCreateResponse> createAccount(@RequestBody @Valid AccountCreateRequest request){
+    public ApiResponse<AccountCreateResponse> createAccount( @RequestBody @Valid AccountCreateRequest request,@RequestParam Role role){
         return ApiResponse.<AccountCreateResponse>builder()
                 .entity(accountService.accountCreateResponse(request))
                 .build();
@@ -66,6 +68,7 @@ public class AccountController {
                 .entity(list)
                 .build();
     }
+
 
     @DeleteMapping("/{accountId}")
     public ApiResponse<Void> deleteAccount(@PathVariable UUID accountId){

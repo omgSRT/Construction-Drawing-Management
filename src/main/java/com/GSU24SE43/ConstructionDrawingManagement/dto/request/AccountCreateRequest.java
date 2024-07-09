@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.request;
 
+import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

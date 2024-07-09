@@ -32,7 +32,7 @@ public class StaffFolderService {
     FolderRepository folderRepository;
     StaffFolderMapper staffFolderMapper;
 
-    public StaffFolderCreateResponse createDetailTaskByHead(StaffFolderCreateRequest request){
+    public StaffFolderCreateResponse createStaffFolder(StaffFolderCreateRequest request){
         Staff staff = staffRepository.findById(request.getStaffId()).orElseThrow(
                 () -> new AppException(ErrorCode.STAFF_NOT_FOUND));
         Folder folder = folderRepository.findById(request.getFolderId()).orElseThrow(

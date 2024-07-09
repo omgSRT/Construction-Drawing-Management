@@ -41,4 +41,3 @@ springdoc:
 #springdoc.api-docs.path=/info
 #springdoc.swagger-ui.path=/
 #springdoc.swagger-ui.operationsSorter=method
-

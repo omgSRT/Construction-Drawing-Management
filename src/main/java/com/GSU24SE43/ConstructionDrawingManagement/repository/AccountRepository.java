@@ -11,6 +11,7 @@ import java.util.UUID;
 public interface AccountRepository extends JpaRepository<Account, UUID> {
      Optional<Account> findByUsername(String username);
      Account findByAccountId(UUID id);
+     Account findByStaff_StaffId(UUID staffId);
      boolean existsByUsername(String username);
      boolean existsByAccountId(UUID accountId);
      List<Account> findByUsernameContainingIgnoreCase(String username);

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatusCode;
 
 @Getter
 public enum ErrorCode {
+
     INVALID_ERROR_MESSAGE_KEY(10666, "Không tìm thấy tin nhắn lỗi trong danh sách ", HttpStatus.INTERNAL_SERVER_ERROR),
     UNDEFINED_EXCEPTION(10000, "Lỗi không xác định", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_PASSWORD(10001, "Mật khẩu phải có ít nhất 8 kí tự", HttpStatus.BAD_REQUEST),
@@ -76,6 +77,8 @@ public enum ErrorCode {
     TASK_CHILD_NOT_FOUND(10066, "Không tìm thấy task con", HttpStatus.NOT_FOUND),
     UNDEFINED_STATUS_TASK(10067, "Trạng thái công việc không hợp lệ", HttpStatus.BAD_REQUEST),
     LOG_NOT_FOUND(10068, "Không tìm thấy nhật kí", HttpStatus.NOT_FOUND),
+    ROOM_HAD_HEAD(10069, "Phòng này đã có trưởng phòng", HttpStatus.BAD_REQUEST),
+
     ;
 
 

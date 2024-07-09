@@ -11,7 +11,11 @@ import java.util.UUID;
 public interface StaffRepository extends JpaRepository<Staff, UUID> {
     boolean existsByFullName(String fullname);
     List<Staff> findByFullNameContainingIgnoreCase(String fullname);
+    List<Staff> findByDepartment_DepartmentId(UUID departmentId);
     boolean existsByEmail(String email);
     Staff findByAccount_AccountId(UUID accountId);
+    Staff findByAccountAccountId(UUID accountId);
+    Staff findByFullName(String fullname);
+
 
 }
