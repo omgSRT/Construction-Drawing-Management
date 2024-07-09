@@ -77,6 +77,7 @@ public enum ErrorCode {
     TASK_CHILD_NOT_FOUND(10067, "task child is not found", HttpStatus.NOT_FOUND),
     UNDEFINE_STATUS_TASK(10068, "undefine status task", HttpStatus.BAD_REQUEST),
     LOG_NOT_FOUND(10069, "log is not found", HttpStatus.NOT_FOUND),
+    ROOM_HAD_HEAD(10068, "There was a head for this department", HttpStatus.BAD_REQUEST),
     ;
 
 

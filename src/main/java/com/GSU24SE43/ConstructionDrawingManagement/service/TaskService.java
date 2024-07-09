@@ -17,6 +17,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -33,6 +34,7 @@ public class TaskService {
     TaskMapper taskMapper;
 
     //create task parent by admin
+    @PreAuthorize("hasRole('ADMIN')")
     public TaskParentCreateResponse createTaskParentByAdmin(TaskParentCreateRequest request) {
         Project project = checkProject(request.getProjectId());
         Date beginDate = request.getBeginDate();
@@ -47,7 +49,7 @@ public class TaskService {
             return taskMapper.toTaskParentCreateResponse(task);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     public TaskChildCreateResponse createChildTaskByAdmin(UUID parentTaskId, TaskChildCreateRequest request) {
 
         Task taskParent = checkTask(parentTaskId);
@@ -85,7 +87,7 @@ public class TaskService {
         return taskMapper.toCreateResponse(taskChild);
     }
 
-    public boolean checkDuplicatePriority(UUID taskParentId, int priority) {
+    private boolean checkDuplicatePriority(UUID taskParentId, int priority) {
         boolean check = false;
         Task parentTask = taskRepository.findById(taskParentId).orElseThrow(
                 () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
@@ -98,7 +100,7 @@ public class TaskService {
         return check;
     }
 
-    public boolean checkDuplicateHead(UUID taskParentId, UUID departmentId) {
+    private boolean checkDuplicateHead(UUID taskParentId, UUID departmentId) {
         Task parentTask = taskRepository.findById(taskParentId).orElseThrow(
                 () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
 
@@ -107,6 +109,7 @@ public class TaskService {
     }
 
     //create task parent by head
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskParentCreateByHeadResponse createTaskParentByHead(TaskParentCreateByHeadRequest request) {
         Department department = checkDepartment(request.getDepartmentId());
         Project project = checkProject(request.getProjectId());
@@ -125,6 +128,7 @@ public class TaskService {
     }
 
     //create task child by head
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskChildCreateByHeadResponse createTaskChildByHead(UUID parentTaskId, TaskChildCreateByHeadRequest request) {
         Task taskParent = checkTask(parentTaskId);
         Department department = checkDepartment(request.getDepartmentId());
@@ -143,7 +147,7 @@ public class TaskService {
         taskRepository.save(taskChild);
         return taskMapper.toTaskChildCreateByHeadResponse(taskChild);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     public TaskParentUpdateByAdminResponse updateTaskParentByAdmin(UUID parentTaskId, TaskParentUpdateByAdminRequest request) {
         Task taskParent = checkTask(parentTaskId);
         Project project = checkProject(request.getProjectId());
@@ -159,7 +163,7 @@ public class TaskService {
         taskRepository.save(taskParent);
         return taskMapper.toTaskParentUpdateByAdminResponse(taskParent);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     public TaskChildUpdateByAdminResponse updateTaskChildByAdmin(UUID childTaskId, TaskChildUpdateByAdminRequest request) {
         Task taskChild = checkTask(childTaskId);
         Department department = checkDepartment(request.getDepartmentId());
@@ -176,30 +180,32 @@ public class TaskService {
 
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskParentUpdateByAdminResponse updateStatusTaskParent(UUID parentTaskId, String status) {
         Task taskParent = checkTask(parentTaskId);
         checkStatusTask(status, taskParent);
         return taskMapper.toTaskParentUpdateByAdminResponse(taskParent);
     }
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskChildUpdateByAdminResponse updateStatusTaskChild(UUID childTaskId, String status) {
         Task taskChild = checkTask(childTaskId);
         checkStatusTask(status, taskChild);
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
-    public Task checkTask(UUID taskId){
+    private Task checkTask(UUID taskId){
         return taskRepository.findById(taskId).orElseThrow(
                 () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
     }
-    public Project checkProject(UUID projectId){
+    private Project checkProject(UUID projectId){
         return projectRepository.findById(projectId).orElseThrow(
                 () -> new AppException(ErrorCode.PROJECT_NOT_FOUND)
         );
     }
-    public Department checkDepartment(UUID departmentId){
+    private Department checkDepartment(UUID departmentId){
         return departmentRepository.findById(departmentId).orElseThrow(
                 () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
     }
-    public void checkStatusTask(String status, Task taskParent) {
+    private void checkStatusTask(String status, Task taskParent) {
         if (!status.equals(TaskStatus.NO_RECIPIENT.name())
                 && !status.equals(TaskStatus.ACTIVE.name())
                 && !status.equals(TaskStatus.INACTIVE.name())
@@ -208,13 +214,17 @@ public class TaskService {
             throw new AppException(ErrorCode.UNDEFINE_STATUS_TASK);
         taskParent.setStatus(status);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Task> getAll() {
         return taskRepository.findAll();
     }
+    //thiếu getAll task những task mà 1 head đã giao
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Task> getAllParentTask() {
         return taskRepository.findByParentTaskIsNull();
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteTask(UUID taskId) {
         taskRepository.deleteById(taskId);
     }
