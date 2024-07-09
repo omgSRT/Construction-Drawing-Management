@@ -23,7 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    private final String[] PUBLIC_ENDPOINTS = {""};
+    private final String[] PUBLIC_ENDPOINTS = {"/authenticate/login, /authenticate/logout, /authenticate/introspect"};
 
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
@@ -42,7 +42,7 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(request ->
                 request
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/**").permitAll()

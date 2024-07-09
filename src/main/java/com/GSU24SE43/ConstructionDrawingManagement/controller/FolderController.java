@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/Folder")
+@RequestMapping("/folder")
 @Slf4j
 public class FolderController {
     final FolderService FolderService;
