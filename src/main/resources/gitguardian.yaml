@@ -1,0 +1,4 @@
+# .gitguardian.yaml
+monitored_branches:
+  - main
+  - thang
