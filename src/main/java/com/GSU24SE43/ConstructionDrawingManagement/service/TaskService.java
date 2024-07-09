@@ -205,7 +205,7 @@ public class TaskService {
                 && !status.equals(TaskStatus.INACTIVE.name())
                 && !status.equals(TaskStatus.PROCESSING.name())
                 && !status.equals(TaskStatus.DONE.name()))
-            throw new AppException(ErrorCode.UNDEFINE_STATUS_TASK);
+            throw new AppException(ErrorCode.UNDEFINED_STATUS_TASK);
         taskParent.setStatus(status);
     }
     public List<Task> getAll() {

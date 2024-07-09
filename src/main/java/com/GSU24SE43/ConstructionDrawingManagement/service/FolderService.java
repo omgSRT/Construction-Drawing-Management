@@ -31,7 +31,7 @@ public class FolderService {
     final ProjectRepository projectRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_MvE_DESIGN_DEPARTMENT', 'HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public FolderResponse createFolder(FolderRequest request){
         if(folderRepository.existsByName(request.getName())){
             throw new AppException(ErrorCode.NAME_EXISTED);
@@ -46,7 +46,7 @@ public class FolderService {
         return folderMapper.toFolderResponse(folderRepository.save(newFolder));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_MvE_DESIGN_DEPARTMENT', 'HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public List<FolderResponse> getAllFolders(int page, int perPage) {
         try {
             List<FolderResponse> folderResponses
@@ -58,30 +58,30 @@ public class FolderService {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_MvE_DESIGN_DEPARTMENT', 'HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public void deleteFolderById(UUID id){
         var folder = folderRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.SUBFOLDER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
         folderRepository.delete(folder);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_MvE_DESIGN_DEPARTMENT', 'HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public FolderResponse findFolderById(UUID id){
         return folderMapper.toFolderResponse(folderRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.SUBFOLDER_NOT_FOUND)));
+                .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND)));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_MvE_DESIGN_DEPARTMENT', 'HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public FolderResponse updateFolderById(UUID id, FolderUpdateRequest request){
         var folder = folderRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.SUBFOLDER_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
 
         folderMapper.updateFolder(folder, request);
 
         return folderMapper.toFolderResponse(folderRepository.save(folder));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_MvE_DESIGN_DEPARTMENT', 'HEAD_OF_INTERIOR_DESIGN_DEPARTMENT', 'DESIGNER', 'COMMANDER')")
     public List<FolderResponse> findFolderByNameContaining(String name, int page, int perPage){
         try {
             List<FolderResponse> folderResponses
@@ -93,7 +93,7 @@ public class FolderService {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_MvE_DESIGN_DEPARTMENT', 'HEAD_OF_INTERIOR_DESIGN_DEPARTMENT', 'DESIGNER', 'COMMANDER')")
     public List<FolderResponse> getFoldersByProjectId(int page, int perPage, UUID projectId){
         try {
             List<FolderResponse> folderResponses
