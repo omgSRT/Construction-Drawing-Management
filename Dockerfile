@@ -14,7 +14,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Use a smaller base image for Java applications
-FROM openjdk:20-jdk-alpine
+FROM openjdk:20-jdk-slim
 
 # Set the working directory inside the container
 WORKDIR /app
