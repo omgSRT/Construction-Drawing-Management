@@ -1,5 +1,5 @@
 # Use a base image with Java and Maven
-FROM maven:3.8.5-openjdk-20 AS build
+FROM maven:3.3.0-jdk-20 AS build
 
 # Set the working directory inside the container
 WORKDIR /app
