@@ -19,8 +19,8 @@ import java.util.Objects;
 
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
-//    @Value("${jwt.signerKey}")
-    private String signerKey="9fpGEUpGqiplW2HJB7UDOpJScDgzJWJR5xqOP3zsJQKs8fuIQpvw37BP3hmNmb/9";
+    @Value("${spring.custom.jwt.secret}")
+    private String signerKey;
 
     @Autowired
     private AuthenticateService authenticationService;

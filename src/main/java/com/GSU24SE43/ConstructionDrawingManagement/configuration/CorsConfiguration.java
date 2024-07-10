@@ -14,16 +14,4 @@ public class CorsConfiguration implements WebMvcConfigurer {
                 .allowedHeaders("*");
         //.allowCredentials(true);
     }
-//    @Bean
-//    public CorsFilter corsFilter() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
-//        config.addAllowedOriginPattern("*"); // Access-Control-Allow-Origin
-//        config.addAllowedHeader("*"); // Access-Control-Request-Headers
-//        config.addAllowedMethod("*"); // Access-Control-Request-Method
-//
-//        source.registerCorsConfiguration("/**", config);
-//        return new CorsFilter(source);
-//    }
 }

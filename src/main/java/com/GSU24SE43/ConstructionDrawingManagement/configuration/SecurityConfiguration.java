@@ -26,9 +26,9 @@ import javax.crypto.spec.SecretKeySpec;
 public class SecurityConfiguration {
     private final String[] PUBLIC_ENDPOINTS = {"/test/login", "/test/introspect", "/test/logout"};
 
+
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
-//    private String jwtSecret="9fpGEUpGqiplW2HJB7UDOpJScDgzJWJR5xqOP3zsJQKs8fuIQpvw37BP3hmNmb/9";
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
