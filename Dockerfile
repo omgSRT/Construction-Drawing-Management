@@ -1,5 +1,5 @@
 # Use a base image with Java and Maven
-FROM maven:3.3.0-openjdk-20 AS build
+FROM maven:3.9.4-amazoncorretto-20 AS build
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -14,7 +14,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Use a smaller base image for Java applications
-FROM openjdk:23-jdk-slim
+FROM openjdk:8-jdk-alpine3.8
 
 # Set the working directory inside the container
 WORKDIR /app
