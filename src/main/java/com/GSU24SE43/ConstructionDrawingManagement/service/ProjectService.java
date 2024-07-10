@@ -8,6 +8,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
@@ -44,23 +45,10 @@ public class ProjectService {
         }
         Department department = departmentRepository.findById(request.getDepartmentId())
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
-        Account account = null;
-        if(request.getStaffId() == null && request.getAccountId() == null){
-            throw new AppException(ErrorCode.STAFF_OR_ACCOUNT_NOT_FOUND);
-        }
-        if(request.getAccountId() != null){
-            account = accountRepository.findById(request.getAccountId())
-                    .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
-
-            try {
-                Role role = Role.valueOf(account.getRoleName());
-                if(role != Role.ADMIN){
-                    throw new AppException(ErrorCode.ONLY_ADMIN_CREATE_PROJECT);
-                }
-            } catch (IllegalArgumentException e) {
-                throw new AppException(ErrorCode.INVALID_STATUS);
-            }
-        }
+        Account account = accountRepository.findByUsername("admin")
+                        .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        Staff staff = staffRepository.findByAccountAccountId(account.getAccountId())
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
         ValidateProjectDate(request.getStartDate(), request.getEndDate());
 
@@ -68,6 +56,7 @@ public class ProjectService {
         newProject.setCreationDate(new Date());
         newProject.setDepartment(department);
         newProject.setAccount(account);
+        newProject.setStaff(staff);
         newProject.setStatus(ProjectStatus.ACTIVE.name());
 
         return projectMapper.toProjectResponse(projectRepository.save(newProject));
