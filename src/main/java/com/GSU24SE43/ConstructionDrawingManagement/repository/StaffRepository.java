@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -14,8 +15,6 @@ public interface StaffRepository extends JpaRepository<Staff, UUID> {
     List<Staff> findByDepartment_DepartmentId(UUID departmentId);
     boolean existsByEmail(String email);
     Staff findByAccount_AccountId(UUID accountId);
-    Staff findByAccountAccountId(UUID accountId);
+    Optional<Staff> findByAccountAccountId(UUID accountId);
     Staff findByFullName(String fullname);
-
-
 }

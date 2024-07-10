@@ -20,8 +20,4 @@ public class ProjectRequest {
     Date startDate;
     Date endDate;
     UUID departmentId;
-    @Nullable
-    UUID accountId;
-    @Nullable
-    UUID staffId;
 }
