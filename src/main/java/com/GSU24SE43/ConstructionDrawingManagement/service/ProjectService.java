@@ -175,18 +175,11 @@ public class ProjectService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public ProjectResponse changeProjectStatus(ProjectChangeStatusRequest request){
-        ProjectStatus projectStatus;
-        try {
-            projectStatus = ProjectStatus.valueOf(request.getStatusName().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new AppException(ErrorCode.INVALID_STATUS);
-        }
-
+    public ProjectResponse changeProjectStatus(ProjectChangeStatusRequest request, ProjectStatus status){
+        String stringStatus = status.name();
         var project = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
-
-        project.setStatus(request.getStatusName().toUpperCase());
+        project.setStatus(stringStatus);
 
         return projectMapper.toProjectResponse(projectRepository.save(project));
     }

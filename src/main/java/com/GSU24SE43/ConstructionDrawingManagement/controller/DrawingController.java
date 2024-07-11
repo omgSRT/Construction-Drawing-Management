@@ -3,6 +3,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.controller;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ApiResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.DrawingResponse;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.DrawingStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.SuccessReturnMessage;
 import com.GSU24SE43.ConstructionDrawingManagement.service.DrawingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -73,10 +74,11 @@ public class DrawingController {
 
     @Operation(summary = "Change Status", description = "Change A Drawing Status by ID")
     @PutMapping(path = "/change/status")
-    public ApiResponse<DrawingResponse> changeDrawingStatus(@RequestBody @Valid DrawingStatusChangeRequest request){
+    public ApiResponse<DrawingResponse> changeDrawingStatus(@RequestBody @Valid DrawingStatusChangeRequest request,
+                                                            @RequestParam DrawingStatus status){
         return ApiResponse.<DrawingResponse>builder()
                 .message(SuccessReturnMessage.CHANGE_SUCCESS.getMessage())
-                .entity(drawingService.changeDrawingStatus(request))
+                .entity(drawingService.changeDrawingStatus(request, status))
                 .build();
     }
 
