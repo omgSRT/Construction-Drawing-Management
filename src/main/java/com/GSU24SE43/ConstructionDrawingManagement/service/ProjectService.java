@@ -47,8 +47,6 @@ public class ProjectService {
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         Account account = accountRepository.findByUsername("admin")
                         .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
-        Staff staff = staffRepository.findByAccountAccountId(account.getAccountId())
-                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
         ValidateProjectDate(request.getStartDate(), request.getEndDate());
 
@@ -56,7 +54,6 @@ public class ProjectService {
         newProject.setCreationDate(new Date());
         newProject.setDepartment(department);
         newProject.setAccount(account);
-        newProject.setStaff(staff);
         newProject.setStatus(ProjectStatus.ACTIVE.name());
 
         return projectMapper.toProjectResponse(projectRepository.save(newProject));
