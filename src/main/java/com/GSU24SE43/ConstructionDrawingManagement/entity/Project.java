@@ -44,9 +44,9 @@ public class Project {
     @JsonIgnoreProperties(value = { "project" }, allowSetters = true)
     List<Task> tasks;
 
-    @ManyToOne
-    @JoinColumn(name = "projectId")
-    Staff staff;
+//    @ManyToOne
+//    @JoinColumn(name = "projectId")
+//    Staff staff;
 
 
 }

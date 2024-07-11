@@ -158,18 +158,11 @@ public class DrawingService {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_MvE_DESIGN_DEPARTMENT', 'HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
-    public DrawingResponse changeDrawingStatus(DrawingStatusChangeRequest request){
-        DrawingStatus drawingStatus;
-        String status = request.getStatus().toUpperCase();
-        try {
-            drawingStatus = DrawingStatus.valueOf(status);
-        } catch (IllegalArgumentException e) {
-            throw new AppException(ErrorCode.INVALID_STATUS);
-        }
-
+    public DrawingResponse changeDrawingStatus(DrawingStatusChangeRequest request, DrawingStatus status){
+        String stringStatus = status.name();
         var drawing = drawingRepository.findById(request.getDrawingId())
                 .orElseThrow(() -> new AppException(ErrorCode.DRAWING_NOT_FOUND));
-        drawing.setStatus(status);
+        drawing.setStatus(stringStatus);
 
         return drawingMapper.toDrawingResponse(drawingRepository.save(drawing));
     }

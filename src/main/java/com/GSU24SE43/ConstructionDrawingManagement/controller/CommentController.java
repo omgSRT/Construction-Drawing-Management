@@ -92,12 +92,12 @@ public class CommentController {
                 .build();
     }
 
-    @Operation(summary = "Change Comment Status", description = "Change Comment Status To Hidden")
+    @Operation(summary = "Change Comment Status", description = "Change Comment Status")
     @PutMapping(path = "/change/status/{commentId}")
     public ApiResponse<CommentResponse> changeCommentStatusToHidden(@PathVariable UUID commentId){
         return ApiResponse.<CommentResponse>builder()
                 .message(SuccessReturnMessage.CHANGE_SUCCESS.getMessage())
-                .entity(commentService.changeCommentStatusToHidden(commentId))
+                .entity(commentService.changeCommentStatus(commentId))
                 .build();
     }
 }
