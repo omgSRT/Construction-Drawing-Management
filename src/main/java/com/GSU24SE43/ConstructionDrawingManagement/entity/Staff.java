@@ -42,8 +42,8 @@ public class Staff {
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     List<DetailTask> detailTasks;
 
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Project> projects;
+//    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+//    List<Project> projects;
 
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = { "staff" }, allowSetters = true)

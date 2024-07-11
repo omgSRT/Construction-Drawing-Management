@@ -47,8 +47,6 @@ public class ProjectService {
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         Account account = accountRepository.findByUsername("admin")
                         .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
-        Staff staff = staffRepository.findByAccountAccountId(account.getAccountId())
-                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
         ValidateProjectDate(request.getStartDate(), request.getEndDate());
 
@@ -56,7 +54,6 @@ public class ProjectService {
         newProject.setCreationDate(new Date());
         newProject.setDepartment(department);
         newProject.setAccount(account);
-        newProject.setStaff(staff);
         newProject.setStatus(ProjectStatus.ACTIVE.name());
 
         return projectMapper.toProjectResponse(projectRepository.save(newProject));
@@ -178,18 +175,11 @@ public class ProjectService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public ProjectResponse changeProjectStatus(ProjectChangeStatusRequest request){
-        ProjectStatus projectStatus;
-        try {
-            projectStatus = ProjectStatus.valueOf(request.getStatusName().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new AppException(ErrorCode.INVALID_STATUS);
-        }
-
+    public ProjectResponse changeProjectStatus(ProjectChangeStatusRequest request, ProjectStatus status){
+        String stringStatus = status.name();
         var project = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
-
-        project.setStatus(request.getStatusName().toUpperCase());
+        project.setStatus(stringStatus);
 
         return projectMapper.toProjectResponse(projectRepository.save(project));
     }

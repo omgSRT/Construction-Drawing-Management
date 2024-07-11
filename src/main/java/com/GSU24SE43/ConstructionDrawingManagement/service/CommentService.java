@@ -86,15 +86,15 @@ public class CommentService {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_MvE_DESIGN_DEPARTMENT', 'HEAD_OF_INTERIOR_DESIGN_DEPARTMENT', 'DESIGNER', 'COMMANDER')")
-    public CommentResponse changeCommentStatusToHidden(UUID commentId){
+    public CommentResponse changeCommentStatus(UUID commentId){
         var comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
-//        comment.setStatus(
-//                CommentStatus.ACTIVE.name().equalsIgnoreCase(comment.getStatus())
-//                        ? CommentStatus.INACTIVE.name()
-//                        : CommentStatus.ACTIVE.name()
-//        );
-        comment.setStatus(CommentStatus.INACTIVE.name());
+        comment.setStatus(
+                CommentStatus.ACTIVE.name().equalsIgnoreCase(comment.getStatus())
+                        ? CommentStatus.INACTIVE.name()
+                        : CommentStatus.ACTIVE.name()
+        );
+        //comment.setStatus(CommentStatus.INACTIVE.name());
 
         return commentMapper.toCommentResponse(commentRepository.save(comment));
     }

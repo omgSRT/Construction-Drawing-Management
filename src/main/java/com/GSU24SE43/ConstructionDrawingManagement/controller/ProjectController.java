@@ -5,6 +5,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ApiResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.SuccessReturnMessage;
 import com.GSU24SE43.ConstructionDrawingManagement.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -77,10 +78,11 @@ public class ProjectController {
 
     @Operation(summary = "Change Status", description = "Change A Project Status by ID")
     @PutMapping(path = "/change")
-    public ApiResponse<ProjectResponse> changeProjectStatus(@RequestBody ProjectChangeStatusRequest request){
+    public ApiResponse<ProjectResponse> changeProjectStatus(@RequestBody ProjectChangeStatusRequest request,
+                                                            @RequestParam ProjectStatus status){
         return ApiResponse.<ProjectResponse>builder()
                 .message(SuccessReturnMessage.CHANGE_SUCCESS.getMessage())
-                .entity(projectService.changeProjectStatus(request))
+                .entity(projectService.changeProjectStatus(request, status))
                 .build();
     }
 
