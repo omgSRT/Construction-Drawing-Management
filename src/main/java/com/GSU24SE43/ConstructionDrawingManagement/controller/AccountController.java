@@ -3,6 +3,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.controller;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.AccountStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.AccountRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.service.AccountService;
@@ -24,7 +25,7 @@ public class AccountController {
     AccountService accountService;
 
     @PostMapping("/create-account")
-    public ApiResponse<AccountCreateResponse> createAccount( @RequestBody @Valid AccountCreateRequest request,@RequestParam Role role){
+    public ApiResponse<AccountCreateResponse> createAccount( @RequestBody @Valid AccountCreateRequest request){
         return ApiResponse.<AccountCreateResponse>builder()
                 .entity(accountService.accountCreateResponse(request))
                 .build();
@@ -35,16 +36,29 @@ public class AccountController {
                 .entity(accountService.accountUpdateResponse(accountId, request))
                 .build();
     }
+//    @PutMapping("/update-status/{accountId}")
+//    public ApiResponse<AccountUpdateStatusResponse> updateStatus(@PathVariable UUID accountId,@RequestBody AccountUpdateStatusRequest request){
+//        return ApiResponse.<AccountUpdateStatusResponse>builder()
+//                .entity(accountService.updateStatus(accountId,request))
+//                .build();
+//    }
     @PutMapping("/update-status/{accountId}")
-    public ApiResponse<AccountUpdateStatusResponse> updateStatus(@PathVariable UUID accountId,@RequestBody AccountUpdateStatusRequest request){
+    public ApiResponse<AccountUpdateStatusResponse> updateStatus(@PathVariable UUID accountId,@RequestParam AccountStatus status){
         return ApiResponse.<AccountUpdateStatusResponse>builder()
-                .entity(accountService.updateStatus(accountId,request))
+                .entity(accountService.updateStatus(accountId,status))
                 .build();
     }
-    @PutMapping("/update-role/{accountId}")
-    public ApiResponse<AccountUpdateResponse> updateRoleAccount(@PathVariable UUID accountId,@RequestBody AccountUpdateRoleRequest request){
+//    @PutMapping("/update-role/{accountId}")
+//    public ApiResponse<AccountUpdateResponse> updateRoleAccount(@PathVariable UUID accountId,@RequestBody AccountUpdateRoleRequest request){
+//        return ApiResponse.<AccountUpdateResponse>builder()
+//                .entity(accountService.updateRole(accountId,request))
+//                .build();
+//    }
+
+    @PutMapping("/update-role-2/{accountId}")
+    public ApiResponse<AccountUpdateResponse> updateRoleAccount_2(@PathVariable UUID accountId,@RequestParam Role role){
         return ApiResponse.<AccountUpdateResponse>builder()
-                .entity(accountService.updateRole(accountId,request))
+                .entity(accountService.updateRole2(accountId,role))
                 .build();
     }
 

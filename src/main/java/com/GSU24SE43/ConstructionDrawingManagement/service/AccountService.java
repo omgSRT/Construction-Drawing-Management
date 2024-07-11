@@ -70,25 +70,61 @@ public class AccountService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public AccountUpdateStatusResponse updateStatus(UUID id, AccountUpdateStatusRequest request) {
+    public AccountUpdateStatusResponse updateStatus(UUID id, AccountStatus request) {
         Account account = repository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
-        String status = request.getAccountStatus();
+        String status = request.name();
         if (!status.equals(AccountStatus.ACTIVE.name())
                 && (!status.equals(AccountStatus.INACTIVE.name())
                 && (!status.equals(AccountStatus.HIDDEN.name())
         ))) {
             throw new AppException(ErrorCode.UNDEFINED_STATUS_ACCOUNT);
         }
-        accountMapper.toAccountUpdateStatusResponse(account, request);
+//        accountMapper.toAccountUpdateStatusResponse(account, request);
+        account.setAccountStatus(status);
         repository.save(account);
         return accountMapper.toAccountUpdateStatusResponse(account);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public AccountUpdateResponse updateRole(UUID id, AccountUpdateRoleRequest request) {
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public AccountUpdateResponse updateRole(UUID id, AccountUpdateRoleRequest request) {
+//        Account account = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
+//        String roleName = request.getRoleName();
+//        if (!roleName.equalsIgnoreCase(Role.DESIGNER.name())
+//                && !roleName.equalsIgnoreCase(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.name())
+//                && !roleName.equalsIgnoreCase(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.name())
+//                && !roleName.equalsIgnoreCase(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.name())
+//                && !roleName.equalsIgnoreCase(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.name())
+//                && !roleName.equalsIgnoreCase(Role.ADMIN.name())
+//                && !roleName.equalsIgnoreCase(Role.COMMANDER.name())
+//        ) {
+//            throw new AppException(ErrorCode.ROLE_IS_NOT_DEFINED);
+//        }
+//        //check 1 phòng ko có 2 head
+//        if (roleName.equalsIgnoreCase(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.toString())
+//                || roleName.equalsIgnoreCase(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.toString())
+//                || roleName.equalsIgnoreCase(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.toString())
+//                || roleName.equalsIgnoreCase(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.toString())) {
+//            if (checkHead(id)) throw new AppException(ErrorCode.ROOM_HAD_HEAD);
+//        }
+//        //check ko trùng head
+//        checkDuplicateHead(roleName);
+//        account.setRoleName(request.getRoleName());
+//        Staff staff = account.getStaff();
+//        if (roleName.equals(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.name())
+//                || roleName.equals(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.name())
+//                || roleName.equals(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.name())
+//                || roleName.equals(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.name())) {
+//            staff.setSupervisor(true);
+//        } else staff.setSupervisor(false);
+//        repository.save(account);
+//        return accountMapper.toAccountUpdateResponse(account);
+//    }
+
+    public AccountUpdateResponse updateRole2(UUID id, Role request) {
         Account account = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
-        String roleName = request.getRoleName();
+        String roleName = request.name();
+        log.info(roleName);
         if (!roleName.equalsIgnoreCase(Role.DESIGNER.name())
                 && !roleName.equalsIgnoreCase(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.name())
                 && !roleName.equalsIgnoreCase(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.name())
@@ -104,11 +140,11 @@ public class AccountService {
                 || roleName.equalsIgnoreCase(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.toString())
                 || roleName.equalsIgnoreCase(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.toString())
                 || roleName.equalsIgnoreCase(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.toString())) {
-            if (checkHead(id)) throw new AppException(ErrorCode.ROOM_HAD_HEAD);
+            if (checkHead(id,request)) throw new AppException(ErrorCode.ROOM_HAD_HEAD);
         }
         //check ko trùng head
         checkDuplicateHead(roleName);
-        account.setRoleName(request.getRoleName());
+        account.setRoleName(request.name());
         Staff staff = account.getStaff();
         if (roleName.equals(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.name())
                 || roleName.equals(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.name())
@@ -134,14 +170,25 @@ public class AccountService {
                 throw new AppException(ErrorCode.DUPLICATE_HEAD);
             }
         }));
-//        departments.forEach(department -> {
-//            department.getStaffList().forEach(staff -> {
-//                Account account = repository.findByStaff_StaffId(staff.getStaffId());
-//                if (account != null && account.getRoleName().equals(role)) {
-//                    throw new AppException(ErrorCode.DUPLICATE_HEAD);
-//                }
-//            });
-//        });
+    }
+
+    //******
+    private void checkDuplicateHead_2(String role,UUID id) {
+        if (role.equals(Role.COMMANDER.name())
+                || role.equals(Role.DESIGNER.name())
+                || role.equals(Role.ADMIN.name())) {
+            return;
+        }
+//        Account account_1 =checkAccount(id);
+//        if (account_1)
+
+        List<Department> departments = departmentRepository.findAll();
+        departments.forEach(department -> department.getStaffList().forEach(staff -> {
+            Account account = repository.findByStaff_StaffId(staff.getStaffId());
+            if (account != null && account.getRoleName().equals(role)) {
+                throw new AppException(ErrorCode.DUPLICATE_HEAD);
+            }
+        }));
     }
 
     private Account checkAccount(UUID id) {
@@ -160,7 +207,7 @@ public class AccountService {
                 () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
     }
 
-    private boolean checkHead(UUID accountId) {
+    private boolean checkHead(UUID accountId, Role role) {
 //        Account account = repository.findById(accountId).orElseThrow(()
 //                -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
 //        Staff staff1 = staffRepository.findById(account.getStaff().getStaffId()).orElseThrow(
@@ -169,6 +216,7 @@ public class AccountService {
 //        Department department = departmentRepository.findById(staff1.getDepartment().getDepartmentId()).orElseThrow(
 //                () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         Account account = checkAccount(accountId);
+        if (account.getRoleName().equals(role.name())) throw new AppException(ErrorCode.HEAD_HAD_THIS_ROLE);
         Staff staff1 = checkStaff(account.getStaff().getStaffId());
         Department department = checkDepartment(staff1.getDepartment().getDepartmentId());
         return department.getStaffList().stream().anyMatch(staff -> Objects.equals(staff.isSupervisor(), true));

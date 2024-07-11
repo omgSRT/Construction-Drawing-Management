@@ -78,7 +78,7 @@ public enum ErrorCode {
     UNDEFINED_STATUS_TASK(10067, "Trạng thái công việc không hợp lệ", HttpStatus.BAD_REQUEST),
     LOG_NOT_FOUND(10068, "Không tìm thấy nhật kí", HttpStatus.NOT_FOUND),
     ROOM_HAD_HEAD(10069, "Phòng này đã có trưởng phòng", HttpStatus.BAD_REQUEST),
-
+    HEAD_HAD_THIS_ROLE(10069, "Tài khoản hiện tại đã có vai trò này rồi", HttpStatus.BAD_REQUEST),
     ;
 
 
