@@ -181,15 +181,20 @@ public class TaskService {
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
     @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
-    public TaskParentUpdateByAdminResponse updateStatusTaskParent(UUID parentTaskId, String status) {
+//    public TaskParentUpdateByAdminResponse updateStatusTaskParent(UUID parentTaskId, String status) {
+//        Task taskParent = checkTask(parentTaskId);
+//        checkStatusTask(status, taskParent);
+//        return taskMapper.toTaskParentUpdateByAdminResponse(taskParent);
+//    }
+    public TaskParentUpdateByAdminResponse updateStatusTaskParent(UUID parentTaskId, TaskStatus status) {
         Task taskParent = checkTask(parentTaskId);
-        checkStatusTask(status, taskParent);
+        checkStatusTask(status.name(), taskParent);
         return taskMapper.toTaskParentUpdateByAdminResponse(taskParent);
     }
     @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
-    public TaskChildUpdateByAdminResponse updateStatusTaskChild(UUID childTaskId, String status) {
+    public TaskChildUpdateByAdminResponse updateStatusTaskChild(UUID childTaskId, TaskStatus status) {
         Task taskChild = checkTask(childTaskId);
-        checkStatusTask(status, taskChild);
+        checkStatusTask(status.name(), taskChild);
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
     private Task checkTask(UUID taskId){
@@ -205,14 +210,14 @@ public class TaskService {
         return departmentRepository.findById(departmentId).orElseThrow(
                 () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
     }
-    private void checkStatusTask(String status, Task taskParent) {
+    private void checkStatusTask(String status, Task task) {
         if (!status.equals(TaskStatus.NO_RECIPIENT.name())
                 && !status.equals(TaskStatus.ACTIVE.name())
                 && !status.equals(TaskStatus.INACTIVE.name())
                 && !status.equals(TaskStatus.PROCESSING.name())
                 && !status.equals(TaskStatus.DONE.name()))
             throw new AppException(ErrorCode.UNDEFINED_STATUS_TASK);
-        taskParent.setStatus(status);
+        task.setStatus(status);
     }
     @PreAuthorize("hasRole('ADMIN')")
     public List<Task> getAll() {

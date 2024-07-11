@@ -141,6 +141,7 @@ public class AccountService {
                 || roleName.equalsIgnoreCase(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.toString())
                 || roleName.equalsIgnoreCase(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.toString())) {
             if (checkHead(id,request)) throw new AppException(ErrorCode.ROOM_HAD_HEAD);
+
         }
         //check ko trùng head
         checkDuplicateHead(roleName);
@@ -156,7 +157,7 @@ public class AccountService {
         return accountMapper.toAccountUpdateResponse(account);
     }
 
-    //check 1 phòng ko có 2 head
+    //check head không trùng
     private void checkDuplicateHead(String role) {
         if (role.equals(Role.COMMANDER.name())
                 || role.equals(Role.DESIGNER.name())
@@ -173,23 +174,23 @@ public class AccountService {
     }
 
     //******
-    private void checkDuplicateHead_2(String role,UUID id) {
-        if (role.equals(Role.COMMANDER.name())
-                || role.equals(Role.DESIGNER.name())
-                || role.equals(Role.ADMIN.name())) {
-            return;
-        }
+//    private void checkDuplicateHead_2(String role,UUID id) {
+//        if (role.equals(Role.COMMANDER.name())
+//                || role.equals(Role.DESIGNER.name())
+//                || role.equals(Role.ADMIN.name())) {
+//            return;
+//        }
 //        Account account_1 =checkAccount(id);
-//        if (account_1)
-
-        List<Department> departments = departmentRepository.findAll();
-        departments.forEach(department -> department.getStaffList().forEach(staff -> {
-            Account account = repository.findByStaff_StaffId(staff.getStaffId());
-            if (account != null && account.getRoleName().equals(role)) {
-                throw new AppException(ErrorCode.DUPLICATE_HEAD);
-            }
-        }));
-    }
+//        if (account_1.getStaff().isSupervisor()) return;
+//
+//        List<Department> departments = departmentRepository.findAll();
+//        departments.forEach(department -> department.getStaffList().forEach(staff -> {
+//            Account account = repository.findByStaff_StaffId(staff.getStaffId());
+//            if (account != null && account.getRoleName().equals(role)) {
+//                throw new AppException(ErrorCode.DUPLICATE_HEAD);
+//            }
+//        }));
+//    }
 
     private Account checkAccount(UUID id) {
         return repository.findById(id).orElseThrow(()
@@ -221,6 +222,8 @@ public class AccountService {
         Department department = checkDepartment(staff1.getDepartment().getDepartmentId());
         return department.getStaffList().stream().anyMatch(staff -> Objects.equals(staff.isSupervisor(), true));
     }
+
+
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<AccountResponse> getAllAccount() {
