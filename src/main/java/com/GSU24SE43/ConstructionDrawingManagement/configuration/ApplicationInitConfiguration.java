@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Date;
 import java.util.HashSet;
 
 
@@ -47,6 +48,7 @@ public class ApplicationInitConfiguration {
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
                         .roleName("ROLE_" + Role.ADMIN.name())
+                        .createdDate(new Date())
                         .accountStatus(AccountStatus.ACTIVE.name())
                         .build();
                 accountRepository.save(user);

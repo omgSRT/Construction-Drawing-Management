@@ -24,7 +24,7 @@ import javax.crypto.spec.SecretKeySpec;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    private final String[] PUBLIC_ENDPOINTS = {"/test/login", "/test/introspect", "/test/logout"};
+    private final String[] PUBLIC_ENDPOINTS = {"/test/login", "/test/introspect", "/test/logout","/swagger-ui/**"};
 
 
     @Autowired
@@ -42,6 +42,8 @@ public class SecurityConfiguration {
         //Config which method is allowed while the rest will be authenticated
         http.authorizeHttpRequests(request ->
                 request
+
+//                        .requestMatchers("/swagger-ui/index.html#/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/**").permitAll()
