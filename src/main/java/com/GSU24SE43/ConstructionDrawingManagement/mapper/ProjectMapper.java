@@ -12,6 +12,7 @@ import org.mapstruct.MappingTarget;
 public interface ProjectMapper {
     Project toProject(ProjectRequest request);
 
+    @Mapping(source = "department.departmentId", target = "departmentId")
     ProjectResponse toProjectResponse(Project project);
 
     @Mapping(target = "folders", ignore = true)

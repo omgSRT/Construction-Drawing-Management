@@ -35,7 +35,6 @@ public class ProjectService {
     final ProjectMapper projectMapper;
     final AccountRepository accountRepository;
     final DepartmentRepository departmentRepository;
-    final StaffRepository staffRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     @PreAuthorize("hasRole('ADMIN')")
