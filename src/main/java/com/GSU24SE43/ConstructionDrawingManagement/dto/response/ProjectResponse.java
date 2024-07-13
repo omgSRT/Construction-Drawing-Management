@@ -19,4 +19,5 @@ public class ProjectResponse {
     Date startDate;
     Date endDate;
     String status;
+    UUID departmentId;
 }
