@@ -14,8 +14,6 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskParentCreateRequest {
     UUID projectId;
-//    UUID departmentId;
-//    UUID accountId;
     String title;
     String description;
     Date beginDate;

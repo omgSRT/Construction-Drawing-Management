@@ -3,6 +3,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
@@ -10,6 +11,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.enums.TaskStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.TaskMapper;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.AccountRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.DepartmentRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.ProjectRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.TaskRepository;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -31,24 +34,34 @@ public class TaskService {
     TaskRepository taskRepository;
     ProjectRepository projectRepository;
     DepartmentRepository departmentRepository;
+    AccountRepository accountRepository;
     TaskMapper taskMapper;
 
     //create task parent by admin
     @PreAuthorize("hasRole('ADMIN')")
     public TaskParentCreateResponse createTaskParentByAdmin(TaskParentCreateRequest request) {
         Project project = checkProject(request.getProjectId());
-        Date beginDate = request.getBeginDate();
-        Date endDate = request.getEndDate();
-        if (endDate.before(beginDate)) throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
+//        Date beginDate = request.getBeginDate();
+//        Date endDate = request.getEndDate();
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        if (request.getEndDate().before(request.getBeginDate()))
+            throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
         else {
             Task task = taskMapper.toTask(request);
             task.setProject(project);
             task.setCreateDate(new Date());
+            if (account.getRoleName().equals("ROLE_ADMIN")) {
+                task.setAccount(account);
+            }
             task.setStatus(TaskStatus.NO_RECIPIENT.getMessage());
             taskRepository.save(task);
             return taskMapper.toTaskParentCreateResponse(task);
         }
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     public TaskChildCreateResponse createChildTaskByAdmin(UUID parentTaskId, TaskChildCreateRequest request) {
 
@@ -147,6 +160,7 @@ public class TaskService {
         taskRepository.save(taskChild);
         return taskMapper.toTaskChildCreateByHeadResponse(taskChild);
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     public TaskParentUpdateByAdminResponse updateTaskParentByAdmin(UUID parentTaskId, TaskParentUpdateByAdminRequest request) {
         Task taskParent = checkTask(parentTaskId);
@@ -163,6 +177,7 @@ public class TaskService {
         taskRepository.save(taskParent);
         return taskMapper.toTaskParentUpdateByAdminResponse(taskParent);
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     public TaskChildUpdateByAdminResponse updateTaskChildByAdmin(UUID childTaskId, TaskChildUpdateByAdminRequest request) {
         Task taskChild = checkTask(childTaskId);
@@ -180,6 +195,7 @@ public class TaskService {
 
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
+
     @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
 //    public TaskParentUpdateByAdminResponse updateStatusTaskParent(UUID parentTaskId, String status) {
 //        Task taskParent = checkTask(parentTaskId);
@@ -189,27 +205,57 @@ public class TaskService {
     public TaskParentUpdateByAdminResponse updateStatusTaskParent(UUID parentTaskId, TaskStatus status) {
         Task taskParent = checkTask(parentTaskId);
         checkStatusTask(status.name(), taskParent);
+        taskRepository.save(taskParent);
         return taskMapper.toTaskParentUpdateByAdminResponse(taskParent);
     }
+
     @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskChildUpdateByAdminResponse updateStatusTaskChild(UUID childTaskId, TaskStatus status) {
         Task taskChild = checkTask(childTaskId);
         checkStatusTask(status.name(), taskChild);
+        taskRepository.save(taskChild);
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
-    private Task checkTask(UUID taskId){
+
+    public TaskChildUpdateByAdminResponse upgradeStatus(UUID childTaskId, TaskStatus status) {
+        Task taskChild = checkTask(childTaskId);
+        checkStatusTask(status.name(), taskChild);
+        Task taskParent = checkTask(taskChild.getParentTask().getId());
+        taskRepository.save(taskChild);
+        if (status.name().equals(TaskStatus.DONE.name())) {
+            int priority = taskChild.getPriority();
+            int a = priority + 1;
+            if (priority == 4){
+                taskParent.setStatus(TaskStatus.DONE.name());
+                taskRepository.save(taskParent);
+            }
+            if (priority < 4) {
+                Task nextTask = taskRepository.findByPriorityAndParentTaskId(a, taskParent.getId());
+                if (nextTask == null) throw new AppException(ErrorCode.NEXT_TASK_HAS_NOT_BEEN_INITIALIZE);
+                nextTask.setStatus(TaskStatus.ACTIVE.name());
+                taskRepository.save(nextTask);
+            }
+
+        }
+        return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
+    }
+
+    private Task checkTask(UUID taskId) {
         return taskRepository.findById(taskId).orElseThrow(
                 () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
     }
-    private Project checkProject(UUID projectId){
+
+    private Project checkProject(UUID projectId) {
         return projectRepository.findById(projectId).orElseThrow(
                 () -> new AppException(ErrorCode.PROJECT_NOT_FOUND)
         );
     }
-    private Department checkDepartment(UUID departmentId){
+
+    private Department checkDepartment(UUID departmentId) {
         return departmentRepository.findById(departmentId).orElseThrow(
                 () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
     }
+
     private void checkStatusTask(String status, Task task) {
         if (!status.equals(TaskStatus.NO_RECIPIENT.name())
                 && !status.equals(TaskStatus.ACTIVE.name())
@@ -219,20 +265,51 @@ public class TaskService {
             throw new AppException(ErrorCode.UNDEFINED_STATUS_TASK);
         task.setStatus(status);
     }
+
+
     @PreAuthorize("hasRole('ADMIN')")
     public List<Task> getAll() {
         return taskRepository.findAll();
     }
-    //thiếu getAll task những task mà 1 head đã giao
+
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<Task> getAllParentTask() {
         return taskRepository.findByParentTaskIsNull();
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<Task> getAllParentTaskOfAdmin() {
+        List<Task> list = new ArrayList<>();
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        if (account.getRoleName().equals("ROLE_ADMIN")) {
+            list = taskRepository.findByAccountAndParentTaskIsNull(account);
+        }
+        return list;
+    }
+
+    public List<Task> getAllParentTaskOfHead() {
+        List<Task> list = new ArrayList<>();
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        Department department = departmentRepository.findById(account.getStaff().getDepartment().getDepartmentId()).orElseThrow(
+                () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
+        if (account.getStaff().isSupervisor()) {
+            list = taskRepository.findByDepartmentAndParentTaskIsNull(department);
+        }
+        return list;
+    }
+
+
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteTask(UUID taskId) {
+        checkTask(taskId);
         taskRepository.deleteById(taskId);
     }
+
 
 
 }
