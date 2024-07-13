@@ -20,4 +20,5 @@ public class ProjectResponse {
     Date endDate;
     String status;
     UUID departmentId;
+    String departmentName;
 }

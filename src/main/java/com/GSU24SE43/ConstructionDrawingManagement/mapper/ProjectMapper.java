@@ -13,6 +13,7 @@ public interface ProjectMapper {
     Project toProject(ProjectRequest request);
 
     @Mapping(source = "department.departmentId", target = "departmentId")
+    @Mapping(source = "department.name", target = "departmentName")
     ProjectResponse toProjectResponse(Project project);
 
     @Mapping(target = "folders", ignore = true)
