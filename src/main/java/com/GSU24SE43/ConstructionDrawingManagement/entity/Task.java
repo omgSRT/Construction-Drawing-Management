@@ -68,4 +68,19 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"task"}, allowSetters = true)
     List<Notification> notifications;
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", status='" + status + '\'' +
+                ", priority=" + priority +
+                ", createDate=" + createDate +
+                ", beginDate=" + beginDate +
+                ", endDate=" + endDate +
+                ", parentTaskId=" + (null) +
+                '}';
+    }
 }

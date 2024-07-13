@@ -3,7 +3,6 @@ package com.GSU24SE43.ConstructionDrawingManagement.controller;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
-import com.GSU24SE43.ConstructionDrawingManagement.enums.AccountStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.TaskStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,6 +78,13 @@ public class TaskController {
                 .entity(taskService.updateStatusTaskChild(childTaskId, status))
                 .build();
     }
+    @Operation(summary = "Update status task child by admin", description = "Bản update premium của update task child by admin")
+    @PostMapping("/updateStatusChildByAdmin/{childTaskId}")
+    public ApiResponse<TaskChildUpdateByAdminResponse> updateStatusChildTaskByAdmin(@PathVariable UUID childTaskId, @RequestParam TaskStatus status) {
+        return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
+                .entity(taskService.upgradeStatus(childTaskId, status))
+                .build();
+    }
 
     @Operation(summary = "Update task parent by admin", description = "Update task parent by admin")
     @PostMapping("/updateStatusTaskParentByAdmin/{parentTaskId}")
@@ -109,4 +115,30 @@ public class TaskController {
                 .entity(taskService.getAllParentTask())
                 .build();
     }
+
+    @GetMapping("/getAllParentTaskOfAdmin")
+    public ApiResponse<List<Task>> getAllParentTaskOfAdmin() {
+        return ApiResponse.<List<Task>>builder()
+                .entity(taskService.getAllParentTaskOfAdmin())
+                .build();
+    }
+
+    @GetMapping("/getAllParentTaskOfHead")
+    public ApiResponse<List<Task>> getAllParentTaskOfHead() {
+        return ApiResponse.<List<Task>>builder()
+                .entity(taskService.getAllParentTaskOfHead())
+                .build();
+    }
+
+    @DeleteMapping("/{taskId}")
+    public ApiResponse<Void> deleteTask(@PathVariable UUID taskId){
+        taskService.deleteTask(taskId);
+        return ApiResponse.<Void>builder()
+                .message("Delete Task Success")
+                .build();
+    }
+
+
+
+
 }
