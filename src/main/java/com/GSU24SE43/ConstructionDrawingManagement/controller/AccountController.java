@@ -55,8 +55,8 @@ public class AccountController {
 //                .build();
 //    }
 
-    @PutMapping("/update-role-2/{accountId}")
-    public ApiResponse<AccountUpdateResponse> updateRoleAccount_2(@PathVariable UUID accountId,@RequestParam Role role){
+    @PutMapping("/update-role/{accountId}")
+    public ApiResponse<AccountUpdateResponse> updateRoleAccount(@PathVariable UUID accountId,@RequestParam Role role){
         return ApiResponse.<AccountUpdateResponse>builder()
                 .entity(accountService.updateRole2(accountId,role))
                 .build();

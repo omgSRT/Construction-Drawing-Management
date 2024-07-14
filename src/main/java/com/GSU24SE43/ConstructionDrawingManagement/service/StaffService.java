@@ -80,7 +80,7 @@ public class StaffService {
         return mapper.toStaffCreateResponse2(staffRepository.save(staff));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public StaffUpdateResponse update(UUID id, StaffUpdateRequest request) {
         Staff staff = staffRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.STAFF_IS_EXISTED)
@@ -93,7 +93,7 @@ public class StaffService {
         staffRepository.save(staff);
         return mapper.toStaffUpdateResponse(staff);
     }
-    @PreAuthorize("hasAuthority('DESIGNER')")
+    @PreAuthorize("hasRole('DESIGNER')")
     public StaffUpdateByStaffResponse updateByStaff(UUID id, StaffUpdateByStaffRequest request){
         Staff staff = staffRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.STAFF_IS_EXISTED)
@@ -102,15 +102,15 @@ public class StaffService {
         staffRepository.save(staff);
         return mapper.toStaffUpdateByStaffResponse(staff);
     }
-    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public List<Staff> getAll() {
         return staffRepository.findAll();
 
     }
-    // thiếu search staff theo từng deparment
 //*********************
     //phân trang
-    @PreAuthorize("hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+//    @PreAuthorize("hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public List<StaffListResponse> getAllListStaffByHead() {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
@@ -121,7 +121,7 @@ public class StaffService {
         if (staff.isSupervisor()) return department.getStaffList().stream().map(mapper::toStaffList).toList();
         return Collections.emptyList();
     }
-    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public List<Staff> searchStaff(String fullname) {
         return staffRepository.findByFullNameContainingIgnoreCase(fullname);
     }

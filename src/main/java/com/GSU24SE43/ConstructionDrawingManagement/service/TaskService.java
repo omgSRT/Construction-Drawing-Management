@@ -122,7 +122,7 @@ public class TaskService {
     }
 
     //create task parent by head
-    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskParentCreateByHeadResponse createTaskParentByHead(TaskParentCreateByHeadRequest request) {
         Department department = checkDepartment(request.getDepartmentId());
         Project project = checkProject(request.getProjectId());
@@ -141,7 +141,7 @@ public class TaskService {
     }
 
     //create task child by head
-    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskChildCreateByHeadResponse createTaskChildByHead(UUID parentTaskId, TaskChildCreateByHeadRequest request) {
         Task taskParent = checkTask(parentTaskId);
         Department department = checkDepartment(request.getDepartmentId());
@@ -196,7 +196,7 @@ public class TaskService {
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
 //    public TaskParentUpdateByAdminResponse updateStatusTaskParent(UUID parentTaskId, String status) {
 //        Task taskParent = checkTask(parentTaskId);
 //        checkStatusTask(status, taskParent);
@@ -209,7 +209,7 @@ public class TaskService {
         return taskMapper.toTaskParentUpdateByAdminResponse(taskParent);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskChildUpdateByAdminResponse updateStatusTaskChild(UUID childTaskId, TaskStatus status) {
         Task taskChild = checkTask(childTaskId);
         checkStatusTask(status.name(), taskChild);
@@ -290,6 +290,7 @@ public class TaskService {
         return list;
     }
 
+    @PreAuthorize("hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public List<Task> getAllParentTaskOfHead() {
         List<Task> list = new ArrayList<>();
         var context = SecurityContextHolder.getContext();

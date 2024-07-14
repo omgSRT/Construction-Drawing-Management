@@ -57,7 +57,7 @@ public class AccountService {
         return accountMapper.toCreateResponse(account);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public AccountUpdateResponse accountUpdateResponse(UUID accountId, AccountUpdateRequest request) {
         Account account = repository.findById(accountId).orElseThrow(()
                 -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
@@ -121,6 +121,7 @@ public class AccountService {
 //        return accountMapper.toAccountUpdateResponse(account);
 //    }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public AccountUpdateResponse updateRole2(UUID id, Role request) {
         Account account = repository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
         String roleName = request.name();
@@ -172,26 +173,7 @@ public class AccountService {
             }
         }));
     }
-
     //******
-//    private void checkDuplicateHead_2(String role,UUID id) {
-//        if (role.equals(Role.COMMANDER.name())
-//                || role.equals(Role.DESIGNER.name())
-//                || role.equals(Role.ADMIN.name())) {
-//            return;
-//        }
-//        Account account_1 =checkAccount(id);
-//        if (account_1.getStaff().isSupervisor()) return;
-//
-//        List<Department> departments = departmentRepository.findAll();
-//        departments.forEach(department -> department.getStaffList().forEach(staff -> {
-//            Account account = repository.findByStaff_StaffId(staff.getStaffId());
-//            if (account != null && account.getRoleName().equals(role)) {
-//                throw new AppException(ErrorCode.DUPLICATE_HEAD);
-//            }
-//        }));
-//    }
-
     private Account checkAccount(UUID id) {
         return repository.findById(id).orElseThrow(()
                 -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
@@ -209,13 +191,6 @@ public class AccountService {
     }
 
     private boolean checkHead(UUID accountId, Role role) {
-//        Account account = repository.findById(accountId).orElseThrow(()
-//                -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST));
-//        Staff staff1 = staffRepository.findById(account.getStaff().getStaffId()).orElseThrow(
-//                () -> new AppException(ErrorCode.STAFF_NOT_FOUND)
-//        );
-//        Department department = departmentRepository.findById(staff1.getDepartment().getDepartmentId()).orElseThrow(
-//                () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
         Account account = checkAccount(accountId);
         if (account.getRoleName().equals(role.name())) throw new AppException(ErrorCode.HEAD_HAD_THIS_ROLE);
         Staff staff1 = checkStaff(account.getStaff().getStaffId());
@@ -230,6 +205,7 @@ public class AccountService {
         return repository.findAll().stream().map(accountMapper::toAccountResponse).toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
     public AccountResponse getAccountInfo() {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
@@ -238,13 +214,12 @@ public class AccountService {
         );
         return accountMapper.toAccountResponse(account);
     }
-
-    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public Account getAccountByUUID(UUID accountId) {
         return repository.findByAccountId(accountId);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasAnyAuthority('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT', 'HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT','HEAD_OF_MvE_DESIGN_DEPARTMENT','HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public List<Account> searchAccount(String username) {
         return repository.findByUsernameContainingIgnoreCase(username);
     }
@@ -254,6 +229,5 @@ public class AccountService {
         checkAccount(id);
         repository.deleteById(id);
     }
-
 
 }

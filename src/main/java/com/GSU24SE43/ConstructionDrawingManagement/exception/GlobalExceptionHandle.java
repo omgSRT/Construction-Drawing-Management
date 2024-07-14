@@ -2,6 +2,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.exception;
 
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -49,21 +50,31 @@ public class GlobalExceptionHandle {
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
-    @ExceptionHandler({Exception.class})
-    ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException exception){
-        ApiResponse apiRespone = new ApiResponse();
-        apiRespone.setCode(ErrorCode.UNDEFINED_EXCEPTION.getCode());
-        apiRespone.setMessage(ErrorCode.UNDEFINED_EXCEPTION.getMessage());
-
-        System.out.println(exception.toString());
-
-        return ResponseEntity.badRequest().body(apiRespone);
-    }
+//    @ExceptionHandler({Exception.class})
+//    ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException exception){
+//        ApiResponse apiRespone = new ApiResponse();
+//        apiRespone.setCode(ErrorCode.UNDEFINED_EXCEPTION.getCode());
+//        apiRespone.setMessage(ErrorCode.UNDEFINED_EXCEPTION.getMessage());
+//
+//        System.out.println(exception.toString());
+//
+//        return ResponseEntity.badRequest().body(apiRespone);
+//    }
     @ExceptionHandler(IllegalStateException.class)
     ResponseEntity<ApiResponse> handleRuntimeException(IllegalStateException exception){
         ApiResponse response = new ApiResponse<>();
         response.setCode(ErrorCode.UNDEFINED_EXCEPTION.getCode());
         response.setMessage(ErrorCode.UNDEFINED_EXCEPTION.getMessage());
+        System.out.println(exception.toString());
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    ResponseEntity<ApiResponse> handleAuthorizationDeniedException(AuthorizationDeniedException exception){
+        ApiResponse response = new ApiResponse<>();
+        response.setCode(ErrorCode.AUTHORIZATION_DENIED_EXCEPTION.getCode());
+        response.setMessage(ErrorCode.AUTHORIZATION_DENIED_EXCEPTION.getMessage());
+        System.out.println(exception.toString());
         return ResponseEntity.badRequest().body(response);
     }
 }

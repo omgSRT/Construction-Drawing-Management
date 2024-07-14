@@ -42,12 +42,11 @@ public class ApplicationInitConfiguration {
     ApplicationRunner applicationRunner(){
         return args -> {
             if(accountRepository.findByUsername("admin").isEmpty()) {
-//                var roles = new HashSet<String>();
-//                roles.add("ROLE_" + Role.ADMIN.name());
                 Account user = Account.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
-                        .roleName("ROLE_" + Role.ADMIN.name())
+//                        .roleName("ROLE_" + Role.ADMIN.name())
+                        .roleName(Role.ADMIN.name())
                         .createdDate(new Date())
                         .accountStatus(AccountStatus.ACTIVE.name())
                         .build();

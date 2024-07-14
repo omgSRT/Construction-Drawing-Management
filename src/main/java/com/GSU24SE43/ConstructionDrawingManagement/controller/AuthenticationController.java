@@ -22,8 +22,8 @@ import java.text.ParseException;
 public class AuthenticationController {
     @Autowired
     private AuthenticateService authenticateService;
-    @Autowired
-    private AccountRepository accountRepository;
+//    @Autowired
+//    private AccountRepository accountRepository;
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){

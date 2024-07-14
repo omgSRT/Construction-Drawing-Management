@@ -78,10 +78,10 @@ public enum ErrorCode {
     UNDEFINED_STATUS_TASK(10067, "Trạng thái công việc không hợp lệ", HttpStatus.BAD_REQUEST),
     LOG_NOT_FOUND(10068, "Không tìm thấy nhật kí", HttpStatus.NOT_FOUND),
     ROOM_HAD_HEAD(10069, "Phòng này đã có trưởng phòng", HttpStatus.BAD_REQUEST),
-    HEAD_HAD_THIS_ROLE(10069, "Tài khoản hiện tại đã có vai trò này rồi", HttpStatus.BAD_REQUEST),
+    HEAD_HAD_THIS_ROLE(10070, "Tài khoản hiện tại đã có vai trò này rồi", HttpStatus.BAD_REQUEST),
 
-    NEXT_TASK_HAS_NOT_BEEN_INITIALIZE(10069, "nhiệm vụ tiếp theo chưa được khởi tạo", HttpStatus.BAD_REQUEST),
-//    THE_LAST_TASK_IS_DONE(10069, "nhiệm vụ cuối cùng đã xong", HttpStatus.BAD_REQUEST),
+    NEXT_TASK_HAS_NOT_BEEN_INITIALIZE(10071, "nhiệm vụ tiếp theo chưa được khởi tạo", HttpStatus.BAD_REQUEST),
+    AUTHORIZATION_DENIED_EXCEPTION(10072, "Vai trò của bạn không thể thực hiện chức năng này", HttpStatus.FORBIDDEN),
     ;
 
 
