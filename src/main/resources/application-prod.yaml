@@ -39,10 +39,15 @@ server:
     include-stacktrace: never
     include-message: always
 springdoc:
+#  api-docs:
+#    path: /info
+#  swagger-ui:
+#    path: /
+#    operations-sorter: method
   api-docs:
-    path: /info
+    path: /v3/api-docs
   swagger-ui:
-    path: /
+    path: /swagger-ui/index.html
     operations-sorter: method
 logging:
   level:

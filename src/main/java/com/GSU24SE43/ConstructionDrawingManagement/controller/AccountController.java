@@ -30,6 +30,7 @@ public class AccountController {
                 .entity(accountService.accountCreateResponse(request))
                 .build();
     }
+
     @PutMapping("/{accountId}")
     public ApiResponse<AccountUpdateResponse> updateAccount(@PathVariable UUID accountId, @RequestBody @Valid AccountUpdateRequest request){
         return ApiResponse.<AccountUpdateResponse>builder()

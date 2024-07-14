@@ -56,6 +56,20 @@ public class AccountService {
 
         return accountMapper.toCreateResponse(account);
     }
+    public AccountCreateResponse accountAdmin() {
+        Account account =new Account();
+        if (repository.findByUsername("admin").isEmpty()) {
+             account = Account.builder()
+                    .username("admin")
+                    .password(passwordEncoder.encode("admin"))
+                    .roleName(Role.ADMIN.name())
+                    .createdDate(new Date())
+                    .accountStatus(AccountStatus.ACTIVE.name())
+                    .build();
+            repository.save(account);
+        }
+        return accountMapper.toCreateResponse(account);
+    }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public AccountUpdateResponse accountUpdateResponse(UUID accountId, AccountUpdateRequest request) {

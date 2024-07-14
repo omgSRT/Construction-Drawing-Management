@@ -45,7 +45,6 @@ public class ApplicationInitConfiguration {
                 Account user = Account.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
-//                        .roleName("ROLE_" + Role.ADMIN.name())
                         .roleName(Role.ADMIN.name())
                         .createdDate(new Date())
                         .accountStatus(AccountStatus.ACTIVE.name())
