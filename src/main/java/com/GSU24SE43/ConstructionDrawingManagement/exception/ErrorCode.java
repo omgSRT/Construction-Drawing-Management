@@ -1,6 +1,7 @@
 package com.GSU24SE43.ConstructionDrawingManagement.exception;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
@@ -79,14 +80,15 @@ public enum ErrorCode {
     LOG_NOT_FOUND(10068, "Không tìm thấy nhật kí", HttpStatus.NOT_FOUND),
     ROOM_HAD_HEAD(10069, "Phòng này đã có trưởng phòng", HttpStatus.BAD_REQUEST),
     HEAD_HAD_THIS_ROLE(10070, "Tài khoản hiện tại đã có vai trò này rồi", HttpStatus.BAD_REQUEST),
-
     NEXT_TASK_HAS_NOT_BEEN_INITIALIZE(10071, "nhiệm vụ tiếp theo chưa được khởi tạo", HttpStatus.BAD_REQUEST),
     AUTHORIZATION_DENIED_EXCEPTION(10072, "Vai trò của bạn không thể thực hiện chức năng này", HttpStatus.FORBIDDEN),
+    PAGE_EXCEED_MAX_PAGE(10073, "Số trang vượt quá giới hạn tối đa hiện tại là %d", HttpStatus.BAD_REQUEST)
     ;
 
 
 
     private int code;
+    @Setter
     private String message;
     private HttpStatusCode statusCode;
 

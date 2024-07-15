@@ -24,6 +24,12 @@ public class PaginationUtils {
             throw new AppException(ErrorCode.INVALID_PER_PAGE_NUMBER);
         }
 
+        int totalItems = list.size();
+        int maxPage = (int) Math.ceil((double) totalItems / perPage);
+        if(page > maxPage){
+            throw new AppException(ErrorCode.PAGE_EXCEED_MAX_PAGE);
+        }
+
         //turn arraylist to page
         PageRequest pageable = PageRequest.of(page - 1, perPage);
         int start = (int) pageable.getOffset();
