@@ -3,18 +3,12 @@ package com.GSU24SE43.ConstructionDrawingManagement.service;
 
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.*;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.TaskStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.TaskMapper;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.AccountRepository;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.DepartmentRepository;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.ProjectRepository;
-import com.GSU24SE43.ConstructionDrawingManagement.repository.TaskRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,18 +30,18 @@ public class TaskService {
     ProjectRepository projectRepository;
     DepartmentRepository departmentRepository;
     AccountRepository accountRepository;
+    DetailTaskRepository detailTaskRepository;
     TaskMapper taskMapper;
 
     //create task parent by admin
     @PreAuthorize("hasRole('ADMIN')")
     public TaskParentCreateResponse createTaskParentByAdmin(TaskParentCreateRequest request) {
         Project project = checkProject(request.getProjectId());
-//        Date beginDate = request.getBeginDate();
-//        Date endDate = request.getEndDate();
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
 
+        validateProjectDate(request.getBeginDate(), request.getEndDate());
         if (request.getEndDate().before(request.getBeginDate()))
             throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
         else {
@@ -125,13 +120,13 @@ public class TaskService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskParentCreateByHeadResponse createTaskParentByHead(TaskParentCreateByHeadRequest request) {
         Department department = checkDepartment(request.getDepartmentId());
-        Project project = checkProject(request.getProjectId());
+//        Project project = checkProject(request.getProjectId());
         Date beginDate = request.getBeginDate();
         Date endDate = request.getEndDate();
         if (endDate.before(beginDate)) throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
         else {
             Task task = taskMapper.toTaskByHead(request);
-            task.setProject(project);
+//            task.setProject(project);
             task.setDepartment(department);
             task.setCreateDate(new Date());
             task.setStatus(TaskStatus.NO_RECIPIENT.getMessage());
@@ -145,17 +140,19 @@ public class TaskService {
     public TaskChildCreateByHeadResponse createTaskChildByHead(UUID parentTaskId, TaskChildCreateByHeadRequest request) {
         Task taskParent = checkTask(parentTaskId);
         Department department = checkDepartment(request.getDepartmentId());
-        Project project = checkProject(request.getProjectId());
+//        Project project = checkProject(request.getProjectId());
+        validateProjectDate(request.getBeginDate(),request.getEndDate());
         Date beginDate = request.getBeginDate();
         Date endDate = request.getEndDate();
         if (endDate.before(beginDate)) throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
+        if (request.getPriority() < 0) throw new AppException(ErrorCode.PRIORITY_INVALID);
         Task taskChild = taskMapper.toTaskByHead_2(request);
         taskChild.setParentTask(taskParent);
         taskChild.setDepartment(department);
-        taskChild.setProject(project);
+//        taskChild.setProject(project);
         taskChild.setPriority(request.getPriority());
         taskChild.setCreateDate(new Date());
-        taskChild.setStatus(TaskStatus.INACTIVE.name());
+        taskChild.setStatus(TaskStatus.ACTIVE.name());
         taskParent.setStatus(TaskStatus.PROCESSING.name());
         taskRepository.save(taskChild);
         return taskMapper.toTaskChildCreateByHeadResponse(taskChild);
@@ -225,7 +222,7 @@ public class TaskService {
         if (status.name().equals(TaskStatus.DONE.name())) {
             int priority = taskChild.getPriority();
             int a = priority + 1;
-            if (priority == 4){
+            if (priority == 4) {
                 taskParent.setStatus(TaskStatus.DONE.name());
                 taskRepository.save(taskParent);
             }
@@ -266,6 +263,21 @@ public class TaskService {
         task.setStatus(status);
     }
 
+    private void validateProjectDate(Date startDate, Date endDate) {
+        int result = startDate.compareTo(endDate);
+        int result1 = startDate.compareTo(new Date());
+        int result2 = endDate.compareTo(new Date());
+
+        if (result >= 0) {
+            throw new AppException(ErrorCode.INVALID_CREATED_DATE_EARLIER_THAN_END_DATE);
+        }
+        if (result1 < 0) {
+            throw new AppException(ErrorCode.INVALID_CREATED_DATE_NOT_IN_FUTURE);
+        }
+        if (result2 <= 0) {
+            throw new AppException(ErrorCode.INVALID_END_DATE_NOT_IN_FUTURE);
+        }
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<Task> getAll() {
@@ -304,13 +316,25 @@ public class TaskService {
         return list;
     }
 
+    public List<Task> getAllTaskOfDesigner(){
+//        List<Task> list = new ArrayList<>();
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        List<DetailTask> detailTasks = detailTaskRepository.findByStaffStaffId(account.getStaff().getStaffId());
+        return detailTasks.stream()
+                .map(DetailTask::getTask)
+                .distinct()
+                .collect(Collectors.toList());
+
+    }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteTask(UUID taskId) {
         checkTask(taskId);
         taskRepository.deleteById(taskId);
     }
-
 
 
 }

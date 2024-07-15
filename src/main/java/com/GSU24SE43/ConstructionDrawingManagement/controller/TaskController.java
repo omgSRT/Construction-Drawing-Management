@@ -129,6 +129,12 @@ public class TaskController {
                 .entity(taskService.getAllParentTaskOfHead())
                 .build();
     }
+    @GetMapping("/getAllTaskOfDesigner")
+    public ApiResponse<List<Task>> getAllTaskOfDesigner() {
+        return ApiResponse.<List<Task>>builder()
+                .entity(taskService.getAllTaskOfDesigner())
+                .build();
+    }
 
     @DeleteMapping("/{taskId}")
     public ApiResponse<Void> deleteTask(@PathVariable UUID taskId){
