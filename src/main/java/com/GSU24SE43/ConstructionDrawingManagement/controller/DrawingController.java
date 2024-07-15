@@ -32,35 +32,65 @@ public class DrawingController {
                 .build();
     }
 
-    @Operation(summary = "Get All Drawings", description = "Get All Drawings")
-    @GetMapping(path = "/getall")
-    public ApiResponse<List<DrawingResponse>> getAllDrawings(@RequestParam(defaultValue = "1") int page,
+    @Operation(summary = "Get All Drawings", description = "Get All Drawings By Status")
+    @GetMapping(path = "/getallByStatus")
+    public ApiResponse<List<DrawingResponse>> getAllDrawingsByStatus(@RequestParam(defaultValue = "1") int page,
                                                              @RequestParam(defaultValue = "10") int perPage,
-                                                             @RequestParam(required = false) String status){
+                                                             @RequestParam DrawingStatus status){
         return ApiResponse.<List<DrawingResponse>>builder()
-                .entity(drawingService.getAllDrawings(page, perPage, status))
+                .entity(drawingService.getAllDrawingsByStatus(page, perPage, status))
                 .build();
     }
 
-    @Operation(summary = "Find Drawings", description = "Find Drawing(s) by Name")
-    @GetMapping(path = "/search/name")
-    public ApiResponse<List<DrawingResponse>> searchDrawingsByName(@NotBlank String name,
+    @Operation(summary = "Get All Drawings")
+    @GetMapping(path = "/getall")
+    public ApiResponse<List<DrawingResponse>> getAllDrawings(@RequestParam(defaultValue = "1") int page,
+                                                                     @RequestParam(defaultValue = "10") int perPage){
+        return ApiResponse.<List<DrawingResponse>>builder()
+                .entity(drawingService.getAllDrawings(page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Find Drawings", description = "Find Drawing(s) by Name and Status")
+    @GetMapping(path = "/searchByNameAndStatus")
+    public ApiResponse<List<DrawingResponse>> searchDrawingsByNameAndStatus(@NotBlank String name,
                                                                              @RequestParam(defaultValue = "1") int page,
                                                                              @RequestParam(defaultValue = "10") int perPage,
-                                                                             @RequestParam(required = false) String status){
+                                                                             @RequestParam DrawingStatus status){
         return ApiResponse.<List<DrawingResponse>>builder()
                 .entity(drawingService.findDrawingsByNameContainingAndStatus(name, status, page, perPage))
                 .build();
     }
 
+    @Operation(summary = "Find Drawings", description = "Find Drawing(s) by Name")
+    @GetMapping(path = "/searchByName")
+    public ApiResponse<List<DrawingResponse>> searchDrawingsByName(@NotBlank String name,
+                                                                            @RequestParam(defaultValue = "1") int page,
+                                                                            @RequestParam(defaultValue = "10") int perPage){
+        return ApiResponse.<List<DrawingResponse>>builder()
+                .entity(drawingService.findDrawingsByNameContaining(name, page, perPage))
+                .build();
+    }
 
-    @Operation(summary = "Find Drawings", description = "Find Drawing(s) by Folder")
-    @GetMapping(path = "/search/projectName")
-    public ApiResponse<List<DrawingResponse>> searchDrawingByFolder(@RequestBody @Valid DrawingSearchByFolderRequest request,
+
+    @Operation(summary = "Find Drawings", description = "Find Drawing(s) by Folder and Status")
+    @GetMapping(path = "/searchByFolderIdAndStatus/{folderId}")
+    public ApiResponse<List<DrawingResponse>> searchDrawingByFolderAndStatus(@PathVariable UUID folderId,
+                                                                         @RequestParam DrawingStatus status,
                                                                          @RequestParam(defaultValue = "1") int page,
                                                                          @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<DrawingResponse>>builder()
-                .entity(drawingService.findDrawingsByFolderAndStatus(request, page, perPage))
+                .entity(drawingService.findDrawingsByFolderAndStatus(folderId, status, page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Find Drawings", description = "Find Drawing(s) by Folder")
+    @GetMapping(path = "/searchByFolderId/{folderId}")
+    public ApiResponse<List<DrawingResponse>> searchDrawingByFolder(@PathVariable UUID folderId,
+                                                                             @RequestParam(defaultValue = "1") int page,
+                                                                             @RequestParam(defaultValue = "10") int perPage){
+        return ApiResponse.<List<DrawingResponse>>builder()
+                .entity(drawingService.findDrawingsByFolder(folderId, page, perPage))
                 .build();
     }
 
@@ -69,6 +99,15 @@ public class DrawingController {
     public ApiResponse<DrawingResponse> getDrawingById(@PathVariable UUID id){
         return ApiResponse.<DrawingResponse>builder()
                 .entity(drawingService.findDrawingById(id))
+                .build();
+    }
+
+    @Operation(summary = "Get Drawing", description = "Get A Drawing by ID and Status")
+    @GetMapping(path = "/getByStatus/{id}")
+    public ApiResponse<DrawingResponse> getDrawingByIdAndStatus(@PathVariable UUID id,
+                                                                @RequestParam DrawingStatus status){
+        return ApiResponse.<DrawingResponse>builder()
+                .entity(drawingService.findDrawingByIdAndStatus(id, status))
                 .build();
     }
 
