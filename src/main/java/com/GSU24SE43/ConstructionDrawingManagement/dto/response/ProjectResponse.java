@@ -1,8 +1,10 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Date;
 import java.util.UUID;
 
@@ -19,6 +21,5 @@ public class ProjectResponse {
     Date startDate;
     Date endDate;
     String status;
-    UUID departmentId;
-    String departmentName;
+    List<Department> departments;
 }

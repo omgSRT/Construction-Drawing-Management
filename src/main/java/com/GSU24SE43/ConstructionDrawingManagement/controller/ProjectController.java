@@ -41,42 +41,79 @@ public class ProjectController {
     @Operation(summary = "Get All Projects", description = "Get All Projects")
     @GetMapping(path = "/getall")
     public ApiResponse<List<ProjectResponse>> getAllProjects(@RequestParam(defaultValue = "1") int page,
-                                                             @RequestParam(defaultValue = "10") int perPage,
-                                                             @RequestParam(required = false) String status){
+                                                             @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<ProjectResponse>>builder()
-                .entity(projectService.getAllProjects(page, perPage, status))
+                .entity(projectService.getAllProjects(page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Get All Projects", description = "Get All Projects By Status")
+    @GetMapping(path = "/getallByStatus")
+    public ApiResponse<List<ProjectResponse>> getAllProjectsByStatus(@RequestParam(defaultValue = "1") int page,
+                                                             @RequestParam(defaultValue = "10") int perPage,
+                                                             @RequestParam ProjectStatus status){
+        return ApiResponse.<List<ProjectResponse>>builder()
+                .entity(projectService.getAllProjectsByStatus(page, perPage, status))
                 .build();
     }
 
     @Operation(summary = "Find Projects", description = "Find Project(s) by Department Name")
     @GetMapping(path = "/search/departmentName")
     public ApiResponse<List<ProjectResponse>> searchProjectsByDepartmentName(@NotBlank String departmentName,
+                                                                                       @RequestParam(defaultValue = "1") int page,
+                                                                                       @RequestParam(defaultValue = "10") int perPage){
+        return ApiResponse.<List<ProjectResponse>>builder()
+                .entity(projectService.findProjectByDepartmentName(departmentName, page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Find Projects", description = "Find Project(s) by Department Name with Status")
+    @GetMapping(path = "/search/departmentNameWithStatus")
+    public ApiResponse<List<ProjectResponse>> searchProjectsByDepartmentNameWithStatus(@NotBlank String departmentName,
                                                                              @RequestParam(defaultValue = "1") int page,
                                                                              @RequestParam(defaultValue = "10") int perPage,
-                                                                             @RequestParam(required = false) String status){
+                                                                             @RequestParam ProjectStatus status){
         return ApiResponse.<List<ProjectResponse>>builder()
                 .entity(projectService.findProjectByDepartmentNameAndStatus(departmentName, status, page, perPage))
                 .build();
     }
 
 
-    @Operation(summary = "Find Projects", description = "Find Project(s) by Name")
-    @GetMapping(path = "/search/projectName")
-    public ApiResponse<List<ProjectResponse>> searchActiveProjectsByName(@NotBlank String projectName,
+    @Operation(summary = "Find Projects", description = "Find Project(s) by Name with Status")
+    @GetMapping(path = "/search/projectNameWithStatus")
+    public ApiResponse<List<ProjectResponse>> searchProjectsByNameWithStatus(@NotBlank String projectName,
                                                                          @RequestParam(defaultValue = "1") int page,
                                                                          @RequestParam(defaultValue = "10") int perPage,
-                                                                         @RequestParam(required = false) String status){
+                                                                         @RequestParam ProjectStatus status){
         return ApiResponse.<List<ProjectResponse>>builder()
                 .entity(projectService.findProjectByNameContainingAndStatus(projectName, status, page, perPage))
                 .build();
     }
 
-    @Operation(summary = "Get Project", description = "Get A Project by ID")
-    @GetMapping(path = "/get/{id}")
-    public ApiResponse<ProjectResponse> getProjectById(@PathVariable UUID id,
-                                                       @RequestParam(required = false) String status){
+    @Operation(summary = "Find Projects", description = "Find Project(s) by Name")
+    @GetMapping(path = "/search/projectName")
+    public ApiResponse<List<ProjectResponse>> searchProjectsByName(@NotBlank String projectName,
+                                                                             @RequestParam(defaultValue = "1") int page,
+                                                                             @RequestParam(defaultValue = "10") int perPage){
+        return ApiResponse.<List<ProjectResponse>>builder()
+                .entity(projectService.findProjectByNameContaining(projectName, page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Get Project", description = "Get A Project by ID with Status")
+    @GetMapping(path = "/getWithStatus/{id}")
+    public ApiResponse<ProjectResponse> getProjectByIdAndStatus(@PathVariable UUID id,
+                                                       @RequestParam ProjectStatus status){
         return ApiResponse.<ProjectResponse>builder()
                 .entity(projectService.findProjectByIdAndStatus(id, status))
+                .build();
+    }
+
+    @Operation(summary = "Get Project", description = "Get A Project by ID")
+    @GetMapping(path = "/get/{id}")
+    public ApiResponse<ProjectResponse> getProjectById(@PathVariable UUID id){
+        return ApiResponse.<ProjectResponse>builder()
+                .entity(projectService.findProjectById(id))
                 .build();
     }
 

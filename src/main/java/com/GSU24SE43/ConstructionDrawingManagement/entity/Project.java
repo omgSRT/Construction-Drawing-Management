@@ -31,9 +31,9 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Folder> folders;
 
-    @ManyToOne
-    @JoinColumn(name ="departmentId")
-    Department department;
+    @JsonIgnore
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<DepartmentProject> departmentProjects;
 
     @ManyToOne
     @JoinColumn(name = "accountId")

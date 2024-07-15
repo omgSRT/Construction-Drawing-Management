@@ -51,9 +51,4 @@ public class DetailTaskController {
                 .message("")
                 .build();
     }
-
-
-
-
-
 }
