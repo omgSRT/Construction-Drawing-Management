@@ -9,6 +9,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.CommentStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.DrawingStatus;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.VersionStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
@@ -54,28 +55,20 @@ public class CommentService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<CommentResponse> getAllComments(int page, int perPage, String status) {
-        try {
-            List<CommentResponse> comments;
-            if(!status.isBlank()){
-                CommentStatus commentStatus;
-                status = status.toUpperCase();
-                try {
-                    commentStatus = CommentStatus.valueOf(status);
-                } catch (IllegalArgumentException e) {
-                    throw new AppException(ErrorCode.INVALID_STATUS);
-                }
-                comments = commentRepository.findByStatus(status).stream()
-                        .map(commentMapper::toCommentResponse).toList();
-            }
-            else{
-                comments = commentRepository.findAll().stream().map(commentMapper::toCommentResponse).toList();
-            }
+    public List<CommentResponse> getAllCommentsWithStatus(int page, int perPage, CommentStatus status) {
+        String stringStatus = status.name();
+        var commentResponses = commentRepository.findByStatus(stringStatus).stream()
+                .map(commentMapper::toCommentResponse).toList();
+        commentResponses = paginationUtils.convertListToPage(page, perPage, commentResponses);
+        return commentResponses;
+    }
 
-            return paginationUtils.convertListToPage(page, perPage, comments);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<CommentResponse> getAllComments(int page, int perPage) {
+        var commentResponses = commentRepository.findAll().stream()
+                .map(commentMapper::toCommentResponse).toList();
+        commentResponses = paginationUtils.convertListToPage(page, perPage, commentResponses);
+        return commentResponses;
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
@@ -105,6 +98,13 @@ public class CommentService {
                                                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    public CommentResponse findCommentByIdAndStatus(UUID id, CommentStatus status){
+        String stringStatus = status.name();
+        return commentMapper.toCommentResponse(commentRepository.findByCommentIdAndStatus(id, stringStatus)
+                .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND)));
+    }
+
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
     public CommentResponse updateCommentById(UUID id, CommentUpdateRequest request){
         var comment = commentRepository.findById(id)
@@ -116,55 +116,48 @@ public class CommentService {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
-    public List<CommentResponse> findCommentsByStaffId(UUID staffId, String status, int page, int perPage){
-        try {
-            List<CommentResponse> commentResponses;
-            if(!status.isBlank()){
-                CommentStatus commentStatus;
-                status = status.toUpperCase();
-                try {
-                    commentStatus = CommentStatus.valueOf(status);
-                } catch (IllegalArgumentException e) {
-                    throw new AppException(ErrorCode.INVALID_STATUS);
-                }
+    public List<CommentResponse> findCommentsByStaffIdAndStatus(UUID staffId, CommentStatus status, int page, int perPage){
+        Staff staff = staffRepository.findById(staffId)
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
-                commentResponses = commentRepository.findByStaffStaffIdAndStatus(staffId, status).stream()
-                        .map(commentMapper::toCommentResponse).toList();
-            }
-            else{
-                commentResponses = commentRepository.findByStaffStaffId(staffId).stream()
-                        .map(commentMapper::toCommentResponse).toList();
-            }
-
-            return paginationUtils.convertListToPage(page, perPage, commentResponses);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        String stringStatus = status.name();
+        var commentResponses = commentRepository.findByStaffStaffIdAndStatus(staffId, stringStatus).stream()
+                .map(commentMapper::toCommentResponse).toList();
+        commentResponses = paginationUtils.convertListToPage(page, perPage, commentResponses);
+        return commentResponses;
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
-    public List<CommentResponse> findCommentsByTaskId(UUID taskId, String status, int page, int perPage){
-        try {
-            List<CommentResponse> commentResponses;
-            if(!status.isBlank()){
-                CommentStatus commentStatus;
-                status = status.toUpperCase();
-                try {
-                    commentStatus = CommentStatus.valueOf(status);
-                } catch (IllegalArgumentException e) {
-                    throw new AppException(ErrorCode.INVALID_STATUS);
-                }
+    public List<CommentResponse> findCommentsByStaffId(UUID staffId, int page, int perPage){
+        Staff staff = staffRepository.findById(staffId)
+                .orElseThrow(() -> new AppException(ErrorCode.STAFF_NOT_FOUND));
 
-                commentResponses = commentRepository.findByTaskIdAndStatus(taskId, status).stream()
-                        .map(commentMapper::toCommentResponse).toList();
-            }
-            else{
-                commentResponses = commentRepository.findByTaskId(taskId).stream().map(commentMapper::toCommentResponse).toList();
-            }
+        var commentResponses = commentRepository.findByStaffStaffId(staffId).stream()
+                .map(commentMapper::toCommentResponse).toList();
+        commentResponses = paginationUtils.convertListToPage(page, perPage, commentResponses);
+        return commentResponses;
+    }
 
-            return paginationUtils.convertListToPage(page, perPage, commentResponses);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<CommentResponse> findCommentsByTaskIdAndStatus(UUID taskId, CommentStatus status, int page, int perPage){
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND));
+
+        String stringStatus = status.name();
+        var commentResponses = commentRepository.findByTaskIdAndStatus(taskId, stringStatus).stream()
+                .map(commentMapper::toCommentResponse).toList();
+        commentResponses = paginationUtils.convertListToPage(page, perPage, commentResponses);
+        return commentResponses;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<CommentResponse> findCommentsByTaskId(UUID taskId, int page, int perPage){
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND));
+
+        var commentResponses = commentRepository.findByTaskId(taskId).stream()
+                .map(commentMapper::toCommentResponse).toList();
+        commentResponses = paginationUtils.convertListToPage(page, perPage, commentResponses);
+        return commentResponses;
     }
 }

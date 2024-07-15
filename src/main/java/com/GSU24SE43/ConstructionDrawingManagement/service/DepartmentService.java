@@ -6,6 +6,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.DepartmentMapper;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.DepartmentProjectRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.DepartmentRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class DepartmentService {
     final DepartmentRepository departmentRepository;
     final DepartmentMapper departmentMapper;
+    final DepartmentProjectRepository departmentProjectRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     @PreAuthorize("hasRole('ADMIN')")
