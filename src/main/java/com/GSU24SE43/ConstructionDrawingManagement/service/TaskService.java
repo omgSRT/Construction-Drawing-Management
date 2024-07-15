@@ -120,13 +120,13 @@ public class TaskService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskParentCreateByHeadResponse createTaskParentByHead(TaskParentCreateByHeadRequest request) {
         Department department = checkDepartment(request.getDepartmentId());
-//        Project project = checkProject(request.getProjectId());
+        Project project = checkProject(request.getProjectId());
         Date beginDate = request.getBeginDate();
         Date endDate = request.getEndDate();
         if (endDate.before(beginDate)) throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
         else {
             Task task = taskMapper.toTaskByHead(request);
-//            task.setProject(project);
+            task.setProject(project);
             task.setDepartment(department);
             task.setCreateDate(new Date());
             task.setStatus(TaskStatus.NO_RECIPIENT.getMessage());
@@ -140,7 +140,7 @@ public class TaskService {
     public TaskChildCreateByHeadResponse createTaskChildByHead(UUID parentTaskId, TaskChildCreateByHeadRequest request) {
         Task taskParent = checkTask(parentTaskId);
         Department department = checkDepartment(request.getDepartmentId());
-//        Project project = checkProject(request.getProjectId());
+        Project project = checkProject(request.getProjectId());
         validateProjectDate(request.getBeginDate(),request.getEndDate());
         Date beginDate = request.getBeginDate();
         Date endDate = request.getEndDate();
@@ -149,7 +149,7 @@ public class TaskService {
         Task taskChild = taskMapper.toTaskByHead_2(request);
         taskChild.setParentTask(taskParent);
         taskChild.setDepartment(department);
-//        taskChild.setProject(project);
+        taskChild.setProject(project);
         taskChild.setPriority(request.getPriority());
         taskChild.setCreateDate(new Date());
         taskChild.setStatus(TaskStatus.ACTIVE.name());
