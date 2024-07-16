@@ -37,6 +37,7 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "accountId")
+    @JsonIgnoreProperties(value = { "projectList" }, allowSetters = true)
     Account account;
 
     @JsonIgnore

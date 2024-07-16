@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,7 +41,8 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "departmentId")
-    @JsonIgnoreProperties(value = {"taskList"}, allowSetters = true)
+    //@JsonIgnoreProperties(value = {"taskList"}, allowSetters = true)
+    @JsonIgnore
     Department department;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -53,7 +55,8 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "projectId")
-    @JsonIgnoreProperties(value = {"tasks"}, allowSetters = true)
+//    @JsonIgnoreProperties(value = {"tasks"}, allowSetters = true)
+    @JsonIgnore
     Project project;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -66,7 +69,8 @@ public class Task {
     Account account;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = {"task"}, allowSetters = true)
+//    @JsonIgnoreProperties(value = {"task"}, allowSetters = true)
+            @JsonIgnore
     List<Notification> notifications;
 
     @Override

@@ -26,19 +26,22 @@ public class Staff {
     String degree;
     boolean isSupervisor;
 
-// department
+    // department
     @ManyToOne
     @JoinColumn(name = "departmentId")
+    @JsonIgnoreProperties(value = {"staffList"}, allowSetters = true)
     Department department;
 
     @OneToOne
-    @JsonIgnoreProperties(value = { "staff" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
     @JoinColumn(name = "account_Id")
     Account account;
-// comment
+    // comment
+    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Comment> comments;
 
+    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     List<DetailTask> detailTasks;
 
@@ -46,7 +49,7 @@ public class Staff {
 //    List<Project> projects;
 
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = { "staff" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
     List<StaffFolder> staff_folders;
 
 }
