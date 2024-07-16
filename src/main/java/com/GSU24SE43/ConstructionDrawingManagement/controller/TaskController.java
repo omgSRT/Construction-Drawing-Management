@@ -5,6 +5,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.TaskStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.service.TaskService;
+import com.google.protobuf.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -102,6 +104,7 @@ public class TaskController {
                 .build();
     }
 
+    @Operation(summary = "Get all task", description = "Get all task")
     @GetMapping("/getAll")
     public ApiResponse<List<Task>> getAll() {
         return ApiResponse.<List<Task>>builder()
@@ -109,13 +112,14 @@ public class TaskController {
                 .build();
     }
 
+    @Operation(summary = "Get all parent task", description = "Get all parent task")
     @GetMapping("/getAllParentTask")
     public ApiResponse<List<Task>> getAllParentTask() {
         return ApiResponse.<List<Task>>builder()
                 .entity(taskService.getAllParentTask())
                 .build();
     }
-
+    @Operation(summary = "Get All task parent of admin", description = "Get All task parent of admin")
     @GetMapping("/getAllParentTaskOfAdmin")
     public ApiResponse<List<Task>> getAllParentTaskOfAdmin() {
         return ApiResponse.<List<Task>>builder()
@@ -123,16 +127,57 @@ public class TaskController {
                 .build();
     }
 
+    @Operation(summary = "Get All task child of admin", description = "Get All task child of admin")
+    @GetMapping("/getAllChildTaskOfAdmin")
+    public ApiResponse<List<Task>> getAllChildTaskOfAdmin() {
+        return ApiResponse.<List<Task>>builder()
+                .entity(taskService.getAllChildTasksOfAdmin())
+                .build();
+    }
+    @Operation(summary = "Get All task parent of head", description = "Get All task parent of head")
     @GetMapping("/getAllParentTaskOfHead")
     public ApiResponse<List<Task>> getAllParentTaskOfHead() {
         return ApiResponse.<List<Task>>builder()
                 .entity(taskService.getAllParentTaskOfHead())
                 .build();
     }
+    @Operation(summary = "Get All task child of head", description = "Get All task child of head")
+    @GetMapping("/getAllChildTaskOfHead")
+    public ApiResponse<List<Task>> getAllChildTaskOfHead() {
+        return ApiResponse.<List<Task>>builder()
+                .entity(taskService.getAllChildTaskOfHead())
+                .build();
+    }
+    @Operation(summary = "Get All task of designer", description = "Get All task of designer")
     @GetMapping("/getAllTaskOfDesigner")
     public ApiResponse<List<Task>> getAllTaskOfDesigner() {
         return ApiResponse.<List<Task>>builder()
                 .entity(taskService.getAllTaskOfDesigner())
+                .build();
+    }
+    @Operation(summary = "Search task by id", description = "Search task by id")
+    @GetMapping("/findTaskById")
+    public ApiResponse<Task> findTask(@RequestParam UUID taskId){
+        return ApiResponse.<Task>builder()
+                .entity(taskService.findTaskById(taskId))
+                .build();
+    }
+    @Operation(summary = "Filter task", description = "Filter task")
+    @GetMapping("/filterTask")
+    public ApiResponse<List<Task>> filterTask(@RequestParam(required = false) UUID taskId
+            ,@RequestParam(required = false) String status
+            ,@RequestParam(required = false) String title
+            ,@RequestParam(required = false) Date beginDate
+            ,@RequestParam(required = false) Date endDate){
+        return ApiResponse.<List<Task>>builder()
+                .entity(taskService.filterTask(taskId, title, status,beginDate, endDate))
+                .build();
+    }
+    @Operation(summary = "Get all child task of a task parent", description = "Get all child task of a task parent")
+    @GetMapping("/getChildTaskOfAParentTask/{parentTaskId}")
+    public ApiResponse<List<Task>> getChildTaskOfAParentTask(@PathVariable UUID parentTaskId){
+        return ApiResponse.<List<Task>>builder()
+                .entity(taskService.getChildTaskOfAParentTask(parentTaskId))
                 .build();
     }
 
