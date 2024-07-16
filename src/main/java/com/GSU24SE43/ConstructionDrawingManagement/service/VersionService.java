@@ -50,47 +50,43 @@ public class VersionService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<VersionResponse> getAllVersions(int page, int perPage, String status) {
-        List<VersionResponse> versionResponseList;
-        if(status != null){
-            VersionStatus versionStatus;
-            try {
-                versionStatus = VersionStatus.valueOf(status.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new AppException(ErrorCode.INVALID_STATUS);
-            }
-            versionResponseList = versionRepository.findByStatus(status).stream()
-                    .map(versionMapper::toVersionResponse).toList();
-        }
-        else{
-            versionResponseList = versionRepository.findAll().stream()
-                    .map(versionMapper::toVersionResponse).toList();
-        }
+    public List<VersionResponse> getAllVersionsByStatus(int page, int perPage, VersionStatus status) {
+        String stringStatus = status.name();
+        var versionResponses = versionRepository.findByStatus(stringStatus).stream()
+                .map(versionMapper::toVersionResponse).toList();
+        versionResponses = paginationUtils.convertListToPage(page, perPage, versionResponses);
+        return versionResponses;
+    }
 
-        versionResponseList = paginationUtils.convertListToPage(page, perPage, versionResponseList);
-        return versionResponseList;
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<VersionResponse> getAllVersions(int page, int perPage) {
+        var versionResponses = versionRepository.findAll().stream()
+                .map(versionMapper::toVersionResponse).toList();
+        versionResponses = paginationUtils.convertListToPage(page, perPage, versionResponses);
+        return versionResponses;
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
-    public List<VersionResponse> getAllVersionsByDrawingId(int page, int perPage, String status, UUID drawingId) {
-        List<VersionResponse> versionResponseList;
-        if(status != null){
-            VersionStatus versionStatus;
-            try {
-                versionStatus = VersionStatus.valueOf(status.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new AppException(ErrorCode.INVALID_STATUS);
-            }
-            versionResponseList = versionRepository.findByDrawingIdAndStatus(drawingId, status).stream()
-                    .map(versionMapper::toVersionResponse).toList();
-        }
-        else{
-            versionResponseList = versionRepository.findByDrawingId(drawingId).stream()
-                    .map(versionMapper::toVersionResponse).toList();
-        }
+    public List<VersionResponse> getAllVersionsByDrawingIdAndStatus(int page, int perPage, VersionStatus status, UUID drawingId) {
+        Drawing drawing = drawingRepository.findById(drawingId)
+                .orElseThrow(() -> new AppException(ErrorCode.DRAWING_NOT_FOUND));
 
-        versionResponseList = paginationUtils.convertListToPage(page, perPage, versionResponseList);
-        return versionResponseList;
+        String stringStatus = status.name();
+        var versionResponses = versionRepository.findByStatus(stringStatus).stream()
+                .map(versionMapper::toVersionResponse).toList();
+        versionResponses = paginationUtils.convertListToPage(page, perPage, versionResponses);
+        return versionResponses;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<VersionResponse> getAllVersionsByDrawingId(int page, int perPage, UUID drawingId) {
+        Drawing drawing = drawingRepository.findById(drawingId)
+                .orElseThrow(() -> new AppException(ErrorCode.DRAWING_NOT_FOUND));
+
+        var versionResponses = versionRepository.findByDrawingId(drawingId).stream()
+                .map(versionMapper::toVersionResponse).toList();
+        versionResponses = paginationUtils.convertListToPage(page, perPage, versionResponses);
+        return versionResponses;
     }
 
     @PreAuthorize("hasRole('ADMIN')")

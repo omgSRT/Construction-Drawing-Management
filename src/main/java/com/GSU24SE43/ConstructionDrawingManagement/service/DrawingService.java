@@ -51,87 +51,60 @@ public class DrawingService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<DrawingResponse> getAllDrawings(int page, int perPage, String status){
-        try {
-            List<DrawingResponse> drawingResponses;
-            if(!status.isBlank()){
-                DrawingStatus drawingStatus;
-                status = status.toUpperCase();
-                try {
-                    drawingStatus = DrawingStatus.valueOf(status);
-                } catch (IllegalArgumentException e) {
-                    throw new AppException(ErrorCode.INVALID_STATUS);
-                }
-                drawingResponses = drawingRepository.findByStatus(status.toUpperCase())
-                        .stream().map(drawingMapper::toDrawingResponse).toList();
-            }
-            else{
-                drawingResponses = drawingRepository.findAll().stream().map(drawingMapper::toDrawingResponse).toList();
-            }
+    public List<DrawingResponse> getAllDrawingsByStatus(int page, int perPage, DrawingStatus status){
+        String stringStatus = status.name();
+        var drawingResponses = drawingRepository.findByStatus(stringStatus).stream()
+                .map(drawingMapper::toDrawingResponse).toList();
+        drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
+        return drawingResponses;
+    }
 
-            drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
-            return drawingResponses;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<DrawingResponse> getAllDrawings(int page, int perPage){
+        var drawingResponses = drawingRepository.findAll().stream()
+                .map(drawingMapper::toDrawingResponse).toList();
+        drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
+        return drawingResponses;
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
-    public List<DrawingResponse> findDrawingsByNameContainingAndStatus(String name, String status, int page, int perPage){
-        try {
-            List<DrawingResponse> drawingResponses;
-            if(!status.isBlank()){
-                DrawingStatus drawingStatus;
-                status = status.toUpperCase();
-                try {
-                    drawingStatus = DrawingStatus.valueOf(status);
-                } catch (IllegalArgumentException e) {
-                    throw new AppException(ErrorCode.INVALID_STATUS);
-                }
-                drawingResponses = drawingRepository.findByNameContainingAndStatus(name, status)
-                        .stream().map(drawingMapper::toDrawingResponse).toList();
-            }
-            else{
-                drawingResponses
-                        = drawingRepository.findByNameContaining(name).stream().map(drawingMapper::toDrawingResponse).toList();
-            }
-
-            drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
-            return drawingResponses;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public List<DrawingResponse> findDrawingsByNameContainingAndStatus(String name, DrawingStatus status, int page, int perPage){
+        String stringStatus = status.name();
+        var drawingResponses = drawingRepository.findByNameContainingAndStatus(name, stringStatus).stream()
+                .map(drawingMapper::toDrawingResponse).toList();
+        drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
+        return drawingResponses;
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
-    public List<DrawingResponse> findDrawingsByFolderAndStatus(DrawingSearchByFolderRequest request, int page, int perPage){
-        try {
-            Folder folder = folderRepository.findById(request.getFolderId())
-                    .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
+    public List<DrawingResponse> findDrawingsByNameContaining(String name, int page, int perPage){
+        var drawingResponses = drawingRepository.findByNameContaining(name).stream()
+                .map(drawingMapper::toDrawingResponse).toList();
+        drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
+        return drawingResponses;
+    }
 
-            List<DrawingResponse> drawingResponses;
-            String status = request.getStatus();
-            if(!status.isBlank()){
-                DrawingStatus drawingStatus;
-                status = status.toUpperCase();
-                try {
-                    drawingStatus = DrawingStatus.valueOf(status);
-                } catch (IllegalArgumentException e) {
-                    throw new AppException(ErrorCode.INVALID_STATUS);
-                }
-                drawingResponses = drawingRepository.findByFolderAndStatus(folder, status)
-                        .stream().map(drawingMapper::toDrawingResponse).toList();
-            }
-            else{
-                drawingResponses
-                        = drawingRepository.findByFolder(folder).stream().map(drawingMapper::toDrawingResponse).toList();
-            }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<DrawingResponse> findDrawingsByFolderAndStatus(UUID folderId, DrawingStatus status, int page, int perPage){
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
 
-            drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
-            return drawingResponses;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        String stringStatus = status.name();
+        var drawingResponses = drawingRepository.findByFolderAndStatus(folder, stringStatus).stream()
+                .map(drawingMapper::toDrawingResponse).toList();
+        drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
+        return drawingResponses;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<DrawingResponse> findDrawingsByFolder(UUID folderId, int page, int perPage){
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
+
+        var drawingResponses = drawingRepository.findByFolder(folder).stream()
+                .map(drawingMapper::toDrawingResponse).toList();
+        drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
+        return drawingResponses;
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
@@ -144,6 +117,13 @@ public class DrawingService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
     public DrawingResponse findDrawingById(UUID id){
         return drawingMapper.toDrawingResponse(drawingRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND)));
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public DrawingResponse findDrawingByIdAndStatus(UUID id, DrawingStatus status){
+        String stringStatus = status.name();
+        return drawingMapper.toDrawingResponse(drawingRepository.findByIdAndStatus(id, stringStatus)
                 .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND)));
     }
 

@@ -5,6 +5,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.VersionUpdateRequ
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ApiResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.VersionResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.SuccessReturnMessage;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.VersionStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.service.VersionService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -31,24 +32,43 @@ public class VersionController {
                 .build();
     }
 
+    @Operation(summary = "Get All Versions", description = "Get All Versions by Status")
+    @GetMapping(path = "/getallByStatus")
+    public ApiResponse<List<VersionResponse>> getAllVersionsByStatus(@RequestParam(defaultValue = "1") int page,
+                                                             @RequestParam(defaultValue = "10") int perPage,
+                                                             @RequestParam VersionStatus status){
+        return ApiResponse.<List<VersionResponse>>builder()
+                .entity(versionService.getAllVersionsByStatus(page, perPage, status))
+                .build();
+    }
+
     @Operation(summary = "Get All Versions")
     @GetMapping(path = "/getall")
     public ApiResponse<List<VersionResponse>> getAllVersions(@RequestParam(defaultValue = "1") int page,
-                                                             @RequestParam(defaultValue = "10") int perPage,
-                                                             @RequestParam(required = false) String status){
+                                                                     @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<VersionResponse>>builder()
-                .entity(versionService.getAllVersions(page, perPage, status))
+                .entity(versionService.getAllVersions(page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Get All Versions", description = "Get All Versions By Drawing ID and Status")
+    @GetMapping(path = "/getallByDrawingIdAndStatus/{drawingId}")
+    public ApiResponse<List<VersionResponse>> getAllVersionsByDrawingIdAndStatus(@PathVariable UUID drawingId,
+                                                             @RequestParam(defaultValue = "1") int page,
+                                                             @RequestParam(defaultValue = "10") int perPage,
+                                                             @RequestParam VersionStatus status){
+        return ApiResponse.<List<VersionResponse>>builder()
+                .entity(versionService.getAllVersionsByDrawingIdAndStatus(page, perPage, status, drawingId))
                 .build();
     }
 
     @Operation(summary = "Get All Versions", description = "Get All Versions By Drawing ID")
-    @GetMapping(path = "/getall/drawing/{drawingId}")
-    public ApiResponse<List<VersionResponse>> getAllVersions(@PathVariable UUID drawingId,
-                                                             @RequestParam(defaultValue = "1") int page,
-                                                             @RequestParam(defaultValue = "10") int perPage,
-                                                             @RequestParam(required = false) String status){
+    @GetMapping(path = "/getallByDrawingId/{drawingId}")
+    public ApiResponse<List<VersionResponse>> getAllVersionsByDrawingId(@PathVariable UUID drawingId,
+                                                                                 @RequestParam(defaultValue = "1") int page,
+                                                                                 @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<VersionResponse>>builder()
-                .entity(versionService.getAllVersionsByDrawingId(page, perPage, status, drawingId))
+                .entity(versionService.getAllVersionsByDrawingId(page, perPage, drawingId))
                 .build();
     }
 

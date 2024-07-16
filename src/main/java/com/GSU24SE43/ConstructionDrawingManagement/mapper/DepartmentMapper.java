@@ -12,6 +12,6 @@ public interface DepartmentMapper {
 
     @Mapping(target = "staffList", ignore = true)
     @Mapping(target = "taskList", ignore = true)
-    @Mapping(target = "projectList", ignore = true)
+    @Mapping(target = "departmentProjects", ignore = true)
     void updateDepartment(@MappingTarget Department department, DepartmentRequest request);
 }

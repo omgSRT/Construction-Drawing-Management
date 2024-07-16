@@ -30,8 +30,6 @@ public class Department {
 
     @JsonIgnore
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Project> projectList;
-
-
+    List<DepartmentProject> departmentProjects;
 
 }

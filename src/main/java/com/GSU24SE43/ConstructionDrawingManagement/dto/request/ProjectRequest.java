@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.annotation.Nullable;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -19,5 +19,5 @@ public class ProjectRequest {
     String description;
     Date startDate;
     Date endDate;
-    UUID departmentId;
+    List<UUID> departmentIds;
 }

@@ -5,12 +5,8 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectChangeStat
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.*;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
-import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.ProjectMapper;
@@ -35,53 +31,61 @@ public class ProjectService {
     final ProjectMapper projectMapper;
     final AccountRepository accountRepository;
     final DepartmentRepository departmentRepository;
+    final DepartmentProjectRepository departmentProjectRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     @PreAuthorize("hasRole('ADMIN')")
-    public ProjectResponse createProject(ProjectRequest request){
-        if(projectRepository.existsByName(request.getName())){
+    public ProjectResponse createProject(ProjectRequest request) {
+        if (projectRepository.existsByName(request.getName())) {
             throw new AppException(ErrorCode.NAME_EXISTED);
         }
-        Department department = departmentRepository.findById(request.getDepartmentId())
-                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
+
+        List<Department> departmentList = request.getDepartmentIds().stream()
+                .map(departmentId -> departmentRepository.findById(departmentId)
+                        .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)))
+                .toList();
+
         Account account = accountRepository.findByUsername("admin")
-                        .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        ValidateProjectDate(request.getStartDate(), request.getEndDate());
+        validateProjectDate(request.getStartDate(), request.getEndDate());
 
-        Project newProject = projectMapper.toProject(request);
-        newProject.setCreationDate(new Date());
-        newProject.setDepartment(department);
-        newProject.setAccount(account);
-        newProject.setStatus(ProjectStatus.ACTIVE.name());
+        Project project = projectMapper.toProject(request);
+        project.setCreationDate(new Date());
+        project.setAccount(account);
+        project.setStatus(ProjectStatus.ACTIVE.name());
 
-        return projectMapper.toProjectResponse(projectRepository.save(newProject));
+        Project newProject = projectRepository.save(project);
+        newProject.setDepartmentProjects(
+                departmentList.stream()
+                        .map(department -> {
+                            DepartmentProject newDepartmentProject = new DepartmentProject();
+                            newDepartmentProject.setDepartment(department);
+                            newDepartmentProject.setProject(newProject);
+                            departmentProjectRepository.save(newDepartmentProject);
+                            return newDepartmentProject;
+                        })
+                        .toList()
+        );
+
+        return projectMapper.toProjectResponse(newProject);
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
-    public List<ProjectResponse> getAllProjects(int page, int perPage, String status) {
-        try {
-            List<ProjectResponse> projectResponses;
-            if(status != null){
-                ProjectStatus projectStatus;
-                status = status.toUpperCase();
-                try {
-                    projectStatus = ProjectStatus.valueOf(status);
-                } catch (IllegalArgumentException e) {
-                    throw new AppException(ErrorCode.INVALID_STATUS);
-                }
-                projectResponses = projectRepository.findByStatus(status)
-                        .stream().map(projectMapper::toProjectResponse).toList();
-            }
-            else{
-                projectResponses = projectRepository.findAll().stream().map(projectMapper::toProjectResponse).toList();
-            }
+    public List<ProjectResponse> getAllProjectsByStatus(int page, int perPage, ProjectStatus status) {
+        String stringStatus = status.name();
+        var projectResponses = projectRepository.findByStatus(stringStatus).stream()
+                .map(projectMapper::toProjectResponse).toList();
+        projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+        return projectResponses;
+    }
 
-            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
-            return projectResponses;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<ProjectResponse> getAllProjects(int page, int perPage) {
+        var projectResponses = projectRepository.findAll().stream()
+                .map(projectMapper::toProjectResponse).toList();
+        projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+        return projectResponses;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -92,12 +96,10 @@ public class ProjectService {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
-    public ProjectResponse findProjectByIdAndStatus(UUID id, String status){
-        var project = projectRepository.findById(id)
+    public ProjectResponse findProjectByIdAndStatus(UUID id, ProjectStatus status){
+        String stringStatus = status.name();
+        var project = projectRepository.findByIdAndStatus(id, stringStatus)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
-        if(status != null && !project.getStatus().equals(status.toUpperCase())){
-            project = null;
-        }
         return projectMapper.toProjectResponse(project);
     }
 
@@ -112,7 +114,7 @@ public class ProjectService {
         var project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
 
-        ValidateProjectDate(request.getStartDate(), request.getEndDate());
+        validateProjectDate(request.getStartDate(), request.getEndDate());
 
         projectMapper.updateProject(project, request);
 
@@ -120,57 +122,38 @@ public class ProjectService {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
-    public List<ProjectResponse> findProjectByNameContainingAndStatus(String name, String status, int page, int perPage){
-        try {
-            List<ProjectResponse> projectResponses;
-            if(status != null){
-                ProjectStatus projectStatus;
-                status = status.toUpperCase();
-                try {
-                    projectStatus = ProjectStatus.valueOf(status);
-                } catch (IllegalArgumentException e) {
-                    throw new AppException(ErrorCode.INVALID_STATUS);
-                }
-                projectResponses = projectRepository.findByNameContainingAndStatus(name, status).stream().map(projectMapper::toProjectResponse).toList();
-            }
-            else{
-                projectResponses
-                        = projectRepository.findByNameContaining(name).stream().map(projectMapper::toProjectResponse).toList();
-            }
+    public List<ProjectResponse> findProjectByNameContainingAndStatus(String name, ProjectStatus status, int page, int perPage){
+        String stringStatus = status.name();
+        var projectResponses = projectRepository.findByNameContainingAndStatus(name, stringStatus).stream()
+                .map(projectMapper::toProjectResponse).toList();
+        projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+        return projectResponses;
+    }
 
-            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
-            return projectResponses;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<ProjectResponse> findProjectByNameContaining(String name, int page, int perPage){
+        var projectResponses = projectRepository.findByNameContaining(name).stream()
+                .map(projectMapper::toProjectResponse).toList();
+        projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+        return projectResponses;
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
-    public List<ProjectResponse> findProjectByDepartmentNameAndStatus(String departmentName, String status,
+    public List<ProjectResponse> findProjectByDepartmentNameAndStatus(String departmentName, ProjectStatus status,
                                                                       int page, int perPage){
-        try {
-            List<ProjectResponse> projectResponses;
-            if(status != null){
-                ProjectStatus projectStatus;
-                status = status.toUpperCase();
-                try {
-                    projectStatus = ProjectStatus.valueOf(status);
-                } catch (IllegalArgumentException e) {
-                    throw new AppException(ErrorCode.INVALID_STATUS);
-                }
-                projectResponses = projectRepository.findByDepartmentNameAndStatus(departmentName, status)
-                        .stream().map(projectMapper::toProjectResponse).toList();
-            }
-            else{
-                projectResponses = projectRepository.findByDepartmentName(departmentName)
-                        .stream().map(projectMapper::toProjectResponse).toList();
-            }
+        String stringStatus = status.toString();
+        var projectResponses = projectRepository.findByDepartmentProjectsDepartmentNameAndStatus(departmentName, stringStatus).stream()
+                .map(projectMapper::toProjectResponse).toList();
+        projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+        return projectResponses;
+    }
 
-            projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
-            return projectResponses;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    public List<ProjectResponse> findProjectByDepartmentName(String departmentName, int page, int perPage){
+        var projectResponses = projectRepository.findByDepartmentProjectsDepartmentName(departmentName).stream()
+                .map(projectMapper::toProjectResponse).toList();
+        projectResponses = paginationUtils.convertListToPage(page, perPage, projectResponses);
+        return projectResponses;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -192,7 +175,7 @@ public class ProjectService {
         return projectMapper.toProjectResponse(projectRepository.save(project));
     }
 
-    private void ValidateProjectDate(Date startDate, Date endDate){
+    private void validateProjectDate(Date startDate, Date endDate){
         int result = startDate.compareTo(endDate);
         int result1 = startDate.compareTo(new Date());
         int result2 = endDate.compareTo(new Date());

@@ -4,6 +4,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.CommentRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.CommentUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ApiResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.CommentResponse;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.CommentStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.SuccessReturnMessage;
 import com.GSU24SE43.ConstructionDrawingManagement.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,13 +32,22 @@ public class CommentController {
                 .build();
     }
 
-    @Operation(summary = "Get All Comments", description = "Get All Folders")
+    @Operation(summary = "Get All Comments", description = "Get All Comments by Status")
+    @GetMapping(path = "/getallByStatus")
+    public ApiResponse<List<CommentResponse>> getAllCommentsByStatus(@RequestParam(defaultValue = "1") int page,
+                                                             @RequestParam(defaultValue = "10") int perPage,
+                                                             @RequestParam CommentStatus status){
+        return ApiResponse.<List<CommentResponse>>builder()
+                .entity(commentService.getAllCommentsWithStatus(page, perPage, status))
+                .build();
+    }
+
+    @Operation(summary = "Get All Comments", description = "Get All Comments")
     @GetMapping(path = "/getall")
     public ApiResponse<List<CommentResponse>> getAllComments(@RequestParam(defaultValue = "1") int page,
-                                                             @RequestParam(defaultValue = "10") int perPage,
-                                                             @RequestParam(required = false) String status){
+                                                                     @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<CommentResponse>>builder()
-                .entity(commentService.getAllComments(page, perPage, status))
+                .entity(commentService.getAllComments(page, perPage))
                 .build();
     }
 
@@ -49,6 +59,17 @@ public class CommentController {
                 .entity(commentService.findCommentById(id))
                 .build();
     }
+
+    @Operation(summary = "Get Comment", description = "Get A Comment by ID and Status")
+    @GetMapping(path = "/getByStatus/{id}")
+    public ApiResponse<CommentResponse> getCommentByIdAndStatus(@PathVariable UUID id,
+                                                                @RequestParam CommentStatus status){
+        return ApiResponse.<CommentResponse>builder()
+                .message(SuccessReturnMessage.SEARCH_SUCCESS.getMessage())
+                .entity(commentService.findCommentByIdAndStatus(id, status))
+                .build();
+    }
+
 
     @Operation(summary = "Update Comment", description = "Update A Comment by ID")
     @PutMapping(path = "/update/{id}")
@@ -70,25 +91,45 @@ public class CommentController {
                 .build();
     }
 
-    @Operation(summary = "Get Comments", description = "Get All Comments by Task ID")
-    @GetMapping(path = "/getall/task/{taskId}")
-    public ApiResponse<List<CommentResponse>> getCommentsByTaskId(@RequestParam(defaultValue = "1") int page,
+    @Operation(summary = "Get Comments", description = "Get All Comments by Task ID and Status")
+    @GetMapping(path = "/getallByTaskIdAndStatus/{taskId}")
+    public ApiResponse<List<CommentResponse>> getCommentsByTaskIdAndStatus(@RequestParam(defaultValue = "1") int page,
                                                                   @RequestParam(defaultValue = "10") int perPage,
-                                                                  @RequestParam UUID taskId,
-                                                                  @RequestParam(required = false) String status){
+                                                                  @PathVariable UUID taskId,
+                                                                  @RequestParam CommentStatus status){
         return ApiResponse.<List<CommentResponse>>builder()
-                .entity(commentService.findCommentsByTaskId(taskId, status, page, perPage))
+                .entity(commentService.findCommentsByTaskIdAndStatus(taskId, status, page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Get Comments", description = "Get All Comments by Task ID")
+    @GetMapping(path = "/getallByTaskId/{taskId}")
+    public ApiResponse<List<CommentResponse>> getCommentsByTaskId(@RequestParam(defaultValue = "1") int page,
+                                                                           @RequestParam(defaultValue = "10") int perPage,
+                                                                           @PathVariable UUID taskId){
+        return ApiResponse.<List<CommentResponse>>builder()
+                .entity(commentService.findCommentsByTaskId(taskId, page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Get Comments", description = "Get All Comments by Staff ID and Status")
+    @GetMapping(path = "/getallByStaffIdAndStatus/{staffId}")
+    public ApiResponse<List<CommentResponse>> getCommentsByStaffIdAndStatus(@RequestParam(defaultValue = "1") int page,
+                                                                  @RequestParam(defaultValue = "10") int perPage,
+                                                                  @PathVariable UUID staffId,
+                                                                   @RequestParam CommentStatus status){
+        return ApiResponse.<List<CommentResponse>>builder()
+                .entity(commentService.findCommentsByStaffIdAndStatus(staffId, status, page, perPage))
                 .build();
     }
 
     @Operation(summary = "Get Comments", description = "Get All Comments by Staff ID")
-    @GetMapping(path = "/getall/staff/{staffId}")
+    @GetMapping(path = "/getallByStaffId/{staffId}")
     public ApiResponse<List<CommentResponse>> getCommentsByStaffId(@RequestParam(defaultValue = "1") int page,
-                                                                  @RequestParam(defaultValue = "10") int perPage,
-                                                                  @RequestParam UUID staffId,
-                                                                   @RequestParam(required = false) String status){
+                                                                            @RequestParam(defaultValue = "10") int perPage,
+                                                                            @PathVariable UUID staffId){
         return ApiResponse.<List<CommentResponse>>builder()
-                .entity(commentService.findCommentsByStaffId(staffId, status, page, perPage))
+                .entity(commentService.findCommentsByStaffId(staffId, page, perPage))
                 .build();
     }
 
