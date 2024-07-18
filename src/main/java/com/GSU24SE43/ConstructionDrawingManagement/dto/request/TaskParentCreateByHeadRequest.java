@@ -13,7 +13,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskParentCreateByHeadRequest {
     UUID projectId;
-    UUID departmentId;
+//    UUID departmentId;
     String title;
     String description;
     Date beginDate;

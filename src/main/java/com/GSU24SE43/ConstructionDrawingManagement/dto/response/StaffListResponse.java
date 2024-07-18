@@ -11,6 +11,8 @@ import java.util.UUID;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StaffListResponse {
+    UUID staffId;
+
     String fullName;
     String email;
     String address;

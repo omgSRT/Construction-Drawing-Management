@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,8 +46,10 @@ public class Staff {
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     List<DetailTask> detailTasks;
 
-//    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-//    List<Project> projects;
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
+//    @JsonIgnore
+    List<Project> projects;
 
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)

@@ -3,6 +3,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.controller;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.Permission;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.TaskStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.service.TaskService;
 import com.google.protobuf.Api;
@@ -42,6 +43,13 @@ public class TaskController {
                 .build();
     }
 
+    @PostMapping("/createTaskChildByAdmin_V2/{parentTaskId}")
+    public ApiResponse<TaskChildCreateResponse> createChildTaskByAdmin_V2(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateRequest_V2 request) {
+        return ApiResponse.<TaskChildCreateResponse>builder()
+                .entity(taskService.createChildTaskByAdmin_V2(parentTaskId, request))
+                .build();
+    }
+
     @Operation(summary = "Create task parent by head", description = "Create task parent by head")
     @PostMapping("/createTaskParentByHead")
     public ApiResponse<TaskParentCreateByHeadResponse> createTaskParentByHead(@RequestBody TaskParentCreateByHeadRequest request) {
@@ -50,21 +58,15 @@ public class TaskController {
                 .build();
     }
 
-    @Operation(summary = "Create task child by head", description = "Create task child by head")
-    @PostMapping("/createTaskChildByHead/{parentTaskId}")
-    public ApiResponse<TaskChildCreateByHeadResponse> createChildTaskByHead(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateByHeadRequest request) {
-        return ApiResponse.<TaskChildCreateByHeadResponse>builder()
-                .entity(taskService.createTaskChildByHead(parentTaskId, request))
-                .build();
-    }
-
-    //    @Operation(summary = "Update status task parent ", description = "Update status task parent")
-//    @PostMapping("/updateStatusTaskParent/{parentTaskId}")
-//    public ApiResponse<TaskParentUpdateByAdminResponse> updateStatusParentTask(@PathVariable UUID parentTaskId, @RequestParam String status){
-//        return ApiResponse.<TaskParentUpdateByAdminResponse>builder()
-//                .entity(taskService.updateStatusTaskParent(parentTaskId,status))
+//    @Operation(summary = "Create task child by head", description = "Create task child by head")
+//    @PostMapping("/createTaskChildByHead/{parentTaskId}")
+//    public ApiResponse<TaskChildCreateByHeadResponse> createChildTaskByHead(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateByHeadRequest request) {
+//        return ApiResponse.<TaskChildCreateByHeadResponse>builder()
+//                .entity(taskService.createTaskChildByHead(parentTaskId, request))
 //                .build();
 //    }
+
+
     @Operation(summary = "Update status task parent ", description = "Update status task parent")
     @PostMapping("/updateStatusTaskParent/{parentTaskId}")
     public ApiResponse<TaskParentUpdateByAdminResponse> updateStatusParentTask(@PathVariable UUID parentTaskId, @RequestParam TaskStatus status) {
@@ -155,6 +157,13 @@ public class TaskController {
                 .entity(taskService.getAllTaskOfDesigner())
                 .build();
     }
+//    @Operation(summary = "Get All task of designer", description = "Get All task of designer")
+//    @GetMapping("/getAllTaskOfDesigner")
+//    public ApiResponse<List<Task>> getAllTaskOfHead() {
+//        return ApiResponse.<List<Task>>builder()
+//                .entity(taskService.getAllTaskOfHead())
+//                .build();
+//    }
     @Operation(summary = "Search task by id", description = "Search task by id")
     @GetMapping("/findTaskById")
     public ApiResponse<Task> findTask(@RequestParam UUID taskId){
@@ -189,6 +198,12 @@ public class TaskController {
                 .build();
     }
 
+    @PostMapping("/createTaskChildByHead_V2/{parentTaskId}")
+    public ApiResponse<TaskChildCreateByHeadResponse> v2(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateByHead_V2Request request, @RequestParam List<Permission> permissions){
+        return ApiResponse.<TaskChildCreateByHeadResponse>builder()
+                .entity(taskService.createTaskChildByHead_LHNH(parentTaskId, request, permissions))
+                .build();
+    }
 
 
 

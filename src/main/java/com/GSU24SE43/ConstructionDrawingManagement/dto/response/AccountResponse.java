@@ -23,5 +23,5 @@ public class AccountResponse {
     String accountStatus;
     String roleName;
     UUID staffId;
-    List<Project> projectList;
+//    List<Project> projectList;
 }

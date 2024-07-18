@@ -1,4 +1,4 @@
-package com.GSU24SE43.ConstructionDrawingManagement.dto.request;
+package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,13 +11,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TaskChildCreateByHeadRequest {
-//    UUID parentTask;
-//    UUID departmentId;
-//    UUID projectId;
+public class TaskResponse {
+    UUID id;
+    UUID parentTaskId;
+    UUID projectId;
+    UUID departmentId;
     String title;
     String description;
+    String status;
     int priority;
+    Date createDate;
     Date beginDate;
     Date endDate;
 }

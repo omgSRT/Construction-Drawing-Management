@@ -37,17 +37,18 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "accountId")
-    @JsonIgnoreProperties(value = { "projectList" }, allowSetters = true)
+//    @JsonIgnoreProperties(value = { "projectList" }, allowSetters = true)
+    @JsonIgnore
     Account account;
 
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = { "project" }, allowSetters = true)
+//    @JsonIgnoreProperties(value = { "project" }, allowSetters = true)
     List<Task> tasks;
 
-//    @ManyToOne
-//    @JoinColumn(name = "projectId")
-//    Staff staff;
+    @ManyToOne
+    @JoinColumn(name = "projectId")
+    Staff staff;
 
 
 }

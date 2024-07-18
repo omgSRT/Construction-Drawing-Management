@@ -23,7 +23,7 @@ public class Account {
     Date createdDate;
     String accountStatus;
     String roleName;
-    @JsonIgnoreProperties(value = { "account" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"account"}, allowSetters = true)
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     Staff staff;
 
@@ -31,12 +31,11 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Project> projectList;
 
-    //@JsonIgnore
-    @JsonIgnoreProperties(value = { "account" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"account"}, allowSetters = true)
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Notification> notifications;
 
-    @JsonIgnoreProperties(value = { "account" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"account"}, allowSetters = true)
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Task> tasks;
 }

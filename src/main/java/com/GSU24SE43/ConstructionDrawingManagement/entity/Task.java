@@ -60,7 +60,8 @@ public class Task {
     Project project;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = {"task"}, allowSetters = true)
+//    @JsonIgnoreProperties(value = {"task"}, allowSetters = true)
+            @JsonIgnore
     List<DetailTask> detailTasks;
 
     @ManyToOne

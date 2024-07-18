@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface DetailTaskRepository extends JpaRepository<DetailTask, UUID> {
     List<DetailTask> findByStaffStaffId(UUID staffId);
+    List<DetailTask> findByStaff_StaffId(UUID staffId);
 }

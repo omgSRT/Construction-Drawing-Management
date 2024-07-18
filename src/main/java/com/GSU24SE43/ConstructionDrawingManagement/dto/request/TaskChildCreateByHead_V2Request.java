@@ -1,9 +1,12 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.request;
 
+import com.GSU24SE43.ConstructionDrawingManagement.enums.Permission;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -11,8 +14,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TaskChildCreateByHeadRequest {
-//    UUID parentTask;
+public class TaskChildCreateByHead_V2Request {
+
 //    UUID departmentId;
 //    UUID projectId;
     String title;
@@ -20,4 +23,7 @@ public class TaskChildCreateByHeadRequest {
     int priority;
     Date beginDate;
     Date endDate;
+    List<UUID> staffs;
+
+    List<Permission> permissions;
 }
