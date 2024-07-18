@@ -3,6 +3,9 @@ package com.GSU24SE43.ConstructionDrawingManagement.service;
 import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.DepartmentRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.DepartmentProject;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.DepartmentMapper;
@@ -49,9 +52,18 @@ public class DepartmentService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteDepartmentById(UUID id){
+    public void deleteDepartmentById(UUID id) {
         var department = departmentRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
+
+        boolean hasActiveProject = department.getDepartmentProjects().stream()
+                .map(DepartmentProject::getProject)
+                .anyMatch(project -> ProjectStatus.ACTIVE.name().equals(project.getStatus()));
+
+        if (hasActiveProject) {
+            throw new AppException(ErrorCode.DELETE_DEPT_FAILED_ACTIVE_PROJECT);
+        }
+
         departmentRepository.delete(department);
     }
 

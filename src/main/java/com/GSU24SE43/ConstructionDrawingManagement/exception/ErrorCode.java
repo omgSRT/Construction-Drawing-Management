@@ -83,8 +83,12 @@ public enum ErrorCode {
     NEXT_TASK_HAS_NOT_BEEN_INITIALIZE(10071, "nhiệm vụ tiếp theo chưa được khởi tạo", HttpStatus.BAD_REQUEST),
     AUTHORIZATION_DENIED_EXCEPTION(10072, "Vai trò của bạn không thể thực hiện chức năng này", HttpStatus.FORBIDDEN),
 
+
     ADMIN_CANNOT_DO_IT(10072, "Bạn đang dùng tài khoản admin để thực hiện chức năng cho head", HttpStatus.FORBIDDEN),
     PAGE_EXCEED_MAX_PAGE(10073, "Số trang vượt quá giới hạn tối đa hiện tại là %d", HttpStatus.BAD_REQUEST),
+    
+    DELETE_DEPT_FAILED_ACTIVE_PROJECT(10074, "Không thể xoá phòng ban do phòng vẫn có dự án đang làm", HttpStatus.BAD_REQUEST),
+
     ;
 
 
