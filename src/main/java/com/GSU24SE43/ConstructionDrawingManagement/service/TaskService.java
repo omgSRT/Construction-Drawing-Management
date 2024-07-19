@@ -41,7 +41,7 @@ public class TaskService {
     //create task parent by admin
     @PreAuthorize("hasRole('ADMIN')")
     public TaskParentCreateResponse createTaskParentByAdmin(TaskParentCreateRequest request) {
-//        Project project = checkProject(request.getProjectId());
+        Project project = checkProject(request.getProjectId());
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
@@ -51,7 +51,7 @@ public class TaskService {
             throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
         else {
             Task task = taskMapper.toTask(request);
-//            task.setProject(project);
+            task.setProject(project);
             task.setCreateDate(new Date());
             if (account.getRoleName().equals("ADMIN")) {
                 task.setAccount(account);
@@ -105,8 +105,10 @@ public class TaskService {
         Department department = departmentRepository.findById(request.getDepartmentId()).orElseThrow(
                 () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)
         );
+
         Staff staff = findHeadOfDepartment(department);
-        log.info(staff.getFullName(), staff.isSupervisor());
+        if(staff == null) throw new AppException(ErrorCode.THIS_ROOM_HAS_NO_HEADER);
+
         validateProjectDate(request.getBeginDate(), request.getEndDate());
 
         Task taskChild = taskMapper.toTaskByAdmin_V2(request);
@@ -149,7 +151,8 @@ public class TaskService {
     private Staff findHeadOfDepartment(Department department) {
         List<Staff> staffs = department.getStaffList();
         for (int i = 0; i < staffs.size(); i++) {
-            if (staffs.get(i).isSupervisor() == true) return staffs.get(i);
+//            if (staffs.get(i).isSupervisor() == true) return staffs.get(i);
+            if (staffs.get(i).isSupervisor()) return staffs.get(i);
         }
         return null;
     }
@@ -181,13 +184,13 @@ public class TaskService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
-//        Project project = checkProject(request.getProjectId());
+        Project project = checkProject(request.getProjectId());
         Date beginDate = request.getBeginDate();
         Date endDate = request.getEndDate();
         if (endDate.before(beginDate)) throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
         else {
             Task task = taskMapper.toTaskByHead(request);
-//            task.setProject(project);
+            task.setProject(project);
             task.setDepartment(account.getStaff().getDepartment());
             task.setCreateDate(new Date());
             task.setStatus(TaskStatus.NO_RECIPIENT.getMessage());
@@ -410,6 +413,15 @@ public class TaskService {
             list = taskRepository.findByAccountAndParentTaskIsNull(account);
         }
         return list;
+    }
+
+    public List<Task> getParentTaskByProjectId(UUID projectId){
+        Project project = checkProject(projectId);
+        List<Task> taskList = new ArrayList<>();
+        project.getTasks().forEach(task -> {
+            if (task.getParentTask() == null) taskList.add(task);
+        });
+        return taskList;
     }
 
     //    @PreAuthorize("hasRole('ADMIN')")

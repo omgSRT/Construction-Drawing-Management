@@ -106,7 +106,7 @@ public class AuthenticateService {
 
     private String generateToken(Account account) {
         Date now = new Date();
-        Date expirationTime = new Date(now.getTime() + 3600 * 1000);
+        Date expirationTime = new Date(now.getTime() + 36000 * 1000);
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()

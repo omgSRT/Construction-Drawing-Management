@@ -88,6 +88,7 @@ public enum ErrorCode {
     PAGE_EXCEED_MAX_PAGE(10073, "Số trang vượt quá giới hạn tối đa hiện tại là %d", HttpStatus.BAD_REQUEST),
     
     DELETE_DEPT_FAILED_ACTIVE_PROJECT(10074, "Không thể xoá phòng ban do phòng vẫn có dự án đang làm", HttpStatus.BAD_REQUEST),
+    THIS_ROOM_HAS_NO_HEADER(10074, "Phòng này chưa có trường phòng, bạn cần tạo trưởng phòng cho phòng này để thực hiện chức năng này", HttpStatus.BAD_REQUEST),
 
     ;
 

@@ -129,6 +129,14 @@ public class TaskController {
                 .build();
     }
 
+    @Operation(summary = "Get All task parent of projectId", description = "Get All task parent of admin")
+    @GetMapping("/getAllParentTaskByProjectId/{projectId}")
+    public ApiResponse<List<Task>> getAllParentTaskByProject(@PathVariable UUID projectId) {
+        return ApiResponse.<List<Task>>builder()
+                .entity(taskService.getParentTaskByProjectId(projectId))
+                .build();
+    }
+
     @Operation(summary = "Get All task child of admin", description = "Get All task child of admin")
     @GetMapping("/getAllChildTaskOfAdmin")
     public ApiResponse<List<Task>> getAllChildTaskOfAdmin() {
