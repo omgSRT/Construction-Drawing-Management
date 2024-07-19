@@ -9,7 +9,9 @@ import com.GSU24SE43.ConstructionDrawingManagement.enums.VersionStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.VersionMapper;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.DepartmentRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.DrawingRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.TaskRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.VersionRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,8 @@ public class VersionService {
     final VersionRepository versionRepository;
     final VersionMapper versionMapper;
     final DrawingRepository drawingRepository;
+    final DepartmentRepository departmentRepository;
+    final TaskRepository taskRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     public VersionResponse createVersion(VersionCreateRequest request) {
@@ -72,7 +76,7 @@ public class VersionService {
                 .orElseThrow(() -> new AppException(ErrorCode.DRAWING_NOT_FOUND));
 
         String stringStatus = status.name();
-        var versionResponses = versionRepository.findByStatus(stringStatus).stream()
+        var versionResponses = versionRepository.findByDrawingIdAndStatus(drawingId, stringStatus).stream()
                 .map(versionMapper::toVersionResponse).toList();
         versionResponses = paginationUtils.convertListToPage(page, perPage, versionResponses);
         return versionResponses;
@@ -121,6 +125,52 @@ public class VersionService {
         );
 
         return versionMapper.toVersionResponse(versionRepository.save(version));
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<VersionResponse> getAllVersionsDepartmentIdAndStatus(int page, int perPage, UUID departmentId, VersionStatus status) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
+
+        String stringStatus = status.name();
+        var versionResponses = versionRepository.findByDrawingTaskDepartmentAndStatus(department, stringStatus).stream()
+                .map(versionMapper::toVersionResponse).toList();
+        versionResponses = paginationUtils.convertListToPage(page, perPage, versionResponses);
+        return versionResponses;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<VersionResponse> getAllVersionsByDepartmentId(int page, int perPage, UUID departmentId) {
+        Department department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND));
+
+        var versionResponses = versionRepository.findByDrawingTaskDepartment(department).stream()
+                .map(versionMapper::toVersionResponse).toList();
+        versionResponses = paginationUtils.convertListToPage(page, perPage, versionResponses);
+        return versionResponses;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<VersionResponse> getAllVersionsTaskIdAndStatus(int page, int perPage, UUID taskId, VersionStatus status) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND));
+
+        String stringStatus = status.name();
+        var versionResponses = versionRepository.findByDrawingTaskAndStatus(task, stringStatus).stream()
+                .map(versionMapper::toVersionResponse).toList();
+        versionResponses = paginationUtils.convertListToPage(page, perPage, versionResponses);
+        return versionResponses;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
+    public List<VersionResponse> getAllVersionsByTaskId(int page, int perPage, UUID taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND));
+
+        var versionResponses = versionRepository.findByDrawingTask(task).stream()
+                .map(versionMapper::toVersionResponse).toList();
+        versionResponses = paginationUtils.convertListToPage(page, perPage, versionResponses);
+        return versionResponses;
     }
 
     private String getNextVersionNumber(List<Version> existingVersions) {
