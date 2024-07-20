@@ -444,17 +444,13 @@ public class TaskService {
     }
 
     private void validateProjectDate(Date startDate, Date endDate) {
-        int result = startDate.compareTo(endDate);
-        int result1 = startDate.compareTo(new Date());
-        int result2 = endDate.compareTo(new Date());
-
-        if (result >= 0) {
-            throw new AppException(ErrorCode.INVALID_CREATED_DATE_EARLIER_THAN_END_DATE);
+        if (startDate.after(endDate)) {
+            throw new AppException(ErrorCode.INVALID_START_DATE_EARLIER_THAN_END_DATE);
         }
-        if (result1 < 0) {
-            throw new AppException(ErrorCode.INVALID_CREATED_DATE_NOT_IN_FUTURE);
+        if (startDate.before(new Date())) {
+            throw new AppException(ErrorCode.INVALID_START_DATE_NOT_IN_FUTURE);
         }
-        if (result2 <= 0) {
+        if (endDate.before(new Date())) {
             throw new AppException(ErrorCode.INVALID_END_DATE_NOT_IN_FUTURE);
         }
     }
