@@ -45,7 +45,7 @@ public class TaskService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
-
+        checkDateTaskVSProject(request.getBeginDate(), request.getEndDate(), project);
         validateProjectDate(request.getBeginDate(), request.getEndDate());
         if (request.getEndDate().before(request.getBeginDate()))
             throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
@@ -60,6 +60,11 @@ public class TaskService {
             taskRepository.save(task);
             return taskMapper.toTaskParentCreateResponse(task);
         }
+    }
+
+    private void checkDateTaskVSProject(Date startDate, Date endDate, Project project) {
+        if (startDate.after(project.getStartDate()) || endDate.before(project.getEndDate()))
+            throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE_2);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -107,7 +112,7 @@ public class TaskService {
         );
 
         Staff staff = findHeadOfDepartment(department);
-        if(staff == null) throw new AppException(ErrorCode.THIS_ROOM_HAS_NO_HEADER);
+        if (staff == null) throw new AppException(ErrorCode.THIS_ROOM_HAS_NO_HEADER);
 
         validateProjectDate(request.getBeginDate(), request.getEndDate());
 
@@ -116,12 +121,12 @@ public class TaskService {
         taskChild.setCreateDate(new Date());
         taskChild.setAccount(taskParent.getAccount());
         taskChild.setProject(taskParent.getProject());
-        if (request.getPriority() > 4 || request.getPriority() <= 0) {
+        if (request.getPriority() <= 0) {
             throw new AppException(ErrorCode.PRIORITY_INVALID);
         }
-        if (checkDuplicatePriority(parentTaskId, request.getPriority())) {
-            throw new AppException(ErrorCode.PRIORITY_IS_DUPLICATE);
-        }
+//        if (checkDuplicatePriority(parentTaskId, request.getPriority())) {
+//            throw new AppException(ErrorCode.PRIORITY_IS_DUPLICATE);
+//        }
         // check k trung department
         if (checkDuplicateHead(parentTaskId, request.getDepartmentId())) {
             throw new AppException(ErrorCode.DUPLICATE_HEAD);
@@ -225,11 +230,11 @@ public class TaskService {
         return taskMapper.toTaskChildCreateByHeadResponse(taskChild);
     }
 
-    public TaskChildCreateByHeadResponse createTaskChildByHead_LHNH(UUID parentTaskId, TaskChildCreateByHead_V2Request request, List<Permission> permissions) {
+    public TaskChildCreateByHeadResponse createTaskChildByHead_LHNH(UUID parentTaskId, TaskChildCreateByHead_V2Request request) {
         Task taskParent = checkTask(parentTaskId);
         Account account = getSecurityContext();
         validateProjectDate(request.getBeginDate(), request.getEndDate());
-        if (request.getPriority() < 0) throw new AppException(ErrorCode.PRIORITY_INVALID);
+        if (request.getPriority() <= 0) throw new AppException(ErrorCode.PRIORITY_INVALID);
 
         Task taskChild = taskMapper.toTaskByHead_3(request);
         List<Staff> staffList = request.getStaffs().stream()
@@ -260,7 +265,10 @@ public class TaskService {
         });
         taskChild.setDetailTasks(detailTaskList);
         taskRepository.save(taskChild);
-        return taskMapper.toTaskChildCreateByHeadResponse(taskChild);
+        TaskChildCreateByHeadResponse response = taskMapper.toTaskChildCreateByHeadResponse(taskChild);
+        response.setPermissions(request.getPermissions());
+//        return taskMapper.toTaskChildCreateByHeadResponse(taskChild);
+        return response;
     }
 
     private Account getSecurityContext() {
@@ -330,7 +338,8 @@ public class TaskService {
     public TaskChildUpdateByAdminResponse upgradeStatus(UUID childTaskId, TaskStatus status) {
         Task taskChild = checkTask(childTaskId);
         checkStatusTask(status.name(), taskChild);
-        Task taskParent = checkTask(taskChild.getParentTask().getId());
+        Task taskParent = taskChild.getParentTask();
+//        Task taskParent = checkTask(taskChild.getParentTask().getId());
         taskRepository.save(taskChild);
         if (status.name().equals(TaskStatus.DONE.name())) {
             int priority = taskChild.getPriority();
@@ -348,6 +357,59 @@ public class TaskService {
 
         }
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
+    }
+
+    public TaskChildUpdateByAdminResponse upgradeStatus_2(UUID childTaskId, TaskStatus status) {
+        Task taskChild = checkTask(childTaskId);
+        checkStatusTask(status.name(), taskChild);
+        Task taskParent = taskChild.getParentTask();
+//        Task taskParent = checkTask(taskChild.getParentTask().getId());
+        taskRepository.save(taskChild);
+        if (status.name().equals(TaskStatus.DONE.name())) {
+            //check 2 task trùng độ ưu tiên
+            List<Task> tasks = new ArrayList<>();
+            Set<Integer> i = new HashSet<>();
+            taskParent.getTasks().forEach(task -> {
+                if (!i.add(task.getPriority())) tasks.add(task);
+            });
+            int priority = taskChild.getPriority();
+            int a = priority + 1;
+            //***
+            if (!tasks.isEmpty()) {
+                boolean check = checkAllTaskDuplicateSuccess(tasks);
+            if (!check) return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
+            }
+            //***
+            //kiểm tra xem đó phải nhiệm vụ cuối cùng chưa
+            boolean isLast = taskParent.getTasks().stream()
+                    .reduce((first, second) -> second) // Lấy phần tử cuối cùng dùng toán nhị phân
+                    .map(lastTask -> lastTask.equals(taskChild))
+                    .orElse(false);
+
+            if (isLast) {
+                taskParent.setStatus(TaskStatus.DONE.name());
+                taskRepository.save(taskParent);
+            }
+            if (priority < 4) {
+                Task nextTask = taskRepository.findByPriorityAndParentTaskId(a, taskParent.getId());
+                if (nextTask == null) throw new AppException(ErrorCode.NEXT_TASK_HAS_NOT_BEEN_INITIALIZE);
+                nextTask.setStatus(TaskStatus.ACTIVE.name());
+                taskRepository.save(nextTask);
+            }
+
+        }
+        return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
+    }
+
+    private boolean checkAllTaskDuplicateSuccess(List<Task> list) {
+        boolean check = true;
+        for (Task x : list) {
+            if (!x.getStatus().equals(TaskStatus.DONE.name())) {
+                check = false;
+                break;
+            }
+        }
+        return check;
     }
 
     private Task checkTask(UUID taskId) {
@@ -415,7 +477,7 @@ public class TaskService {
         return list;
     }
 
-    public List<Task> getParentTaskByProjectId(UUID projectId){
+    public List<Task> getParentTaskByProjectId(UUID projectId) {
         Project project = checkProject(projectId);
         List<Task> taskList = new ArrayList<>();
         project.getTasks().forEach(task -> {
@@ -478,20 +540,22 @@ public class TaskService {
         }
         return list;
     }
-
+//********************************************
 //    @PreAuthorize("hasRole('DESIGNER')")
-    @PreAuthorize("hasRole('DESIGNER') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
-    public List<Task> getAllTaskOfDesigner() {
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
-        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
-        List<DetailTask> detailTasks = detailTaskRepository.findByStaffStaffId(account.getStaff().getStaffId());
-        return detailTasks.stream()
-                .map(DetailTask::getTask)
-                .distinct()
-                .collect(Collectors.toList());
-    }
 //    @PreAuthorize("hasRole('DESIGNER') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+//    public List<Task> getAllTaskOfDesigner() {
+//        var context = SecurityContextHolder.getContext();
+//        String name = context.getAuthentication().getName();
+//        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+//        List<DetailTask> detailTasks = detailTaskRepository.findByStaffStaffId(account.getStaff().getStaffId());
+//        return detailTasks.stream()
+//                .map(DetailTask::getTask)
+//                .distinct()
+//                .collect(Collectors.toList());
+//    }
+// ********************************************
+
+    //    @PreAuthorize("hasRole('DESIGNER') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
 //    public List<Task> getAllTaskOfHead() {
 //        var context = SecurityContextHolder.getContext();
 //        String name = context.getAuthentication().getName();
@@ -502,6 +566,43 @@ public class TaskService {
 //                .distinct()
 //                .collect(Collectors.toList());
 //    }
+    @PreAuthorize("hasRole('DESIGNER') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    public List<TaskResponse> getAllTaskOfHead() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        List<DetailTask> detailTasks = detailTaskRepository.findByStaffStaffId(account.getStaff().getStaffId());
+        return detailTasks.stream()
+                .map(DetailTask::getTask)
+                .distinct()
+                .map(taskMapper::toTaskResponse)
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasRole('DESIGNER') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    public List<TaskResponseDesigner> getAllTaskOfDesigner() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        List<DetailTask> detailTasks = detailTaskRepository.findByStaffStaffId(account.getStaff().getStaffId());
+//        List<DetailTask> detailTasks_2 = detailTaskRepository.findByTask_Id();
+//        return detailTasks.stream()
+//                .map(DetailTask::getTask)
+//                .distinct()
+//                .map(taskMapper::toTaskResponse)
+//                .collect(Collectors.toList());
+//        Set<UUID> list = new HashSet<>();
+//                detailTasks_2.forEach(detailTask -> {list.add(detailTask.getStaff().getStaffId());});
+        return detailTasks.stream()
+                .map(DetailTask::getTask)
+                .distinct()
+                .map(task -> {
+                    TaskResponseDesigner respone = taskMapper.toResponseDesigner(task);
+//                    respone.setStaffIds(list);
+                    return respone;
+                })
+                .collect(Collectors.toList());
+    }
 
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")

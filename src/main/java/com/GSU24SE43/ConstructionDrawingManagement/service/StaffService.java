@@ -4,15 +4,13 @@ import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.StaffCreateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.StaffUpdateByStaffRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.StaffUpdateRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.StaffCreateResponse2;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.StaffListResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.StaffUpdateByStaffResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.StaffUpdateResponse;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.*;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.StaffMapper;
+import com.GSU24SE43.ConstructionDrawingManagement.mapper.TaskMapper;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.AccountRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.DepartmentRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.DetailTaskRepository;
@@ -39,6 +37,8 @@ public class StaffService {
     StaffRepository staffRepository;
     @Autowired
     StaffMapper mapper;
+    @Autowired
+    TaskMapper taskMapper;
     @Autowired
     AccountRepository accountRepository;
     @Autowired
@@ -125,7 +125,17 @@ public class StaffService {
         return staffRepository.findByFullNameContainingIgnoreCase(fullname);
     }
 
-    public Set<Task> getMyTasks(){
+//    public Set<Task> getMyTasks(){
+//        var context = SecurityContextHolder.getContext();
+//        String name = context.getAuthentication().getName();
+//        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+//        Staff staff = account.getStaff();
+//        List<DetailTask> detailTasks = detailTaskRepository.findByStaff_StaffId(staff.getStaffId());
+//        return detailTasks.stream()
+//                .map(DetailTask::getTask)
+//                .collect(Collectors.toSet());
+//    }
+    public Set<TaskResponse> getMyTasks(){
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
@@ -133,6 +143,8 @@ public class StaffService {
         List<DetailTask> detailTasks = detailTaskRepository.findByStaff_StaffId(staff.getStaffId());
         return detailTasks.stream()
                 .map(DetailTask::getTask)
+                .distinct()
+                .map(taskMapper::toTaskResponse)
                 .collect(Collectors.toSet());
     }
 

@@ -73,8 +73,8 @@ public class StaffController {
                 .build();
     }
     @GetMapping("/getMyTasks")
-    public ApiResponse<Set<Task>> getMyTask(){
-        return ApiResponse.<Set<Task>>builder()
+    public ApiResponse<Set<TaskResponse>> getMyTask(){
+        return ApiResponse.<Set<TaskResponse>>builder()
                 .entity(staffService.getMyTasks())
                 .build();
     }

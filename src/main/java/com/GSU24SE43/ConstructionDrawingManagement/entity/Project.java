@@ -5,10 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 @Entity
 @Getter
 @Setter
@@ -49,6 +47,9 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "projectId")
     Staff staff;
+
+    @ManyToMany(mappedBy = "projects")
+    Set<Contractor> contractors;
 
 
 }

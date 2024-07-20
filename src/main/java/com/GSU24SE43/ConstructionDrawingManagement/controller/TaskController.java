@@ -34,14 +34,14 @@ public class TaskController {
                 .build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Create task child by admin", description = "Create task child by admin")
-    @PostMapping("/createTaskChildByAdmin/{parentTaskId}")
-    public ApiResponse<TaskChildCreateResponse> createChildTaskByAdmin(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateRequest request) {
-        return ApiResponse.<TaskChildCreateResponse>builder()
-                .entity(taskService.createChildTaskByAdmin(parentTaskId, request))
-                .build();
-    }
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @Operation(summary = "Create task child by admin", description = "Create task child by admin")
+//    @PostMapping("/createTaskChildByAdmin/{parentTaskId}")
+//    public ApiResponse<TaskChildCreateResponse> createChildTaskByAdmin(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateRequest request) {
+//        return ApiResponse.<TaskChildCreateResponse>builder()
+//                .entity(taskService.createChildTaskByAdmin(parentTaskId, request))
+//                .build();
+//    }
 
     @PostMapping("/createTaskChildByAdmin_V2/{parentTaskId}")
     public ApiResponse<TaskChildCreateResponse> createChildTaskByAdmin_V2(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateRequest_V2 request) {
@@ -158,11 +158,19 @@ public class TaskController {
                 .entity(taskService.getAllChildTaskOfHead())
                 .build();
     }
-    @Operation(summary = "Get All task of designer", description = "Get All task of designer")
+    @Operation(summary = "Get All task of designer, head", description = "Get All task of designer")
     @GetMapping("/getAllTaskOfDesigner")
-    public ApiResponse<List<Task>> getAllTaskOfDesigner() {
-        return ApiResponse.<List<Task>>builder()
+    public ApiResponse<List<TaskResponseDesigner>> getAllTaskOfDesigner() {
+        return ApiResponse.<List<TaskResponseDesigner>>builder()
                 .entity(taskService.getAllTaskOfDesigner())
+                .build();
+    }
+
+    @Operation(summary = "Get All task of designer, head", description = "Get All task of designer")
+    @GetMapping("/getAllTaskOfHeadFromAdmin")
+    public ApiResponse<List<TaskResponse>> getAllTaskOfHead() {
+        return ApiResponse.<List<TaskResponse>>builder()
+                .entity(taskService.getAllTaskOfHead())
                 .build();
     }
 //    @Operation(summary = "Get All task of designer", description = "Get All task of designer")
@@ -207,9 +215,9 @@ public class TaskController {
     }
 
     @PostMapping("/createTaskChildByHead_V2/{parentTaskId}")
-    public ApiResponse<TaskChildCreateByHeadResponse> v2(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateByHead_V2Request request, @RequestParam List<Permission> permissions){
+    public ApiResponse<TaskChildCreateByHeadResponse> v2(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateByHead_V2Request request){
         return ApiResponse.<TaskChildCreateByHeadResponse>builder()
-                .entity(taskService.createTaskChildByHead_LHNH(parentTaskId, request, permissions))
+                .entity(taskService.createTaskChildByHead_LHNH(parentTaskId, request))
                 .build();
     }
 

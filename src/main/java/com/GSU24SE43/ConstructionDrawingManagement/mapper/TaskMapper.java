@@ -58,10 +58,15 @@ public interface TaskMapper {
     @Mapping(source = "department.departmentId", target = "departmentId")
     TaskChildUpdateByAdminResponse toTaskChildUpdateByAdminResponse(Task task);
 
-//    @Mapping(source = "parentTask.id", target = "parentTaskId")
-//    @Mapping(source = "department.departmentId", target = "departmentId")
-//    @Mapping(source = "project.id", target = "projectId")
-//    TaskResponse toTaskResponse(Task task);
+    @Mapping(source = "parentTask.id", target = "parentTaskId")
+    @Mapping(source = "department.departmentId", target = "departmentId")
+    @Mapping(source = "project.id", target = "projectId")
+    TaskResponse toTaskResponse(Task task);
+
+    @Mapping(source = "parentTask.id", target = "parentTaskId")
+    @Mapping(source = "department.departmentId", target = "departmentId")
+    @Mapping(source = "project.id", target = "projectId")
+    TaskResponseDesigner toResponseDesigner(Task task);
 //
 //    List<TaskResponse> toTaskResponseList(List<Task> tasks);
 }

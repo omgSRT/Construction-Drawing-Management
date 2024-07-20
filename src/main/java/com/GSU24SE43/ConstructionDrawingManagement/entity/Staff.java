@@ -29,7 +29,7 @@ public class Staff {
 
     // department
     @ManyToOne
-    @JoinColumn(name = "departmentId")
+    @JoinColumn(name = "department_Id")
     @JsonIgnoreProperties(value = {"staffList"}, allowSetters = true)
     Department department;
 
