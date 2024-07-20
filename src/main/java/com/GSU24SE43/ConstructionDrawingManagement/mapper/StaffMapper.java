@@ -12,6 +12,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.context.annotation.Bean;
 
 
 @Mapper(componentModel = "spring")
@@ -27,5 +28,6 @@ public interface StaffMapper {
     void updateStaff(@MappingTarget Staff staff, StaffUpdateRequest request);
     void updateByStaff(@MappingTarget Staff staff, StaffUpdateByStaffRequest request);
 
+    @Mapping(source = "staffId",target = "staffId")
     StaffListResponse toStaffList(Staff staff);
 }

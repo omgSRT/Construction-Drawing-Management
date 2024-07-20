@@ -24,9 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfiguration {
     private final String[] PUBLIC_ENDPOINTS_POST = {"/authenticate/login", "/authenticate/introspect", "/authenticate/logout"};
-    private final String[] PUBLIC_ENDPOINTS_GET = {"/swagger-ui/**"
-            , "/v3/api-docs/**"
-            , "/swagger-resources/**"
+    private final String[] PUBLIC_ENDPOINTS_GET = {"/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**"
     };
 
     @Autowired

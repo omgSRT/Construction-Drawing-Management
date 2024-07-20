@@ -1,13 +1,12 @@
 package com.GSU24SE43.ConstructionDrawingManagement.mapper;
 
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskChildCreateByHeadRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskChildCreateRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskParentCreateByHeadRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.request.TaskParentCreateRequest;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
@@ -19,6 +18,10 @@ public interface TaskMapper {
     @Mapping(target = "parentTask", ignore = true)
     Task toTaskByAdmin(TaskChildCreateRequest request);
 
+    @Mapping(target = "project", ignore = true)
+//    @Mapping(target = "department", ignore = true)
+    @Mapping(target = "parentTask", ignore = true)
+    Task toTaskByAdmin_V2(TaskChildCreateRequest_V2 request);
     @Mapping(source = "project.id", target = "projectId")
     TaskParentCreateResponse toTaskParentCreateResponse(Task task);
 
@@ -41,6 +44,9 @@ public interface TaskMapper {
     @Mapping(target = "parentTask", ignore = true)
     Task toTaskByHead_2(TaskChildCreateByHeadRequest request);
 
+
+    Task toTaskByHead_3(TaskChildCreateByHead_V2Request request);
+
     @Mapping(source = "project.id", target = "projectId")
     @Mapping(source = "department.departmentId", target = "departmentId")
     TaskChildCreateByHeadResponse toTaskChildCreateByHeadResponse(Task task);
@@ -51,4 +57,16 @@ public interface TaskMapper {
     @Mapping(source = "project.id",target = "projectId")
     @Mapping(source = "department.departmentId", target = "departmentId")
     TaskChildUpdateByAdminResponse toTaskChildUpdateByAdminResponse(Task task);
+
+    @Mapping(source = "parentTask.id", target = "parentTaskId")
+    @Mapping(source = "department.departmentId", target = "departmentId")
+    @Mapping(source = "project.id", target = "projectId")
+    TaskResponse toTaskResponse(Task task);
+
+    @Mapping(source = "parentTask.id", target = "parentTaskId")
+    @Mapping(source = "department.departmentId", target = "departmentId")
+    @Mapping(source = "project.id", target = "projectId")
+    TaskResponseDesigner toResponseDesigner(Task task);
+//
+//    List<TaskResponse> toTaskResponseList(List<Task> tasks);
 }

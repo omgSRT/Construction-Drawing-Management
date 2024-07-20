@@ -1,9 +1,11 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 
+import com.GSU24SE43.ConstructionDrawingManagement.enums.Permission;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -22,5 +24,6 @@ public class TaskChildCreateByHeadResponse {
     Date createDate;
     Date beginDate;
     Date endDate;
+    List<Permission> permissions;
 
 }

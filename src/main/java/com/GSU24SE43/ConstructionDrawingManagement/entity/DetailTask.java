@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -21,7 +20,8 @@ public class DetailTask {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID detailTaskId;
 
-    List<Permission> permissions;
+//    @Enumerated(EnumType.STRING)
+    Permission permissions;
 
     @ManyToOne
     @JoinColumn(name = "taskId")
@@ -36,4 +36,10 @@ public class DetailTask {
     @OneToMany(mappedBy = "detailTask", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"detailTask"}, allowSetters = true)
     List<Log> logs;
+
+    public DetailTask(Permission permissions, Task task, Staff staff) {
+        this.permissions = permissions;
+        this.task = task;
+        this.staff = staff;
+    }
 }

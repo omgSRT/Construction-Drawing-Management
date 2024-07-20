@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,27 +27,32 @@ public class Staff {
     String degree;
     boolean isSupervisor;
 
-// department
+    // department
     @ManyToOne
-    @JoinColumn(name = "departmentId")
+    @JoinColumn(name = "department_Id")
+    @JsonIgnoreProperties(value = {"staffList"}, allowSetters = true)
     Department department;
 
     @OneToOne
-    @JsonIgnoreProperties(value = { "staff" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
     @JoinColumn(name = "account_Id")
     Account account;
-// comment
+    // comment
+    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Comment> comments;
 
+    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     List<DetailTask> detailTasks;
 
-//    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-//    List<Project> projects;
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
+//    @JsonIgnore
+    List<Project> projects;
 
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = { "staff" }, allowSetters = true)
+    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
     List<StaffFolder> staff_folders;
 
 }

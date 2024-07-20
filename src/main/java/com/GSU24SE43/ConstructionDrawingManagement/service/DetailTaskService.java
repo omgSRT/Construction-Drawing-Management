@@ -43,7 +43,7 @@ public class DetailTaskService {
                 .builder()
                 .task(task)
                 .staff(staff)
-                .permissions(request.getPermissionList())
+//                .permissions(request.getPermissionList())
                 .build();
         detailTaskRepository.save(detailTask);
         return detailTaskMapper.toCreateResponse(detailTask);
@@ -63,7 +63,7 @@ public class DetailTaskService {
 
         detailTask.setTask(task);
         detailTask.setStaff(staff);
-        detailTask.setPermissions(request.getPermissionList());
+//        detailTask.setPermissions(request.getPermissionList());
         detailTaskRepository.save(detailTask);
         return detailTaskMapper.toDetailTaskUpdateResponse(detailTask);
     }

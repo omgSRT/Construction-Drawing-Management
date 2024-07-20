@@ -5,10 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 @Entity
 @Getter
 @Setter
@@ -37,16 +35,21 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "accountId")
+//    @JsonIgnoreProperties(value = { "projectList" }, allowSetters = true)
+    @JsonIgnore
     Account account;
 
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = { "project" }, allowSetters = true)
+//    @JsonIgnoreProperties(value = { "project" }, allowSetters = true)
     List<Task> tasks;
 
-//    @ManyToOne
-//    @JoinColumn(name = "projectId")
-//    Staff staff;
+    @ManyToOne
+    @JoinColumn(name = "projectId")
+    Staff staff;
+
+    @ManyToMany(mappedBy = "projects")
+    Set<Contractor> contractors;
 
 
 }

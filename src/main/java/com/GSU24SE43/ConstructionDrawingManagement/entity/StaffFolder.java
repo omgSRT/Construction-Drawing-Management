@@ -19,12 +19,12 @@ public class StaffFolder {
     @Id
     String staffFolderId;
     @ManyToOne
-    @JoinColumn(name = "staffId")
+    @JoinColumn(name = "staff_Id")
     @JsonIgnoreProperties(value = { "staff_folders" }, allowSetters = true)
     Staff staff;
     List<Permission> permissions;
     @ManyToOne
-    @JoinColumn(name = "folderId")
+    @JoinColumn(name = "folder_Id")
     @JsonIgnoreProperties(value = { "staff_folders" }, allowSetters = true)
     Folder folder;
 }

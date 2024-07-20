@@ -67,6 +67,7 @@ public enum ErrorCode {
     SEND_MAIL_FAILED(10055, "Gửi mail thất bại", HttpStatus.INTERNAL_SERVER_ERROR),
     ILLEGAL_STATE_EXCEPTION(10056, "Không thể gọi hoặc hỗ trợ phương thức này", HttpStatus.INTERNAL_SERVER_ERROR),
     WRONG_BEGINDATE_OR_ENDDATE(10057,"Ngày tạo phải được tạo sớm hơn ngày kết thúc",HttpStatus.BAD_REQUEST),
+    WRONG_BEGINDATE_OR_ENDDATE_2(10057,"Ngày tạo phải được tạo trể hơn hoặc bằng ngày dự án bắt đầu và ngày kết thúc phải sớm hơn ngày kết thúc dự án",HttpStatus.BAD_REQUEST),
     PRIORITY_INVALID(10058,"Độ ưu tiên không hợp lệ",HttpStatus.BAD_REQUEST),
     PRIORITY_IS_DUPLICATE(10059,"Độ ưu tiên trùng lặp",HttpStatus.BAD_REQUEST),
     TITLE_NOT_BLANK(10060, "Tiêu đề không được để tróng", HttpStatus.BAD_REQUEST),
@@ -82,9 +83,12 @@ public enum ErrorCode {
     HEAD_HAD_THIS_ROLE(10070, "Tài khoản hiện tại đã có vai trò này rồi", HttpStatus.BAD_REQUEST),
     NEXT_TASK_HAS_NOT_BEEN_INITIALIZE(10071, "nhiệm vụ tiếp theo chưa được khởi tạo", HttpStatus.BAD_REQUEST),
     AUTHORIZATION_DENIED_EXCEPTION(10072, "Vai trò của bạn không thể thực hiện chức năng này", HttpStatus.FORBIDDEN),
-    PAGE_EXCEED_MAX_PAGE(10073, "Số trang vượt quá giới hạn tối đa hiện tại là %d", HttpStatus.BAD_REQUEST),
-    DELETE_DEPT_FAILED_ACTIVE_PROJECT(10074, "Không thể xoá phòng ban do phòng vẫn có dự án đang làm", HttpStatus.BAD_REQUEST),
-    INVALID_DATE_GAP_LESS_THAN_7_DAYS(10075, "Ngày tạo phải cách ngày kết thúc ít nhất 7 ngày", HttpStatus.BAD_REQUEST),
+    ADMIN_CANNOT_DO_IT(10073, "Bạn đang dùng tài khoản admin để thực hiện chức năng cho head", HttpStatus.FORBIDDEN),
+    PAGE_EXCEED_MAX_PAGE(10074, "Số trang vượt quá giới hạn tối đa hiện tại là %d", HttpStatus.BAD_REQUEST),
+    DELETE_DEPT_FAILED_ACTIVE_PROJECT(10075, "Không thể xoá phòng ban do phòng vẫn có dự án đang làm", HttpStatus.BAD_REQUEST),
+    INVALID_DATE_GAP_LESS_THAN_7_DAYS(10076, "Ngày tạo phải cách ngày kết thúc ít nhất 7 ngày", HttpStatus.BAD_REQUEST),
+    THIS_ROOM_HAS_NO_HEADER(10077, "Phòng này chưa có trường phòng, bạn cần tạo trưởng phòng cho phòng này để thực hiện chức năng này", HttpStatus.BAD_REQUEST),
+
     ;
 
 

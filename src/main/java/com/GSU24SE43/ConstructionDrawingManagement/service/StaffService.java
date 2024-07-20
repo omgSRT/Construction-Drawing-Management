@@ -4,23 +4,21 @@ import com.GSU24SE43.ConstructionDrawingManagement.Utils.PaginationUtils;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.StaffCreateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.StaffUpdateByStaffRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.StaffUpdateRequest;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.StaffCreateResponse2;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.StaffListResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.StaffUpdateByStaffResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.dto.response.StaffUpdateResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
+import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.*;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.Role;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.StaffMapper;
+import com.GSU24SE43.ConstructionDrawingManagement.mapper.TaskMapper;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.AccountRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.DepartmentRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.DetailTaskRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.StaffRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,9 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -43,9 +38,13 @@ public class StaffService {
     @Autowired
     StaffMapper mapper;
     @Autowired
+    TaskMapper taskMapper;
+    @Autowired
     AccountRepository accountRepository;
     @Autowired
     DepartmentRepository departmentRepository;
+    @Autowired
+    private DetailTaskRepository detailTaskRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -124,6 +123,29 @@ public class StaffService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public List<Staff> searchStaff(String fullname) {
         return staffRepository.findByFullNameContainingIgnoreCase(fullname);
+    }
+
+//    public Set<Task> getMyTasks(){
+//        var context = SecurityContextHolder.getContext();
+//        String name = context.getAuthentication().getName();
+//        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+//        Staff staff = account.getStaff();
+//        List<DetailTask> detailTasks = detailTaskRepository.findByStaff_StaffId(staff.getStaffId());
+//        return detailTasks.stream()
+//                .map(DetailTask::getTask)
+//                .collect(Collectors.toSet());
+//    }
+    public Set<TaskResponse> getMyTasks(){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        Staff staff = account.getStaff();
+        List<DetailTask> detailTasks = detailTaskRepository.findByStaff_StaffId(staff.getStaffId());
+        return detailTasks.stream()
+                .map(DetailTask::getTask)
+                .distinct()
+                .map(taskMapper::toTaskResponse)
+                .collect(Collectors.toSet());
     }
 
     @PreAuthorize("hasRole('ADMIN')")

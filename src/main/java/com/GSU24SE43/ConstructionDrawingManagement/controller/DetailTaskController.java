@@ -6,6 +6,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ApiResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.DetailTaskCreateResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.DetailTaskResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.DetailTaskUpdateResponse;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.Permission;
 import com.GSU24SE43.ConstructionDrawingManagement.service.DetailTaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class DetailTaskController {
     DetailTaskService detailTaskService;
 
     @PostMapping("/create-by-head")
-    public ApiResponse<DetailTaskCreateResponse> createDetailTaskByHead(@RequestBody DetailTaskCreateRequest request){
+    public ApiResponse<DetailTaskCreateResponse> createDetailTaskByHead(@RequestBody DetailTaskCreateRequest request, @RequestParam List<Permission> permissions){
         return ApiResponse.<DetailTaskCreateResponse>builder()
                 .entity(detailTaskService.createDetailTask(request))
                 .build();

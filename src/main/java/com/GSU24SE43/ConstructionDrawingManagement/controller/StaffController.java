@@ -6,6 +6,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.StaffUpdateReques
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.*;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
 import com.GSU24SE43.ConstructionDrawingManagement.service.AccountService;
 import com.GSU24SE43.ConstructionDrawingManagement.service.StaffService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -68,6 +70,12 @@ public class StaffController {
     public ApiResponse<List<StaffListResponse>> getMyStaff(){
         return ApiResponse.<List<StaffListResponse>>builder()
                 .entity(staffService.getAllListStaffByHead())
+                .build();
+    }
+    @GetMapping("/getMyTasks")
+    public ApiResponse<Set<TaskResponse>> getMyTask(){
+        return ApiResponse.<Set<TaskResponse>>builder()
+                .entity(staffService.getMyTasks())
                 .build();
     }
     @Operation(summary = "Delete staff", description = "delete staff by admin")
