@@ -16,6 +16,9 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -44,10 +47,10 @@ public class AuthenticateService {
     //Introspect JWT Token
     public IntrospectResponse introspectJWT(IntrospectRequest request) throws JOSEException, ParseException {
         String token = request.getToken();
-        boolean invalid =true;
+        boolean invalid = true;
         try {
             verifyToken(token);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             invalid = false;
         }
         //Check And Return Bool If  And JWT Expired
@@ -57,14 +60,14 @@ public class AuthenticateService {
                 .build();
     }
 
-    public AuthenticationResponse authenticated(AuthenticationRequest request){
+    public AuthenticationResponse authenticated(AuthenticationRequest request) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         var account = accountRepository.findByUsername(request.getUsername()).orElseThrow(
                 () -> new AppException(ErrorCode.ACCOUNT_NOT_EXIST)
         );
 
         boolean authenticated = passwordEncoder.matches(request.getPassword(), account.getPassword());
-        if (!authenticated){
+        if (!authenticated) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         var token = generateToken(account);
@@ -156,14 +159,14 @@ public class AuthenticateService {
         if (!(verified && expiredDate.after(new Date()))) {
             throw new RuntimeException("String.valueOf(ErrorCode.UNAUTHENTICATED)");
         }
-        if(invalidateTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())){
+        if (invalidateTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())) {
             throw new RuntimeException("unauthenicated");
         }
 
         return signedJWT;
     }
 
-//    private String buildScope(Optional<Account> account) {
+    //    private String buildScope(Optional<Account> account) {
 //        StringJoiner stringJoiner = new StringJoiner(" ");
 //        if (!CollectionUtils.isEmpty(Collections.singleton(account.get().getRoleName()))) {
 //            account.get().getRoleName();
@@ -171,13 +174,30 @@ public class AuthenticateService {
 //
 //        return stringJoiner.toString();
 //    }
-private String buildScope(Account account) {
-    StringJoiner stringJoiner = new StringJoiner(" ");
-    if (!CollectionUtils.isEmpty(Collections.singleton(account.getRoleName()))) {
-        stringJoiner.add(account.getRoleName());
+    private String buildScope(Account account) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if (!CollectionUtils.isEmpty(Collections.singleton(account.getRoleName()))) {
+            stringJoiner.add(account.getRoleName());
+        }
+        return stringJoiner.toString();
     }
-    return stringJoiner.toString();
-}
+
+    public void addTokenIntoCookie(String username, String password, HttpServletResponse response, Account account) {
+        // Thực hiện xác thực người dùng ở đây (ví dụ: kiểm tra username và password)
+
+        // Giả sử xác thực thành công và tạo ra một JWT token
+//        String token = createToken(username);
+        var token = generateToken(account);
+        // Tạo cookie và đặt token vào đó
+        Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true); // Bảo vệ cookie khỏi việc truy cập bằng JavaScript
+        cookie.setSecure(true); // Chỉ gửi cookie qua HTTPS (đảm bảo bảo mật)
+        cookie.setPath("/"); // Đặt đường dẫn cho cookie
+        cookie.setMaxAge(720 * 60); // Thời gian sống của cookie (1 giờ)
+
+        // Thêm cookie vào phản hồi HTTP
+        response.addCookie(cookie);
+    }
 
 
 }
