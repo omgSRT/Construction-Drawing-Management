@@ -19,6 +19,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class TaskService {
     DepartmentRepository departmentRepository;
     AccountRepository accountRepository;
     TaskMapper taskMapper;
+    SimpMessagingTemplate messagingTemplate;
 
     //create task parent by admin
     @PreAuthorize("hasRole('ADMIN')")
@@ -58,6 +60,9 @@ public class TaskService {
             }
             task.setStatus(TaskStatus.NO_RECIPIENT.getMessage());
             taskRepository.save(task);
+
+            messagingTemplate.convertAndSend("/realtime/notifications", task);
+
             return taskMapper.toTaskParentCreateResponse(task);
         }
     }

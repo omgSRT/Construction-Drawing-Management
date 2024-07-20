@@ -31,8 +31,8 @@ public enum ErrorCode {
     PROJECT_NOT_FOUND(10019, "Không tìm thấy dự án", HttpStatus.NOT_FOUND),
     DEPARTMENT_NOT_FOUND(10020, "Không tìm thấy phòng ban", HttpStatus.NOT_FOUND),
     ACCOUNT_NOT_FOUND(10021, "Không tìm thấy tài khoản", HttpStatus.NOT_FOUND),
-    INVALID_CREATED_DATE_EARLIER_THAN_END_DATE(10022, "Ngày tạo phải được tạo sớm hơn ngày kết thúc", HttpStatus.BAD_REQUEST),
-    INVALID_CREATED_DATE_NOT_IN_FUTURE(10023, "Ngày tạo phải bằng hoặc muộn hơn hiện tại", HttpStatus.BAD_REQUEST),
+    INVALID_START_DATE_EARLIER_THAN_END_DATE(10022, "Ngày tạo phải được tạo sớm hơn ngày kết thúc", HttpStatus.BAD_REQUEST),
+    INVALID_START_DATE_NOT_IN_FUTURE(10023, "Ngày tạo phải muộn hơn hiện tại", HttpStatus.BAD_REQUEST),
     INVALID_END_DATE_NOT_IN_FUTURE(10024, "Ngày kết thúc phải muộn hơn hiện tại", HttpStatus.BAD_REQUEST),
     PERMISSION_NOT_FOUND(10025, "Không tìm thấy quyền truy cập", HttpStatus.BAD_REQUEST),
     ACCOUNT_NOT_EXIST(10026,"Tài khoản không tồn tại",  HttpStatus.NOT_FOUND),
@@ -84,6 +84,7 @@ public enum ErrorCode {
     AUTHORIZATION_DENIED_EXCEPTION(10072, "Vai trò của bạn không thể thực hiện chức năng này", HttpStatus.FORBIDDEN),
     PAGE_EXCEED_MAX_PAGE(10073, "Số trang vượt quá giới hạn tối đa hiện tại là %d", HttpStatus.BAD_REQUEST),
     DELETE_DEPT_FAILED_ACTIVE_PROJECT(10074, "Không thể xoá phòng ban do phòng vẫn có dự án đang làm", HttpStatus.BAD_REQUEST),
+    INVALID_DATE_GAP_LESS_THAN_7_DAYS(10075, "Ngày tạo phải cách ngày kết thúc ít nhất 7 ngày", HttpStatus.BAD_REQUEST),
     ;
 
 
