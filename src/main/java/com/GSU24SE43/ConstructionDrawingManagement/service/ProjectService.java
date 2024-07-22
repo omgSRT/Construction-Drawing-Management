@@ -6,6 +6,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.*;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.LandPurpose;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.AppException;
 import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -32,10 +35,12 @@ public class ProjectService {
     final AccountRepository accountRepository;
     final DepartmentRepository departmentRepository;
     final DepartmentProjectRepository departmentProjectRepository;
+    final ContractorRepository contractorRepository;
+    final FloorDetailRepository floorDetailRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     @PreAuthorize("hasRole('ADMIN')")
-    public ProjectResponse createProject(ProjectRequest request) {
+    public ProjectResponse createProject(ProjectRequest request, LandPurpose landPurpose) {
         if (projectRepository.existsByName(request.getName())) {
             throw new AppException(ErrorCode.NAME_EXISTED);
         }
@@ -44,6 +49,10 @@ public class ProjectService {
                 .map(departmentId -> departmentRepository.findById(departmentId)
                         .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)))
                 .toList();
+        Set<Contractor> contractorList = request.getContractorIds().stream()
+                .map(contractorId -> contractorRepository.findById(contractorId)
+                        .orElseThrow(() -> new AppException(ErrorCode.CONTRACTOR_NOT_FOUND)))
+                .collect(Collectors.toSet());
 
         Account account = accountRepository.findByUsername("admin")
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
@@ -54,6 +63,8 @@ public class ProjectService {
         project.setCreationDate(new Date());
         project.setAccount(account);
         project.setStatus(ProjectStatus.ACTIVE.name());
+        project.setLandPurpose(landPurpose.name());
+        project.setContractors(contractorList);
 
         Project newProject = projectRepository.save(project);
         newProject.setDepartmentProjects(
@@ -110,15 +121,23 @@ public class ProjectService {
     }
 
     @PreAuthorize("hasRole('Admin')")
-    public ProjectResponse updateProjectById(UUID id, ProjectUpdateRequest request){
+    public ProjectResponse updateProjectById(UUID id, ProjectUpdateRequest request, LandPurpose landPurpose){
         var project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
 
-        validateProjectDate(request.getStartDate(), request.getEndDate());
+        if(!checkUpdateRequestDateMatchCurrentProjectDate(project, request)){
+            validateProjectDate(request.getStartDate(), request.getEndDate());
+        }
 
         projectMapper.updateProject(project, request);
+        project.setLandPurpose(landPurpose.name());
 
         return projectMapper.toProjectResponse(projectRepository.save(project));
+    }
+
+    private boolean checkUpdateRequestDateMatchCurrentProjectDate(Project project, ProjectUpdateRequest request){
+        return project.getStartDate().equals(request.getStartDate())
+                && project.getEndDate().equals(request.getEndDate());
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")

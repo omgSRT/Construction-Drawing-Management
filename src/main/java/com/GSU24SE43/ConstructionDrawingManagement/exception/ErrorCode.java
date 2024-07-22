@@ -86,11 +86,20 @@ public enum ErrorCode {
     NEXT_TASK_HAS_NOT_BEEN_INITIALIZE(10071, "nhiệm vụ tiếp theo chưa được khởi tạo", HttpStatus.BAD_REQUEST),
     AUTHORIZATION_DENIED_EXCEPTION(10072, "Vai trò của bạn không thể thực hiện chức năng này", HttpStatus.FORBIDDEN),
     ADMIN_CANNOT_DO_IT(10073, "Bạn đang dùng tài khoản admin để thực hiện chức năng cho head", HttpStatus.FORBIDDEN),
-    PAGE_EXCEED_MAX_PAGE(10074, "Số trang vượt quá giới hạn tối đa hiện tại là %d", HttpStatus.BAD_REQUEST),
+    PAGE_EXCEED_MAX_PAGE(10074, "Số trang vượt quá giới hạn tối đa hiện tại là 10", HttpStatus.BAD_REQUEST),
     DELETE_DEPT_FAILED_ACTIVE_PROJECT(10075, "Không thể xoá phòng ban do phòng vẫn có dự án đang làm", HttpStatus.BAD_REQUEST),
     INVALID_DATE_GAP_LESS_THAN_7_DAYS(10076, "Ngày tạo phải cách ngày kết thúc ít nhất 7 ngày", HttpStatus.BAD_REQUEST),
     THIS_ROOM_HAS_NO_HEADER(10077, "Phòng này chưa có trường phòng, bạn cần tạo trưởng phòng cho phòng này để thực hiện chức năng này", HttpStatus.BAD_REQUEST),
-
+    CONTRACTOR_NOT_FOUND(10078, "Không tìm thấy chủ thầu", HttpStatus.NOT_FOUND),
+    FLOOR_DETAIL_NOT_FOUND(10079, "Không tìm thấy chi tiết tầng", HttpStatus.NOT_FOUND),
+    MIN_FLOOR_OCCUPATION_RATE_ERROR(10080, "Tỉ lệ sử dụng phải ít nhất 1%", HttpStatus.BAD_REQUEST),
+    MAX_FLOOR_OCCUPATION_RATE_ERROR(10081, "Tỉ lệ sử dụng tối đa là 100%", HttpStatus.BAD_REQUEST),
+    MAX_FLOOR_ROOM_ERROR(10082, "Số lượng phòng phải ít nhất là 1", HttpStatus.BAD_REQUEST),
+    MAX_FLOOR_HEIGHT_ERROR(10083, "Độ cao tối thiểu 1 tầng phải là 2.1 mét", HttpStatus.BAD_REQUEST),
+    MAX_AREA_ERROR(10084, "Diện tích tối thiểu là 25 m2", HttpStatus.BAD_REQUEST),
+    EXCEED_PREVIOUS_FLOOR_AREA(10085, "Tầng sau vượt giới hạn diện tích của tầng trước", HttpStatus.BAD_REQUEST),
+    FLOOR_DETAIL_EXISTED(10086, "Chi tiết tầng hiện tại đã tồn tại trong dự này", HttpStatus.BAD_REQUEST),
+    MIN_MAX_PHONE_SIZE(10087, "Sô điện thoại tối thiểu 8 số và tối đa 14 số", HttpStatus.BAD_REQUEST)
     ;
 
 

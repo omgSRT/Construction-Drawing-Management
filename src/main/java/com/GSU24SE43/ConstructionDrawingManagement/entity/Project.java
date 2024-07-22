@@ -3,6 +3,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
 
 import java.util.*;
@@ -26,6 +27,7 @@ public class Project {
     private String status;
 
     // Plot area details
+    @DecimalMin(value = "25", message = "Diện tích tối thiểu là 25 m2")
     private double plotArea;
     private String landPurpose;
 
