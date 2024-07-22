@@ -3,6 +3,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Contractor;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.FloorDetail;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -27,5 +28,6 @@ public class ProjectResponse {
     double plotArea;
     String landPurpose;
     List<Department> departments;
+    @JsonIgnoreProperties(value = {"projects"}, allowSetters = true)
     Set<Contractor> contractors;
 }

@@ -16,6 +16,6 @@ public class ContractorResponse {
     String address;
     String phone;
     String email;
-    int tax_identification_number;
-    String business_license;
+    String taxIdentificationNumber;
+    String businessLicense;
 }
