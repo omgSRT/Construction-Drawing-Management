@@ -35,7 +35,7 @@ public class ContractorService {
         }
 
         Contractor newContractor = contractorMapper.toContractor(request);
-        return contractorMapper.toContractorResponse(newContractor);
+        return contractorMapper.toContractorResponse(contractorRepository.save(newContractor));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -27,7 +27,7 @@ public class Project {
     private String status;
 
     // Plot area details
-    @DecimalMin(value = "25L", message = "Diện tích tối thiểu là 25 m2")
+    @DecimalMin(value = "25", message = "Diện tích tối thiểu là 25 m2")
     private double plotArea;
     private String landPurpose;
 
