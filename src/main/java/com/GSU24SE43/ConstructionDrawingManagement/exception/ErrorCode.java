@@ -68,6 +68,8 @@ public enum ErrorCode {
     ILLEGAL_STATE_EXCEPTION(10056, "Không thể gọi hoặc hỗ trợ phương thức này", HttpStatus.INTERNAL_SERVER_ERROR),
     WRONG_BEGINDATE_OR_ENDDATE(10057,"Ngày tạo phải được tạo sớm hơn ngày kết thúc",HttpStatus.BAD_REQUEST),
     WRONG_BEGINDATE_OR_ENDDATE_2(10057,"Ngày tạo phải được tạo trể hơn hoặc bằng ngày dự án bắt đầu và ngày kết thúc phải sớm hơn ngày kết thúc dự án",HttpStatus.BAD_REQUEST),
+    WRONG_BEGINDATE(10057,"Ngày bắt đầu nhiệm vụ phải lớn hơn ngày dự án bắt đầu",HttpStatus.BAD_REQUEST),
+    WRONG_ENDDATE(10057,"Ngày kết thúc nhiệm vụ phải nhỏ hơn ngày dự án kết thúc",HttpStatus.BAD_REQUEST),
     PRIORITY_INVALID(10058,"Độ ưu tiên không hợp lệ",HttpStatus.BAD_REQUEST),
     PRIORITY_IS_DUPLICATE(10059,"Độ ưu tiên trùng lặp",HttpStatus.BAD_REQUEST),
     TITLE_NOT_BLANK(10060, "Tiêu đề không được để tróng", HttpStatus.BAD_REQUEST),

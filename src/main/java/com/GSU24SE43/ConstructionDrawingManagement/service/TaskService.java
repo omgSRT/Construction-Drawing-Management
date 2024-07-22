@@ -63,8 +63,10 @@ public class TaskService {
     }
 
     private void checkDateTaskVSProject(Date startDate, Date endDate, Project project) {
-        if (startDate.after(project.getStartDate()) || endDate.before(project.getEndDate()))
-            throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE_2);
+        if (startDate.before(project.getStartDate()))
+            throw new AppException(ErrorCode.WRONG_BEGINDATE);
+        if (endDate.after(project.getEndDate()))
+            throw new AppException(ErrorCode.WRONG_ENDDATE);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -339,6 +341,7 @@ public class TaskService {
         Task taskChild = checkTask(childTaskId);
         checkStatusTask(status.name(), taskChild);
         Task taskParent = taskChild.getParentTask();
+        
 //        Task taskParent = checkTask(taskChild.getParentTask().getId());
         taskRepository.save(taskChild);
         if (status.name().equals(TaskStatus.DONE.name())) {
@@ -390,16 +393,69 @@ public class TaskService {
                 taskParent.setStatus(TaskStatus.DONE.name());
                 taskRepository.save(taskParent);
             }
-            if (priority < 4) {
+
                 Task nextTask = taskRepository.findByPriorityAndParentTaskId(a, taskParent.getId());
                 if (nextTask == null) throw new AppException(ErrorCode.NEXT_TASK_HAS_NOT_BEEN_INITIALIZE);
                 nextTask.setStatus(TaskStatus.ACTIVE.name());
                 taskRepository.save(nextTask);
-            }
+
 
         }
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
+
+    public TaskChildUpdateByAdminResponse upgradeStatus_3(UUID childTaskId, TaskStatus status) {
+        Task taskChild = checkTask(childTaskId);
+        checkStatusTask(status.name(), taskChild);
+        Task taskParent = taskChild.getParentTask();
+        List<Task> taskList = taskParent.getTasks();
+        taskRepository.save(taskChild);
+
+        if (status.name().equals(TaskStatus.DONE.name())) {
+            int priority = taskChild.getPriority();
+
+            // Kiểm tra tất cả các task cùng priority
+            boolean allTasksDone = true;
+            for (Task task : taskList) {
+                if (task.getPriority() == priority && !task.getId().equals(taskChild.getId())) {
+                    if (!TaskStatus.DONE.name().equals(task.getStatus())) {
+                        allTasksDone = false;
+                        break;
+                    }
+                }
+            }
+
+            // Nếu tất cả các task cùng priority đã DONE
+            if (allTasksDone) {
+                // Kiểm tra xem task hiện tại có phải là task cuối cùng không
+                boolean isLastTask = true;
+                for (Task task : taskList) {
+                    if (task.getPriority() > priority) {
+                        isLastTask = false;
+                        break;
+                    }
+                }
+
+                // Nếu task hiện tại là task cuối cùng thì cập nhật trạng thái của taskParent
+                if (isLastTask) {
+                    taskParent.setStatus(TaskStatus.DONE.name());
+                    taskRepository.save(taskParent);
+                } else {
+                    // Xác định task tiếp theo và cập nhật trạng thái
+                    int nextPriority = priority + 1;
+                    Task nextTask = taskRepository.findByPriorityAndParentTaskId(nextPriority, taskParent.getId());
+                    if (nextTask != null) {
+                        nextTask.setStatus(TaskStatus.ACTIVE.name());
+                        taskRepository.save(nextTask);
+                    } else {
+                        throw new AppException(ErrorCode.NEXT_TASK_HAS_NOT_BEEN_INITIALIZE);
+                    }
+                }
+            }
+        }
+        return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
+    }
+
 
     private boolean checkAllTaskDuplicateSuccess(List<Task> list) {
         boolean check = true;
@@ -409,7 +465,15 @@ public class TaskService {
                 break;
             }
         }
+
         return check;
+    }
+    private boolean checkDuplicateHead2(UUID taskParentId, UUID departmentId) {
+        Task parentTask = taskRepository.findById(taskParentId).orElseThrow(
+                () -> new AppException(ErrorCode.TASK_PARENT_NOT_FOUND));
+
+        return parentTask.getTasks().stream()
+                .anyMatch(task -> task.getDepartment().getDepartmentId() == departmentId);
     }
 
     private Task checkTask(UUID taskId) {

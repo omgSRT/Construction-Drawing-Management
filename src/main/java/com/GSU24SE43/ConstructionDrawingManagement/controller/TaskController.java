@@ -90,6 +90,13 @@ public class TaskController {
                 .build();
     }
 
+    @PostMapping("/updateStatusChildByAdmin_V2/{childTaskId}")
+    public ApiResponse<TaskChildUpdateByAdminResponse> updateStatusChildTaskByAdmin2(@PathVariable UUID childTaskId, @RequestParam TaskStatus status) {
+        return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
+                .entity(taskService.upgradeStatus_3(childTaskId, status))
+                .build();
+    }
+
     @Operation(summary = "Update task parent by admin", description = "Update task parent by admin")
     @PostMapping("/updateStatusTaskParentByAdmin/{parentTaskId}")
     public ApiResponse<TaskParentUpdateByAdminResponse> updateTaskParentByAdmin(@PathVariable UUID parentTaskId, @RequestBody TaskParentUpdateByAdminRequest request) {
