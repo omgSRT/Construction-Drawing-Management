@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 public interface StaffMapper {
     Staff toStaff(StaffCreateRequest request);
     Staff updateRequestToStaff(StaffUpdateRequest request);
+    @Mapping(source = "department", target = "department")
     StaffCreateResponse2 toStaffCreateResponse2(Staff staff);
 //    @Mapping(source = "department.departmentId", target = "departmentId")
 //    StaffUpdateResponse updateStaff(Staff staff);

@@ -34,14 +34,6 @@ public class TaskController {
                 .build();
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @Operation(summary = "Create task child by admin", description = "Create task child by admin")
-//    @PostMapping("/createTaskChildByAdmin/{parentTaskId}")
-//    public ApiResponse<TaskChildCreateResponse> createChildTaskByAdmin(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateRequest request) {
-//        return ApiResponse.<TaskChildCreateResponse>builder()
-//                .entity(taskService.createChildTaskByAdmin(parentTaskId, request))
-//                .build();
-//    }
 
     @PostMapping("/createTaskChildByAdmin_V2/{parentTaskId}")
     public ApiResponse<TaskChildCreateResponse> createChildTaskByAdmin_V2(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateRequest_V2 request) {
@@ -58,39 +50,32 @@ public class TaskController {
                 .build();
     }
 
-//    @Operation(summary = "Create task child by head", description = "Create task child by head")
-//    @PostMapping("/createTaskChildByHead/{parentTaskId}")
-//    public ApiResponse<TaskChildCreateByHeadResponse> createChildTaskByHead(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateByHeadRequest request) {
-//        return ApiResponse.<TaskChildCreateByHeadResponse>builder()
-//                .entity(taskService.createTaskChildByHead(parentTaskId, request))
+
+
+//    @Operation(summary = "Update status task parent ", description = "Update status task parent")
+//    @PostMapping("/updateStatusTaskParent/{parentTaskId}")
+//    public ApiResponse<TaskParentUpdateByAdminResponse> updateStatusParentTask(@PathVariable UUID parentTaskId, @RequestParam TaskStatus status) {
+//        return ApiResponse.<TaskParentUpdateByAdminResponse>builder()
+//                .entity(taskService.updateStatusTaskParent(parentTaskId, status))
+//                .build();
+//    }
+//
+//    @Operation(summary = "Update status task child ", description = "Update status task child")
+//    @PostMapping("/updateStatusTaskChild/{childTaskId}")
+//    public ApiResponse<TaskChildUpdateByAdminResponse> updateStatusChildTask(@PathVariable UUID childTaskId, @RequestParam TaskStatus status) {
+//        return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
+//                .entity(taskService.updateStatusTaskChild(childTaskId, status))
+//                .build();
+//    }
+//    @Operation(summary = "Update status task child by admin", description = "Bản update premium của update task child by admin")
+//    @PostMapping("/updateStatusChildByAdmin/{childTaskId}")
+//    public ApiResponse<TaskChildUpdateByAdminResponse> updateStatusChildTaskByAdmin(@PathVariable UUID childTaskId, @RequestParam TaskStatus status) {
+//        return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
+//                .entity(taskService.upgradeStatus(childTaskId, status))
 //                .build();
 //    }
 
-
-    @Operation(summary = "Update status task parent ", description = "Update status task parent")
-    @PostMapping("/updateStatusTaskParent/{parentTaskId}")
-    public ApiResponse<TaskParentUpdateByAdminResponse> updateStatusParentTask(@PathVariable UUID parentTaskId, @RequestParam TaskStatus status) {
-        return ApiResponse.<TaskParentUpdateByAdminResponse>builder()
-                .entity(taskService.updateStatusTaskParent(parentTaskId, status))
-                .build();
-    }
-
-    @Operation(summary = "Update status task child ", description = "Update status task child")
-    @PostMapping("/updateStatusTaskChild/{childTaskId}")
-    public ApiResponse<TaskChildUpdateByAdminResponse> updateStatusChildTask(@PathVariable UUID childTaskId, @RequestParam TaskStatus status) {
-        return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
-                .entity(taskService.updateStatusTaskChild(childTaskId, status))
-                .build();
-    }
-    @Operation(summary = "Update status task child by admin", description = "Bản update premium của update task child by admin")
-    @PostMapping("/updateStatusChildByAdmin/{childTaskId}")
-    public ApiResponse<TaskChildUpdateByAdminResponse> updateStatusChildTaskByAdmin(@PathVariable UUID childTaskId, @RequestParam TaskStatus status) {
-        return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
-                .entity(taskService.upgradeStatus(childTaskId, status))
-                .build();
-    }
-
-    @PostMapping("/updateStatusChildByAdmin_V2/{childTaskId}")
+    @PostMapping("/updateStatusChild_V2/{childTaskId}")
     public ApiResponse<TaskChildUpdateByAdminResponse> updateStatusChildTaskByAdmin2(@PathVariable UUID childTaskId, @RequestParam TaskStatus status) {
         return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
                 .entity(taskService.upgradeStatus_3(childTaskId, status))
@@ -105,11 +90,18 @@ public class TaskController {
                 .build();
     }
 
-    @Operation(summary = "Update task child by admin", description = "Update task child by admin")
-    @PostMapping("/updateStatusTaskChildByAdmin/{parentTaskId}")
-    public ApiResponse<TaskChildUpdateByAdminResponse> updateTaskChildByAdmin(@PathVariable UUID parentTaskId, @RequestBody TaskChildUpdateByAdminRequest request) {
-        return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
-                .entity(taskService.updateTaskChildByAdmin(parentTaskId, request))
+//    @Operation(summary = "Update task child by admin", description = "Update task child by admin")
+//    @PostMapping("/updateStatusTaskChildByAdmin/{parentTaskId}")
+//    public ApiResponse<TaskChildUpdateByAdminResponse> updateTaskChildByAdmin(@PathVariable UUID parentTaskId, @RequestBody TaskChildUpdateByAdminRequest request) {
+//        return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
+//                .entity(taskService.updateTaskChildByAdmin(parentTaskId, request))
+//                .build();
+//    }
+
+    @PostMapping("/createTaskChildByHead_V2/{parentTaskId}")
+    public ApiResponse<TaskChildCreateByHeadResponse> v2(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateByHead_V2Request request){
+        return ApiResponse.<TaskChildCreateByHeadResponse>builder()
+                .entity(taskService.createTaskChildByHead_LHNH(parentTaskId, request))
                 .build();
     }
 
@@ -180,13 +172,7 @@ public class TaskController {
                 .entity(taskService.getAllTaskOfHead())
                 .build();
     }
-//    @Operation(summary = "Get All task of designer", description = "Get All task of designer")
-//    @GetMapping("/getAllTaskOfDesigner")
-//    public ApiResponse<List<Task>> getAllTaskOfHead() {
-//        return ApiResponse.<List<Task>>builder()
-//                .entity(taskService.getAllTaskOfHead())
-//                .build();
-//    }
+
     @Operation(summary = "Search task by id", description = "Search task by id")
     @GetMapping("/findTaskById")
     public ApiResponse<Task> findTask(@RequestParam UUID taskId){
@@ -221,12 +207,7 @@ public class TaskController {
                 .build();
     }
 
-    @PostMapping("/createTaskChildByHead_V2/{parentTaskId}")
-    public ApiResponse<TaskChildCreateByHeadResponse> v2(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateByHead_V2Request request){
-        return ApiResponse.<TaskChildCreateByHeadResponse>builder()
-                .entity(taskService.createTaskChildByHead_LHNH(parentTaskId, request))
-                .build();
-    }
+
 
 
 

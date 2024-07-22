@@ -1,6 +1,8 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Account;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,6 +21,8 @@ public class StaffCreateResponse2 {
     String phone;
     String certificate;
     String degree;
+    @JsonIgnoreProperties(value = {"staffList","taskList","departmentProjects"}, allowSetters = true)
+    Department department;
     boolean isSupervisor;
 
 }
