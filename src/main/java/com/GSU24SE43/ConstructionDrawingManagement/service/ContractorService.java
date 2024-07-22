@@ -33,6 +33,10 @@ public class ContractorService {
         if(!contractorList.isEmpty()){
             throw new AppException(ErrorCode.NAME_EXISTED);
         }
+        Contractor contractorWithExistedTIN = contractorRepository.findByTaxIdentificationNumber(request.getTax_identification_number());
+        if(contractorWithExistedTIN != null){
+            throw new AppException(ErrorCode.TIN_EXISTED);
+        }
 
         Contractor newContractor = contractorMapper.toContractor(request);
         return contractorMapper.toContractorResponse(newContractor);

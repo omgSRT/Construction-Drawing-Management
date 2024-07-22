@@ -34,7 +34,6 @@ public class Contractor {
     @Size(max = 13, message = "TIN max is 13 number")
     int tax_identification_number;
     String business_license;
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "contractor_project",

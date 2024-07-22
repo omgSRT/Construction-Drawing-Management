@@ -12,4 +12,6 @@ public interface ContractorRepository extends JpaRepository<Contractor, UUID> {
     List<Contractor> findByContractorName(String name);
 
     List<Contractor> findByContractorNameContaining(String name);
+
+    Contractor findByTaxIdentificationNumber(int tax_identification_number);
 }
