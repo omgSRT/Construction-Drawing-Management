@@ -12,8 +12,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface ContractorMapper {
     Contractor toContractor(ContractorRequest request);
-
-    @Mapping(target = "projects", ignore = true)
+    
     ContractorResponse toContractorResponse(Contractor contractor);
 
     @Mapping(target = "projects", ignore = true)
