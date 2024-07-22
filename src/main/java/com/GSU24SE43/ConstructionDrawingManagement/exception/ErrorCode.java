@@ -31,8 +31,8 @@ public enum ErrorCode {
     PROJECT_NOT_FOUND(10019, "Không tìm thấy dự án", HttpStatus.NOT_FOUND),
     DEPARTMENT_NOT_FOUND(10020, "Không tìm thấy phòng ban", HttpStatus.NOT_FOUND),
     ACCOUNT_NOT_FOUND(10021, "Không tìm thấy tài khoản", HttpStatus.NOT_FOUND),
-    INVALID_CREATED_DATE_EARLIER_THAN_END_DATE(10022, "Ngày tạo phải được tạo sớm hơn ngày kết thúc", HttpStatus.BAD_REQUEST),
-    INVALID_CREATED_DATE_NOT_IN_FUTURE(10023, "Ngày tạo phải bằng hoặc muộn hơn hiện tại", HttpStatus.BAD_REQUEST),
+    INVALID_START_DATE_EARLIER_THAN_END_DATE(10022, "Ngày tạo phải được tạo sớm hơn ngày kết thúc", HttpStatus.BAD_REQUEST),
+    INVALID_START_DATE_NOT_IN_FUTURE(10023, "Ngày tạo phải muộn hơn hiện tại", HttpStatus.BAD_REQUEST),
     INVALID_END_DATE_NOT_IN_FUTURE(10024, "Ngày kết thúc phải muộn hơn hiện tại", HttpStatus.BAD_REQUEST),
     PERMISSION_NOT_FOUND(10025, "Không tìm thấy quyền truy cập", HttpStatus.BAD_REQUEST),
     ACCOUNT_NOT_EXIST(10026,"Tài khoản không tồn tại",  HttpStatus.NOT_FOUND),
@@ -85,13 +85,11 @@ public enum ErrorCode {
     HEAD_HAD_THIS_ROLE(10070, "Tài khoản hiện tại đã có vai trò này rồi", HttpStatus.BAD_REQUEST),
     NEXT_TASK_HAS_NOT_BEEN_INITIALIZE(10071, "nhiệm vụ tiếp theo chưa được khởi tạo", HttpStatus.BAD_REQUEST),
     AUTHORIZATION_DENIED_EXCEPTION(10072, "Vai trò của bạn không thể thực hiện chức năng này", HttpStatus.FORBIDDEN),
-
-
-    ADMIN_CANNOT_DO_IT(10072, "Bạn đang dùng tài khoản admin để thực hiện chức năng cho head", HttpStatus.FORBIDDEN),
-    PAGE_EXCEED_MAX_PAGE(10073, "Số trang vượt quá giới hạn tối đa hiện tại là %d", HttpStatus.BAD_REQUEST),
-    
-    DELETE_DEPT_FAILED_ACTIVE_PROJECT(10074, "Không thể xoá phòng ban do phòng vẫn có dự án đang làm", HttpStatus.BAD_REQUEST),
-    THIS_ROOM_HAS_NO_HEADER(10074, "Phòng này chưa có trường phòng, bạn cần tạo trưởng phòng cho phòng này để thực hiện chức năng này", HttpStatus.BAD_REQUEST),
+    ADMIN_CANNOT_DO_IT(10073, "Bạn đang dùng tài khoản admin để thực hiện chức năng cho head", HttpStatus.FORBIDDEN),
+    PAGE_EXCEED_MAX_PAGE(10074, "Số trang vượt quá giới hạn tối đa hiện tại là %d", HttpStatus.BAD_REQUEST),
+    DELETE_DEPT_FAILED_ACTIVE_PROJECT(10075, "Không thể xoá phòng ban do phòng vẫn có dự án đang làm", HttpStatus.BAD_REQUEST),
+    INVALID_DATE_GAP_LESS_THAN_7_DAYS(10076, "Ngày tạo phải cách ngày kết thúc ít nhất 7 ngày", HttpStatus.BAD_REQUEST),
+    THIS_ROOM_HAS_NO_HEADER(10077, "Phòng này chưa có trường phòng, bạn cần tạo trưởng phòng cho phòng này để thực hiện chức năng này", HttpStatus.BAD_REQUEST),
 
     ;
 

@@ -25,6 +25,13 @@ public class Project {
     private Date endDate;
     private String status;
 
+    // Plot area details
+    private double plotArea;
+    private String landPurpose;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<FloorDetail> floorDetails;
+
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Folder> folders;
@@ -50,6 +57,4 @@ public class Project {
 
     @ManyToMany(mappedBy = "projects")
     Set<Contractor> contractors;
-
-
 }
