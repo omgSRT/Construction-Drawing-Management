@@ -21,5 +21,7 @@ public class ProjectResponse {
     Date startDate;
     Date endDate;
     String status;
+    double plotArea;
+    String landPurpose;
     List<Department> departments;
 }

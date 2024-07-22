@@ -5,6 +5,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ApiResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
+import com.GSU24SE43.ConstructionDrawingManagement.enums.LandPurpose;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.SuccessReturnMessage;
 import com.GSU24SE43.ConstructionDrawingManagement.service.ProjectService;
@@ -31,10 +32,11 @@ public class ProjectController {
     @PostMapping(path = "/create")
     @Secured("ADMIN")
 
-    public ApiResponse<ProjectResponse> createProject(@RequestBody @Valid ProjectRequest request){
+    public ApiResponse<ProjectResponse> createProject(@RequestBody @Valid ProjectRequest request,
+                                                      @RequestParam LandPurpose landPurpose){
         return ApiResponse.<ProjectResponse>builder()
                 .message(SuccessReturnMessage.CREATE_SUCCESS.getMessage())
-                .entity(projectService.createProject(request))
+                .entity(projectService.createProject(request, landPurpose))
                 .build();
     }
 
@@ -129,10 +131,12 @@ public class ProjectController {
 
     @Operation(summary = "Update Project", description = "Update A Project by ID")
     @PutMapping(path = "/update/{id}")
-    public ApiResponse<ProjectResponse> updateProjectById(@PathVariable UUID id, @RequestBody @Valid ProjectUpdateRequest request){
+    public ApiResponse<ProjectResponse> updateProjectById(@PathVariable UUID id,
+                                                          @RequestBody @Valid ProjectUpdateRequest request,
+                                                          @RequestParam LandPurpose landPurpose){
         return ApiResponse.<ProjectResponse>builder()
                 .message(SuccessReturnMessage.UPDATE_SUCCESS.getMessage())
-                .entity(projectService.updateProjectById(id, request))
+                .entity(projectService.updateProjectById(id, request, landPurpose))
                 .build();
     }
 
