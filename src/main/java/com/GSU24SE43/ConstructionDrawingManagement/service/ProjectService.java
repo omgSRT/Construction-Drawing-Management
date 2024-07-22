@@ -53,10 +53,6 @@ public class ProjectService {
                 .map(contractorId -> contractorRepository.findById(contractorId)
                         .orElseThrow(() -> new AppException(ErrorCode.CONTRACTOR_NOT_FOUND)))
                 .collect(Collectors.toSet());
-        List<FloorDetail> floorDetailList = request.getFloorDetailIds().stream()
-                .map(floorDetailId -> floorDetailRepository.findById(floorDetailId)
-                        .orElseThrow(() -> new AppException(ErrorCode.FLOOR_DETAIL_NOT_FOUND)))
-                .toList();
 
         Account account = accountRepository.findByUsername("admin")
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
@@ -69,7 +65,6 @@ public class ProjectService {
         project.setStatus(ProjectStatus.ACTIVE.name());
         project.setLandPurpose(landPurpose.name());
         project.setContractors(contractorList);
-        project.setFloorDetails(floorDetailList);
 
         Project newProject = projectRepository.save(project);
         newProject.setDepartmentProjects(

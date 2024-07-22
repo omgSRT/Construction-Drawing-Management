@@ -1,7 +1,7 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.request;
 
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,7 +16,7 @@ public class ContractorRequest {
     String phone;
     @Email
     String email;
-    @Size(max = 13, message = "TIN max is 13 number")
+    @Digits(integer = 13, fraction = 0, message = "TIN max is 13 number")
     int tax_identification_number;
     String business_license;
 }

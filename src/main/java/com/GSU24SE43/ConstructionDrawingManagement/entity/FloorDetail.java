@@ -20,13 +20,13 @@ public class FloorDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Min(1L)
+    @Min(1)
     private int floorNumber;
     @DecimalMin(value = "25", message = "Diện tích tối thiểu là 25 m2")
     private double floorArea;
     @DecimalMin(value = "2.1", message = "Độ cao tối thiểu 1 tầng phải là 2.1 mét")
     private double height;
-    @Min(value = 1L, message = "Số lượng phòng phải ít nhất là 1")
+    @Min(value = 1, message = "Số lượng phòng phải ít nhất là 1")
     private int numberOfRooms;
     @DecimalMin(value = "1", message = "Tỉ lệ sử dụng phải ít nhất 1%")
     @DecimalMax(value = "100", message = "Tỉ lệ sử dụng tối đa là 100%")

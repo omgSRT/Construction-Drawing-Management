@@ -18,6 +18,6 @@ public class ProjectUpdateRequest {
     String description;
     Date startDate;
     Date endDate;
-    @DecimalMin(value = "25L", message = "Diện tích tối thiểu là 25 m2")
+    @DecimalMin(value = "25", message = "Diện tích tối thiểu là 25 m2")
     double plotArea;
 }

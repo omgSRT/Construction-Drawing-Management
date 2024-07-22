@@ -3,6 +3,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Size;
@@ -31,7 +32,7 @@ public class Contractor {
     String phone;
     @Email
     String email;
-    @Size(max = 13, message = "TIN max is 13 number")
+    @Digits(integer = 13, fraction = 0, message = "TIN max is 13 number")
     int tax_identification_number;
     String business_license;
     @ManyToMany

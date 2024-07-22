@@ -1,11 +1,14 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Contractor;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.FloorDetail;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -24,4 +27,5 @@ public class ProjectResponse {
     double plotArea;
     String landPurpose;
     List<Department> departments;
+    Set<Contractor> contractors;
 }
