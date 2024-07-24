@@ -74,41 +74,6 @@ public class TaskService {
             throw new AppException(ErrorCode.WRONG_ENDDATE);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public TaskChildCreateResponse createChildTaskByAdmin(UUID parentTaskId, TaskChildCreateRequest request) {
-
-        Task taskParent = checkTask(parentTaskId);
-        Department department = departmentRepository.findById(request.getDepartmentId()).orElseThrow(
-                () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)
-        );
-        validateProjectDate(request.getBeginDate(), request.getEndDate());
-
-        Task taskChild = taskMapper.toTaskByAdmin(request);
-        taskChild.setParentTask(taskParent);
-        taskChild.setCreateDate(new Date());
-        taskChild.setAccount(taskParent.getAccount());
-        taskChild.setProject(taskParent.getProject());
-        if (request.getPriority() > 4 || request.getPriority() <= 0) {
-            throw new AppException(ErrorCode.PRIORITY_INVALID);
-        }
-        if (checkDuplicatePriority(parentTaskId, request.getPriority())) {
-            throw new AppException(ErrorCode.PRIORITY_IS_DUPLICATE);
-        }
-        // check k trung department
-        if (checkDuplicateHead(parentTaskId, request.getDepartmentId())) {
-            throw new AppException(ErrorCode.DUPLICATE_HEAD);
-        }
-        if (request.getPriority() == 1) {
-            taskChild.setStatus(TaskStatus.ACTIVE.name());
-            taskParent.setStatus(TaskStatus.PROCESSING.name());
-        } else taskChild.setStatus(TaskStatus.INACTIVE.name());
-
-
-        taskChild.setDepartment(department);
-        taskChild.setPriority(request.getPriority());
-        taskRepository.save(taskChild);
-        return taskMapper.toCreateResponse(taskChild);
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     public TaskChildCreateResponse createChildTaskByAdmin_V2(UUID parentTaskId, TaskChildCreateRequest_V2 request) {
@@ -131,9 +96,6 @@ public class TaskService {
         if (request.getPriority() <= 0) {
             throw new AppException(ErrorCode.PRIORITY_INVALID);
         }
-//        if (checkDuplicatePriority(parentTaskId, request.getPriority())) {
-//            throw new AppException(ErrorCode.PRIORITY_IS_DUPLICATE);
-//        }
         // check k trung department
         if (checkDuplicateHead(parentTaskId, request.getDepartmentId())) {
             throw new AppException(ErrorCode.DUPLICATE_HEAD);
@@ -147,11 +109,6 @@ public class TaskService {
         List<DetailTask> detailTasks = new ArrayList<>();
         request.getPermissions().forEach(permission -> {
             detailTasks.add(
-//                    DetailTask.builder()
-//                            .permissions(permission)
-//                            .staff(staff)
-//                            .task(taskChild)
-//                            .build());
                     new DetailTask(permission, taskChild, staff));
 
         });
@@ -197,6 +154,7 @@ public class TaskService {
         String name = context.getAuthentication().getName();
         Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
         Project project = checkProject(request.getProjectId());
+
         Date beginDate = request.getBeginDate();
         Date endDate = request.getEndDate();
         if (endDate.before(beginDate)) throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
@@ -211,31 +169,6 @@ public class TaskService {
         }
     }
 
-    //create task child by head
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
-    public TaskChildCreateByHeadResponse createTaskChildByHead(UUID parentTaskId, TaskChildCreateByHeadRequest request) {
-        Task taskParent = checkTask(parentTaskId);
-//        Department department = checkDepartment(request.getDepartmentId());
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
-        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
-//        Project project = checkProject(request.getProjectId());
-        validateProjectDate(request.getBeginDate(), request.getEndDate());
-        Date beginDate = request.getBeginDate();
-        Date endDate = request.getEndDate();
-        if (endDate.before(beginDate)) throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
-        if (request.getPriority() < 0) throw new AppException(ErrorCode.PRIORITY_INVALID);
-        Task taskChild = taskMapper.toTaskByHead_2(request);
-        taskChild.setParentTask(taskParent);
-        taskChild.setDepartment(account.getStaff().getDepartment());
-        taskChild.setProject(taskParent.getProject());
-        taskChild.setPriority(request.getPriority());
-        taskChild.setCreateDate(new Date());
-        taskChild.setStatus(TaskStatus.ACTIVE.name());
-        taskParent.setStatus(TaskStatus.PROCESSING.name());
-        taskRepository.save(taskChild);
-        return taskMapper.toTaskChildCreateByHeadResponse(taskChild);
-    }
 
     public TaskChildCreateByHeadResponse createTaskChildByHead_LHNH(UUID parentTaskId, TaskChildCreateByHead_V2Request request) {
         Task taskParent = checkTask(parentTaskId);
@@ -342,75 +275,6 @@ public class TaskService {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
-    public TaskChildUpdateByAdminResponse upgradeStatus(UUID childTaskId, TaskStatus status) {
-        Task taskChild = checkTask(childTaskId);
-        checkStatusTask(status.name(), taskChild);
-        Task taskParent = taskChild.getParentTask();
-        
-//        Task taskParent = checkTask(taskChild.getParentTask().getId());
-        taskRepository.save(taskChild);
-        if (status.name().equals(TaskStatus.DONE.name())) {
-            int priority = taskChild.getPriority();
-            int a = priority + 1;
-            if (priority == 4) {
-                taskParent.setStatus(TaskStatus.DONE.name());
-                taskRepository.save(taskParent);
-            }
-            if (priority < 4) {
-                Task nextTask = taskRepository.findByPriorityAndParentTaskId(a, taskParent.getId());
-                if (nextTask == null) throw new AppException(ErrorCode.NEXT_TASK_HAS_NOT_BEEN_INITIALIZE);
-                nextTask.setStatus(TaskStatus.ACTIVE.name());
-                taskRepository.save(nextTask);
-            }
-
-        }
-        return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
-    }
-
-    public TaskChildUpdateByAdminResponse upgradeStatus_2(UUID childTaskId, TaskStatus status) {
-        Task taskChild = checkTask(childTaskId);
-        checkStatusTask(status.name(), taskChild);
-        Task taskParent = taskChild.getParentTask();
-//        Task taskParent = checkTask(taskChild.getParentTask().getId());
-        taskRepository.save(taskChild);
-        if (status.name().equals(TaskStatus.DONE.name())) {
-            //check 2 task trùng độ ưu tiên
-            List<Task> tasks = new ArrayList<>();
-            Set<Integer> i = new HashSet<>();
-            taskParent.getTasks().forEach(task -> {
-                if (!i.add(task.getPriority())) tasks.add(task);
-            });
-            int priority = taskChild.getPriority();
-            int a = priority + 1;
-            //***
-            if (!tasks.isEmpty()) {
-                boolean check = checkAllTaskDuplicateSuccess(tasks);
-            if (!check) return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
-            }
-            //***
-            //kiểm tra xem đó phải nhiệm vụ cuối cùng chưa
-            boolean isLast = taskParent.getTasks().stream()
-                    .reduce((first, second) -> second) // Lấy phần tử cuối cùng dùng toán nhị phân
-                    .map(lastTask -> lastTask.equals(taskChild))
-                    .orElse(false);
-
-            if (isLast) {
-                taskParent.setStatus(TaskStatus.DONE.name());
-                taskRepository.save(taskParent);
-            }
-
-                Task nextTask = taskRepository.findByPriorityAndParentTaskId(a, taskParent.getId());
-                if (nextTask == null) throw new AppException(ErrorCode.NEXT_TASK_HAS_NOT_BEEN_INITIALIZE);
-                nextTask.setStatus(TaskStatus.ACTIVE.name());
-                taskRepository.save(nextTask);
-
-
-        }
-        return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
-    }
-
-
-
     public TaskChildUpdateByAdminResponse upgradeStatus_3(UUID childTaskId, TaskStatus status) {
         Task taskChild = checkTask(childTaskId);
         checkStatusTask(status.name(), taskChild);
@@ -420,7 +284,6 @@ public class TaskService {
 
         if (status.name().equals(TaskStatus.DONE.name())) {
             int priority = taskChild.getPriority();
-
             // Kiểm tra tất cả các task cùng priority
             boolean allTasksDone = true;
             for (Task task : taskList) {

@@ -25,9 +25,9 @@ public class AccountController {
     AccountService accountService;
 
     @PostMapping("/create-account")
-    public ApiResponse<AccountCreateResponse> createAccount( @RequestBody @Valid AccountCreateRequest request){
+    public ApiResponse<AccountCreateResponse> createAccount( @RequestBody @Valid AccountCreateRequest request,@RequestParam Role role){
         return ApiResponse.<AccountCreateResponse>builder()
-                .entity(accountService.accountCreateResponse(request))
+                .entity(accountService.accountCreateResponse_v2(request,role))
                 .build();
     }
 

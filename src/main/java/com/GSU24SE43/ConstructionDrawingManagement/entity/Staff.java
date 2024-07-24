@@ -33,7 +33,7 @@ public class Staff {
     @JsonIgnoreProperties(value = {"staffList"}, allowSetters = true)
     Department department;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
     @JoinColumn(name = "account_Id")
     Account account;

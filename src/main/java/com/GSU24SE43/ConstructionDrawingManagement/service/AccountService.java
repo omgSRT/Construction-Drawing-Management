@@ -56,10 +56,32 @@ public class AccountService {
 
         return accountMapper.toCreateResponse(account);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public AccountCreateResponse accountCreateResponse_v2(AccountCreateRequest request, Role role) {
+        boolean checkAccountName = repository.existsByUsername(request.getUsername());
+        if (checkAccountName) {
+            throw new AppException(ErrorCode.ACCOUNT_ARE_EXISTED);
+        }
+        List<Account> accounts = repository.findAll();
+        accounts.forEach(account -> {
+            if (account.getRoleName().equals(role.name())) throw new AppException(ErrorCode.DUPLICATE_HEAD);
+        });
+        Account account = accountMapper.toAccount(request);
+        account.setPassword(passwordEncoder.encode(request.getPassword()));
+        account.setRoleName(role.name());
+        account.setCreatedDate(new Date());
+        account.setAccountStatus(AccountStatus.ACTIVE.name());
+
+        account = repository.save(account);
+
+        return accountMapper.toCreateResponse(account);
+    }
+
     public AccountCreateResponse accountAdmin() {
-        Account account =new Account();
+        Account account = new Account();
         if (repository.findByUsername("admin").isEmpty()) {
-             account = Account.builder()
+            account = Account.builder()
                     .username("admin")
                     .password(passwordEncoder.encode("admin"))
                     .roleName(Role.ADMIN.name())
@@ -121,7 +143,7 @@ public class AccountService {
                 || roleName.equalsIgnoreCase(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.toString())
                 || roleName.equalsIgnoreCase(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.toString())
                 || roleName.equalsIgnoreCase(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.toString())) {
-            if (checkHead(id,request)) throw new AppException(ErrorCode.ROOM_HAD_HEAD);
+            if (checkHead(id, request)) throw new AppException(ErrorCode.ROOM_HAD_HEAD);
 
         }
         //check ko trùng head
@@ -153,6 +175,7 @@ public class AccountService {
             }
         }));
     }
+
     //******
     private Account checkAccount(UUID id) {
         return repository.findById(id).orElseThrow(()
@@ -179,7 +202,6 @@ public class AccountService {
     }
 
 
-
     @PreAuthorize("hasRole('ADMIN')")
     public List<AccountResponse> getAllAccount() {
         return repository.findAll().stream().map(accountMapper::toAccountResponse).toList();
@@ -194,6 +216,7 @@ public class AccountService {
         );
         return accountMapper.toAccountResponse(account);
     }
+
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public Account getAccountByUUID(UUID accountId) {
         return repository.findByAccountId(accountId);

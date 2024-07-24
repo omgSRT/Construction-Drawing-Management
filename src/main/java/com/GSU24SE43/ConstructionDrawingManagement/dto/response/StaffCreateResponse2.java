@@ -23,6 +23,6 @@ public class StaffCreateResponse2 {
     String degree;
     @JsonIgnoreProperties(value = {"staffList","taskList","departmentProjects"}, allowSetters = true)
     Department department;
-    boolean isSupervisor;
+//    boolean isSupervisor;
 
 }

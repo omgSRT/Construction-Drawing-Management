@@ -34,7 +34,7 @@ public class StaffController {
         UUID accountId = request.getAccountId();
         Account account = accountService.getAccountByUUID(accountId);
         return ApiResponse.<StaffCreateResponse2>builder()
-                .entity(staffService.create(account,request))
+                .entity(staffService.create_v2(account,request))
                 .build();
     }
     @Operation(summary = "Get list staff", description = "Get list staff")
@@ -79,11 +79,11 @@ public class StaffController {
                 .build();
     }
     @Operation(summary = "Delete staff", description = "delete staff by admin")
-    @DeleteMapping("/{staffId}")
+    @DeleteMapping("/delete-staff/{staffId}")
     public ApiResponse<Void> deleteStaff(@PathVariable UUID staffId){
         staffService.deleteStaff(staffId);
         return ApiResponse.<Void>builder()
-                .message("")
+                .message("Xoá nhân viên thành công")
                 .build();
     }
 }

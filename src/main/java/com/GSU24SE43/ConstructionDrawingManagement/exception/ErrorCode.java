@@ -99,7 +99,8 @@ public enum ErrorCode {
     MAX_AREA_ERROR(10084, "Diện tích tối thiểu là 25 m2", HttpStatus.BAD_REQUEST),
     EXCEED_PREVIOUS_FLOOR_AREA(10085, "Tầng sau vượt giới hạn diện tích của tầng trước", HttpStatus.BAD_REQUEST),
     FLOOR_DETAIL_EXISTED(10086, "Chi tiết tầng hiện tại đã tồn tại trong dự này", HttpStatus.BAD_REQUEST),
-    MIN_MAX_PHONE_SIZE(10087, "Sô điện thoại tối thiểu 8 số và tối đa 14 số", HttpStatus.BAD_REQUEST)
+    MIN_MAX_PHONE_SIZE(10087, "Sô điện thoại tối thiểu 8 số và tối đa 14 số", HttpStatus.BAD_REQUEST),
+    DELETE_FAIL(10087, "Xoá thất bại", HttpStatus.BAD_REQUEST),
     ;
 
 

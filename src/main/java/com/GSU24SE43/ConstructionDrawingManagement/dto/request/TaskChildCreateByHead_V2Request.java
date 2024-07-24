@@ -15,9 +15,6 @@ import java.util.UUID;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TaskChildCreateByHead_V2Request {
-
-//    UUID departmentId;
-//    UUID projectId;
     String title;
     String description;
     int priority;
