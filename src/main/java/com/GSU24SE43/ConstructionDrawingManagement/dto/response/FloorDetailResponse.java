@@ -17,7 +17,6 @@ public class FloorDetailResponse {
     UUID id;
     int floorNumber;
     double floorArea;
-    String purpose;
     double height;
     int numberOfRooms;
     double occupancyRate;

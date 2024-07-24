@@ -22,7 +22,7 @@ public class FloorDetail {
     private UUID id;
     @Min(1)
     private int floorNumber;
-    @DecimalMin(value = "25", message = "Diện tích tối thiểu là 25 m2")
+    @DecimalMin(value = "10", message = "Diện tích tối thiểu 1 tầng là 10 m2")
     private double floorArea;
     @DecimalMin(value = "2.1", message = "Độ cao tối thiểu 1 tầng phải là 2.1 mét")
     private double height;
@@ -39,7 +39,7 @@ public class FloorDetail {
 
     //Calculate available Space
     public double getAvailableSpace() {
-        return floorArea * (100 - occupancyRate) / 100;
+        return floorArea * (occupancyRate / 100);
     }
 
 }
