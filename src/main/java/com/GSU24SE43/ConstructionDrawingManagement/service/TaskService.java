@@ -38,6 +38,7 @@ public class TaskService {
     StaffRepository staffRepository;
     @Autowired
     TaskMapper taskMapper;
+    DrawingRepository drawingRepository;
     SimpMessagingTemplate messagingTemplate;
 
     //create task parent by admin
@@ -120,7 +121,6 @@ public class TaskService {
     private Staff findHeadOfDepartment(Department department) {
         List<Staff> staffs = department.getStaffList();
         for (int i = 0; i < staffs.size(); i++) {
-//            if (staffs.get(i).isSupervisor() == true) return staffs.get(i);
             if (staffs.get(i).isSupervisor()) return staffs.get(i);
         }
         return null;
@@ -266,10 +266,19 @@ public class TaskService {
         return taskMapper.toTaskParentUpdateByAdminResponse(taskParent);
     }
 
+//    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+//    public TaskChildUpdateByAdminResponse updateStatusTaskChild(UUID childTaskId, TaskStatus status) {
+//        Task taskChild = checkTask(childTaskId);
+//        checkStatusTask(status.name(), taskChild);
+//        taskRepository.save(taskChild);
+//        return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
+//    }
+
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
-    public TaskChildUpdateByAdminResponse updateStatusTaskChild(UUID childTaskId, TaskStatus status) {
+    public TaskChildUpdateByAdminResponse updateTaskChildByDesigner(UUID childTaskId, UUID drawingId) {
         Task taskChild = checkTask(childTaskId);
-        checkStatusTask(status.name(), taskChild);
+        Drawing drawing = drawingRepository.findById(drawingId).orElseThrow(() -> new AppException(ErrorCode.DRAWING_NOT_FOUND));
+        taskChild.getDrawingList().add(drawing);
         taskRepository.save(taskChild);
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
@@ -325,6 +334,7 @@ public class TaskService {
         }
         return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
     }
+
 
 
     private boolean checkAllTaskDuplicateSuccess(List<Task> list) {
