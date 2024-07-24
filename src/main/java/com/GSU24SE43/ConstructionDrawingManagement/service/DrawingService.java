@@ -5,6 +5,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.*;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.DrawingResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Drawing;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Task;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.DrawingStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.ProjectStatus;
@@ -13,6 +14,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.exception.ErrorCode;
 import com.GSU24SE43.ConstructionDrawingManagement.mapper.DrawingMapper;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.DrawingRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.FolderRepository;
+import com.GSU24SE43.ConstructionDrawingManagement.repository.ProjectRepository;
 import com.GSU24SE43.ConstructionDrawingManagement.repository.TaskRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class DrawingService {
     DrawingMapper drawingMapper;
     FolderRepository folderRepository;
     TaskRepository taskRepository;
+    ProjectRepository projectRepository;
     PaginationUtils paginationUtils = new PaginationUtils();
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER')")
@@ -94,6 +97,37 @@ public class DrawingService {
                 .map(drawingMapper::toDrawingResponse).toList();
         drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
         return drawingResponses;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    public List<DrawingResponse> findProcessingDrawingsByFolder(UUID folderId, int page, int perPage){
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new AppException(ErrorCode.FOLDER_NOT_FOUND));
+
+        var drawingResponses = drawingRepository.findByFolderAndStatus(folder, DrawingStatus.PROCESSING.name()).stream()
+                .map(drawingMapper::toDrawingResponse).toList();
+        drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
+        return drawingResponses;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    public List<DrawingResponse> findProcessingDrawingsByProject(UUID projectId, int page, int perPage){
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+
+        var drawingResponses = drawingRepository.findByFolderProjectAndStatus(project, DrawingStatus.PROCESSING.name()).stream()
+                .map(drawingMapper::toDrawingResponse).toList();
+        drawingResponses = paginationUtils.convertListToPage(page, perPage, drawingResponses);
+        return drawingResponses;
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    public DrawingResponse ApproveDrawing(UUID drawingId){
+        Drawing drawing = drawingRepository.findById(drawingId)
+                .orElseThrow(() -> new AppException(ErrorCode.DRAWING_NOT_FOUND));
+        drawing.setStatus(DrawingStatus.DONE.name());
+
+        return drawingMapper.toDrawingResponse(drawingRepository.save(drawing));
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
