@@ -9,7 +9,11 @@ import java.util.UUID;
 
 @Repository
 public interface ContractorRepository extends JpaRepository<Contractor, UUID> {
-    List<Contractor> findByContractorName(String name);
+    Contractor findByContractorName(String name);
 
     List<Contractor> findByContractorNameContaining(String name);
+
+    Contractor findByTaxIdentificationNumber(String tax_identification_number);
+    Contractor findByPhone(String phone);
+    Contractor findByEmail(String email);
 }

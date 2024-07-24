@@ -67,7 +67,7 @@ public class ContractorController {
     }
 
     @Operation(summary = "Update Contractor", description = "Update Contractor By ID")
-    @DeleteMapping(path = "/update/{contractorId}")
+    @PutMapping(path = "/update/{contractorId}")
     public ApiResponse<ContractorResponse> updateContractorById(@PathVariable UUID contractorId,
                                                                 @RequestBody @Valid ContractorRequest request){
         return ApiResponse.<ContractorResponse>builder()

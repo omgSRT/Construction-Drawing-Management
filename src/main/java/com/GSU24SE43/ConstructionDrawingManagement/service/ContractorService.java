@@ -29,13 +29,29 @@ public class ContractorService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public ContractorResponse createContractor(ContractorRequest request){
-        List<Contractor> contractorList = contractorRepository.findByContractorName(request.getContractorName());
-        if(!contractorList.isEmpty()){
-            throw new AppException(ErrorCode.NAME_EXISTED);
-        }
+        validateContractorExisted(request);
 
         Contractor newContractor = contractorMapper.toContractor(request);
         return contractorMapper.toContractorResponse(contractorRepository.save(newContractor));
+    }
+
+    private void validateContractorExisted(ContractorRequest request){
+        Contractor contractorList = contractorRepository.findByContractorName(request.getContractorName());
+        if(contractorList != null){
+            throw new AppException(ErrorCode.NAME_EXISTED);
+        }
+        Contractor contractorWithExistedTIN = contractorRepository.findByTaxIdentificationNumber(request.getTaxIdentificationNumber());
+        if(contractorWithExistedTIN != null){
+            throw new AppException(ErrorCode.TIN_EXISTED);
+        }
+        Contractor contractorWithExistedPhone = contractorRepository.findByPhone(request.getPhone());
+        if(contractorWithExistedPhone != null){
+            throw new AppException(ErrorCode.PHONE_EXISTED);
+        }
+        Contractor contractorWithExistedEmail = contractorRepository.findByEmail(request.getEmail());
+        if(contractorWithExistedEmail != null){
+            throw new AppException(ErrorCode.TIN_EXISTED);
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -75,8 +91,8 @@ public class ContractorService {
                 .orElseThrow(() -> new AppException(ErrorCode.CONTRACTOR_NOT_FOUND));
 
         if(!contractor.getContractorName().equalsIgnoreCase(request.getContractorName())){
-            List<Contractor> contractorList = contractorRepository.findByContractorName(request.getContractorName());
-            if(!contractorList.isEmpty()){
+            Contractor existedContractor = contractorRepository.findByContractorName(request.getContractorName());
+            if(existedContractor != null){
                 throw new AppException(ErrorCode.NAME_EXISTED);
             }
         }
