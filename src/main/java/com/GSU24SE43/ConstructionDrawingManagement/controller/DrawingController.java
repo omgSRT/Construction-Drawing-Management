@@ -131,10 +131,21 @@ public class DrawingController {
                 .build();
     }
 
+    @Operation(summary = "Approve Drawing")
+    @PutMapping(path = "/approve/{drawingId}")
+    public ApiResponse<DrawingResponse> approveDrawing(@PathVariable UUID drawingId){
+        return ApiResponse.<DrawingResponse>builder()
+                .message(SuccessReturnMessage.CHANGE_SUCCESS.getMessage())
+                .entity(drawingService.approveDrawing(drawingId))
+                .build();
+    }
+
     @Operation(summary = "Change Status", description = "Change A Drawing Status by ID")
     @PutMapping(path = "/change/status")
     public ApiResponse<DrawingResponse> changeDrawingStatus(@RequestBody @Valid DrawingStatusChangeRequest request,
                                                             @RequestParam DrawingStatus status){
+
+
         return ApiResponse.<DrawingResponse>builder()
                 .message(SuccessReturnMessage.CHANGE_SUCCESS.getMessage())
                 .entity(drawingService.changeDrawingStatus(request, status))
