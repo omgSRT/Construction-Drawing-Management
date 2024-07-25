@@ -192,6 +192,12 @@ public class StaffService {
         staffRepository.delete(staff1);
 
     }
+    public List<StaffListResponse> getAllStaffOfDepartment(UUID departmentId){
+        Department department = departmentRepository.findById(departmentId).orElseThrow(
+                () -> new AppException(ErrorCode.DEPARTMENT_NOT_FOUND)
+        );
+        return department.getStaffList().stream().map(mapper::toStaffList).toList();
+    }
 
 
 }

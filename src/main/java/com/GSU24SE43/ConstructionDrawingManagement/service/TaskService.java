@@ -274,6 +274,7 @@ public class TaskService {
 //        return taskMapper.toTaskChildUpdateByAdminResponse(taskChild);
 //    }
 
+
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskChildUpdateByAdminResponse updateTaskChildByDesigner(UUID childTaskId, UUID drawingId) {
         Task taskChild = checkTask(childTaskId);
@@ -415,6 +416,9 @@ public class TaskService {
             list = taskRepository.findByAccountAndParentTaskIsNull(account);
         }
         return list;
+    }
+    public List<Permission> getAllPermission(){
+        return Arrays.asList(Permission.values());
     }
 
     public List<Task> getParentTaskByProjectId(UUID projectId) {
