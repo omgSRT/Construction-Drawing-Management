@@ -104,6 +104,7 @@ public class VersionService {
         versionRepository.delete(version);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public VersionResponse updateVersionById(UUID versionId, VersionUpdateRequest request){
         var version = versionRepository.findById(versionId)
                 .orElseThrow(() -> new AppException(ErrorCode.VERSION_NOT_FOUND));

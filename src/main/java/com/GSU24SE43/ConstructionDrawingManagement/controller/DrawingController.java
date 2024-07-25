@@ -7,11 +7,21 @@ import com.GSU24SE43.ConstructionDrawingManagement.enums.DrawingStatus;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.SuccessReturnMessage;
 import com.GSU24SE43.ConstructionDrawingManagement.service.DrawingService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +32,7 @@ import java.util.UUID;
 @Slf4j
 public class DrawingController {
     final DrawingService drawingService;
+    final RestTemplate restTemplate = new RestTemplate();
 
     @Operation(summary = "Create New Drawing", description = "Create A Brand New Drawing")
     @PostMapping(path = "/create")
@@ -143,12 +154,33 @@ public class DrawingController {
     @Operation(summary = "Change Status", description = "Change A Drawing Status by ID")
     @PutMapping(path = "/change/status")
     public ApiResponse<DrawingResponse> changeDrawingStatus(@RequestBody @Valid DrawingStatusChangeRequest request,
-                                                            @RequestParam DrawingStatus status){
+                                                            @RequestParam DrawingStatus status,
+                                                            HttpServletRequest httpRequest) {
+        DrawingResponse response = drawingService.changeDrawingStatus(request, status);
 
+        //region call send mail api
+        String baseUrl = ServletUriComponentsBuilder.fromRequestUri(httpRequest)
+                .replacePath(null)
+                .build()
+                .toUriString();
+        String fullUrl = String.format("%s/email/send", baseUrl);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> multipartRequest = new LinkedMultiValueMap<>();
+        multipartRequest.add("emails", "thangckdt@gmail.com");
+        multipartRequest.add("body", response.toString());
+        multipartRequest.add("subject", "Your Drawing Has Been Changed");
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(multipartRequest, headers);
+
+        restTemplate.exchange(fullUrl, HttpMethod.POST, requestEntity, Void.class);
+        //endregion
 
         return ApiResponse.<DrawingResponse>builder()
                 .message(SuccessReturnMessage.CHANGE_SUCCESS.getMessage())
-                .entity(drawingService.changeDrawingStatus(request, status))
+                .entity(response)
                 .build();
     }
 
