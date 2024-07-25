@@ -89,7 +89,12 @@ public class TaskController {
                 .entity(taskService.updateTaskParentByAdmin(parentTaskId, request))
                 .build();
     }
-
+    @PostMapping("/updateTaskByDesigner/{childTaskId}")
+    public ApiResponse<TaskChildUpdateByAdminResponse> updateByDes(@PathVariable UUID childTaskId, @RequestParam UUID drawingId){
+        return ApiResponse.<TaskChildUpdateByAdminResponse>builder()
+                .entity(taskService.updateTaskChildByDesigner(childTaskId,drawingId))
+                .build();
+    }
 
     @PostMapping("/createTaskChildByHead_V2/{parentTaskId}")
     public ApiResponse<TaskChildCreateByHeadResponse> v2(@PathVariable UUID parentTaskId, @RequestBody TaskChildCreateByHead_V2Request request){
