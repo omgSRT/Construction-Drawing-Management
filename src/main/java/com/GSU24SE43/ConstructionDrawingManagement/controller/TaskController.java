@@ -106,6 +106,14 @@ public class TaskController {
                 .build();
     }
 
+    @Operation(summary = "Get all task", description = "Get all permission")
+    @GetMapping("/getAllPermission")
+    public ApiResponse<List<Permission>> getAllPermission() {
+        return ApiResponse.<List<Permission>>builder()
+                .entity(taskService.getAllPermission())
+                .build();
+    }
+
     @Operation(summary = "Get all parent task", description = "Get all parent task")
     @GetMapping("/getAllParentTask")
     public ApiResponse<List<Task>> getAllParentTask() {

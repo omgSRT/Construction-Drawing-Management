@@ -72,6 +72,12 @@ public class StaffController {
                 .entity(staffService.getAllListStaffByHead())
                 .build();
     }
+    @GetMapping("/getDepartentStaff/{departmentId}")
+    public ApiResponse<List<StaffListResponse>> getStaffDepartment(@PathVariable UUID departmentId){
+        return ApiResponse.<List<StaffListResponse>>builder()
+                .entity(staffService.getAllStaffOfDepartment(departmentId))
+                .build();
+    }
     @GetMapping("/getMyTasks")
     public ApiResponse<Set<TaskResponse>> getMyTask(){
         return ApiResponse.<Set<TaskResponse>>builder()

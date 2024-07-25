@@ -2,6 +2,7 @@ package com.GSU24SE43.ConstructionDrawingManagement.repository;
 
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Drawing;
 import com.GSU24SE43.ConstructionDrawingManagement.entity.Folder;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface DrawingRepository extends JpaRepository<Drawing, UUID> {
     List<Drawing> findByNameContainingAndStatus(String name, String status);
 
     List<Drawing> findByStatus(String status);
+
+    List<Drawing> findByFolderProjectAndStatus(Project project, String status);
 }
