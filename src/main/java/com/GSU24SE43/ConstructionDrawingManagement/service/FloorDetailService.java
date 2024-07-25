@@ -21,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -38,14 +40,24 @@ public class FloorDetailService {
     public FloorDetailResponse createFloorDetail(FloorDetailCreateRequest request){
         Project project = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+        int floorNumber = 1;
 
-        var floorDetail = checkExistedFloorDetail(project, request.getFloorNumber());
-        if(floorDetail != null){
-            throw new AppException(ErrorCode.FLOOR_DETAIL_EXISTED);
+        List<FloorDetail> floorDetailList = floorDetailRepository.findByProject(project);
+        if(!floorDetailList.isEmpty()){
+            int maxFloorNumber = floorDetailList.get(0).getFloorNumber();
+
+            for (FloorDetail floorDetail : floorDetailList) {
+                if (floorDetail.getFloorNumber() > maxFloorNumber) {
+                    maxFloorNumber = floorDetail.getFloorNumber();
+                }
+            }
+
+            floorNumber = maxFloorNumber + 1;
         }
 
         FloorDetail newFloorDetail = floorDetailMapper.toFloorDetail(request);
         newFloorDetail.setProject(project);
+        newFloorDetail.setFloorNumber(floorNumber);
 
         boolean check = checkPreviousFloorHasEnoughSpace(project, newFloorDetail);
         if(!check){

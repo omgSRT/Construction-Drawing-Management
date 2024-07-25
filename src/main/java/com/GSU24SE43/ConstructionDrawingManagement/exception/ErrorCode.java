@@ -100,15 +100,15 @@ public enum ErrorCode {
     EXCEED_PREVIOUS_FLOOR_AREA(10085, "Tầng sau vượt giới hạn diện tích của tầng trước", HttpStatus.BAD_REQUEST),
     FLOOR_DETAIL_EXISTED(10086, "Chi tiết tầng hiện tại đã tồn tại trong dự này", HttpStatus.BAD_REQUEST),
     MIN_MAX_PHONE_SIZE(10087, "Sô điện thoại tối thiểu 8 số và tối đa 14 số", HttpStatus.BAD_REQUEST),
-
-    DELETE_FAIL(10087, "Xoá thất bại", HttpStatus.BAD_REQUEST),
-    TIN_EXISTED(10088, "Mã số thuế đã tồn tại", HttpStatus.BAD_REQUEST),
-    ERROR_PHONE_LENGTH(10089, "Sô điện thoại tối thiểu 8 số và tối đa 14 số", HttpStatus.BAD_REQUEST),
-    ERROR_PHONE_PATTERN(10090, "Số điện thoại chỉ có thể bao gồm số", HttpStatus.BAD_REQUEST),
-    ERROR_TIN_LENGTH(10091, "Độ dài mã số thuế tối thiểu 10 và tối đa 13 số", HttpStatus.BAD_REQUEST),
-    ERROR_TIN_PATTERN(10092, "Mã số thuế chỉ có thể bao gồm số", HttpStatus.BAD_REQUEST),
-    PHONE_EXISTED(10093, "Số điện thoại đã tồn tại", HttpStatus.BAD_REQUEST),
-    EMAIL_EXISTED(10094, "Email đã tồn tại", HttpStatus.BAD_REQUEST),
+    DELETE_FAIL(10088, "Xoá thất bại", HttpStatus.BAD_REQUEST),
+    TIN_EXISTED(10089, "Mã số thuế đã tồn tại", HttpStatus.BAD_REQUEST),
+    ERROR_PHONE_LENGTH(10090, "Sô điện thoại tối thiểu 8 số và tối đa 14 số", HttpStatus.BAD_REQUEST),
+    ERROR_PHONE_PATTERN(10091, "Số điện thoại chỉ có thể bao gồm số", HttpStatus.BAD_REQUEST),
+    ERROR_TIN_LENGTH(10092, "Độ dài mã số thuế tối thiểu 10 và tối đa 13 số", HttpStatus.BAD_REQUEST),
+    ERROR_TIN_PATTERN(10093, "Mã số thuế chỉ có thể bao gồm số", HttpStatus.BAD_REQUEST),
+    PHONE_EXISTED(10094, "Số điện thoại đã tồn tại", HttpStatus.BAD_REQUEST),
+    EMAIL_EXISTED(10095, "Email đã tồn tại", HttpStatus.BAD_REQUEST),
+    MIN_FLOOR_AREA_EXCEED(10096, "Diện tích tối thiểu 1 tầng là 10 m2", HttpStatus.BAD_REQUEST),
     ;
 
 

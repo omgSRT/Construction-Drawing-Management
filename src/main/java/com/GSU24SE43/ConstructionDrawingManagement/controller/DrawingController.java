@@ -74,7 +74,7 @@ public class DrawingController {
 
 
     @Operation(summary = "Find Drawings", description = "Find Drawing(s) by Folder and Status")
-    @GetMapping(path = "/searchByFolderIdAndStatus/{folderId}")
+    @GetMapping(path = "/searchByFolderAndStatus/{folderId}")
     public ApiResponse<List<DrawingResponse>> searchDrawingByFolderAndStatus(@PathVariable UUID folderId,
                                                                          @RequestParam DrawingStatus status,
                                                                          @RequestParam(defaultValue = "1") int page,
@@ -85,12 +85,32 @@ public class DrawingController {
     }
 
     @Operation(summary = "Find Drawings", description = "Find Drawing(s) by Folder")
-    @GetMapping(path = "/searchByFolderId/{folderId}")
+    @GetMapping(path = "/searchByFolder/{folderId}")
     public ApiResponse<List<DrawingResponse>> searchDrawingByFolder(@PathVariable UUID folderId,
                                                                              @RequestParam(defaultValue = "1") int page,
                                                                              @RequestParam(defaultValue = "10") int perPage){
         return ApiResponse.<List<DrawingResponse>>builder()
                 .entity(drawingService.findDrawingsByFolder(folderId, page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Get Processing Drawings", description = "Get Processing Drawings By Folder ID")
+    @GetMapping(path = "/searchByFolder/processing/{folderId}")
+    public ApiResponse<List<DrawingResponse>> getProcessingDrawingsByFolderId(@RequestParam(defaultValue = "1") int page,
+                                                                              @RequestParam(defaultValue = "10") int perPage,
+                                                                              @PathVariable UUID folderId){
+        return ApiResponse.<List<DrawingResponse>>builder()
+                .entity(drawingService.findProcessingDrawingsByFolder(folderId, page, perPage))
+                .build();
+    }
+
+    @Operation(summary = "Get Processing Drawings", description = "Get Processing Drawings By Project ID")
+    @GetMapping(path = "/searchByProject/processing/{projectId}")
+    public ApiResponse<List<DrawingResponse>> getProcessingDrawingsByProjectId(@RequestParam(defaultValue = "1") int page,
+                                                                              @RequestParam(defaultValue = "10") int perPage,
+                                                                              @PathVariable UUID projectId){
+        return ApiResponse.<List<DrawingResponse>>builder()
+                .entity(drawingService.findProcessingDrawingsByProject(projectId, page, perPage))
                 .build();
     }
 
