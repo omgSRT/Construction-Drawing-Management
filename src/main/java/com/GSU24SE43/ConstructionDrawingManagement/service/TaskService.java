@@ -169,7 +169,7 @@ public class TaskService {
         }
     }
 
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public TaskChildCreateByHeadResponse createTaskChildByHead_LHNH(UUID parentTaskId, TaskChildCreateByHead_V2Request request) {
         Task taskParent = checkTask(parentTaskId);
         Account account = getSecurityContext();
@@ -417,6 +417,7 @@ public class TaskService {
         return list;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
     public List<Task> getParentTaskByProjectId(UUID projectId) {
         Project project = checkProject(projectId);
         List<Task> taskList = new ArrayList<>();
@@ -550,7 +551,7 @@ public class TaskService {
         return taskRepository.findById(taskId).orElseThrow(() -> new AppException(ErrorCode.TASK_NOT_FOUND));
     }
 
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
     public List<Task> filterTask(UUID id, String title, String status, Date beginDate, Date endDate) {
         List<Task> list = new ArrayList<>();
         if (id != null) {
