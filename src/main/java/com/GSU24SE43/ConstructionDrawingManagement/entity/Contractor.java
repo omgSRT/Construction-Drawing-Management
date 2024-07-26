@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,11 +35,8 @@ public class Contractor {
     @Size(min = 10, max = 13, message = "Độ dài mã số thuế tối thiểu 10 và tối đa 13 số")
     String taxIdentificationNumber;
     String businessLicense;
-    @ManyToMany
-    @JoinTable(
-            name = "contractor_project",
-            joinColumns = @JoinColumn(name = "contractor_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
-    Set<Project> projects;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "contractor", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<ProjectContractor> projectContractors;
 }

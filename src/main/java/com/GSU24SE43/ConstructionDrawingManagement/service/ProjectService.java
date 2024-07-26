@@ -16,8 +16,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -36,7 +38,7 @@ public class ProjectService {
     final DepartmentRepository departmentRepository;
     final DepartmentProjectRepository departmentProjectRepository;
     final ContractorRepository contractorRepository;
-    final FloorDetailRepository floorDetailRepository;
+    final ProjectContractorRepository projectContractorRepository;
     final PaginationUtils paginationUtils = new PaginationUtils();
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -64,7 +66,6 @@ public class ProjectService {
         project.setAccount(account);
         project.setStatus(ProjectStatus.ACTIVE.name());
         project.setLandPurpose(landPurpose.name());
-        project.setContractors(contractorList);
 
         Project newProject = projectRepository.save(project);
         newProject.setDepartmentProjects(
@@ -75,6 +76,17 @@ public class ProjectService {
                             newDepartmentProject.setProject(newProject);
                             departmentProjectRepository.save(newDepartmentProject);
                             return newDepartmentProject;
+                        })
+                        .toList()
+        );
+        newProject.setProjectContractors(
+                contractorList.stream()
+                        .map(contractor -> {
+                            ProjectContractor newProjectContractor = new ProjectContractor();
+                            newProjectContractor.setContractor(contractor);
+                            newProjectContractor.setProject(newProject);
+                            projectContractorRepository.save(newProjectContractor);
+                            return newProjectContractor;
                         })
                         .toList()
         );
@@ -100,10 +112,12 @@ public class ProjectService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteProjectById(UUID id){
+    public ProjectResponse deleteProjectById(UUID id){
         var project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
         projectRepository.delete(project);
+
+        return projectMapper.toProjectResponse(project);
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")

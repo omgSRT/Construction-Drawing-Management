@@ -44,12 +44,16 @@ public class VersionService {
         List<Version> existingVersions = versionRepository.findByDrawingId(request.getDrawingId());
         String newVersionNumber = getNextVersionNumber(existingVersions);
 
+        //set newest version url to drawing
+        drawing.setUrl(request.getUrl());
+
         Version newVersion = versionMapper.toVersion(request);
         newVersion.setVersionNumber(newVersionNumber);
         newVersion.setUploadDate(new Date());
         newVersion.setStatus(VersionStatus.ACTIVE.name());
         newVersion.setDrawing(drawing);
 
+        drawingRepository.save(drawing);
         return versionMapper.toVersionResponse(versionRepository.save(newVersion));
     }
 
@@ -100,6 +104,7 @@ public class VersionService {
         versionRepository.delete(version);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public VersionResponse updateVersionById(UUID versionId, VersionUpdateRequest request){
         var version = versionRepository.findById(versionId)
                 .orElseThrow(() -> new AppException(ErrorCode.VERSION_NOT_FOUND));

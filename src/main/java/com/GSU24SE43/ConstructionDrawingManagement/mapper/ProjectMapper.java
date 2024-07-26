@@ -4,10 +4,7 @@ import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.request.ProjectUpdateRequest;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ContractorResponse;
 import com.GSU24SE43.ConstructionDrawingManagement.dto.response.ProjectResponse;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Contractor;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Department;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.DepartmentProject;
-import com.GSU24SE43.ConstructionDrawingManagement.entity.Project;
+import com.GSU24SE43.ConstructionDrawingManagement.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -24,7 +21,7 @@ public interface ProjectMapper {
     Project toProject(ProjectRequest request);
 
     @Mapping(source = "departmentProjects", target = "departments", qualifiedByName = "mapDepartments")
-    @Mapping(source = "contractors", target = "contractors", qualifiedByName = "mapContractors")
+    @Mapping(source = "projectContractors", target = "contractors", qualifiedByName = "mapContractors")
     ProjectResponse toProjectResponse(Project project);
 
     @Named("mapDepartments")
@@ -35,8 +32,10 @@ public interface ProjectMapper {
     }
 
     @Named("mapContractors")
-    static Set<Contractor> mapContractors(Set<Contractor> contractors) {
-        return contractors;
+    static List<Contractor> mapContractors(List<ProjectContractor> projectContractors) {
+        return projectContractors.stream()
+                .map(ProjectContractor::getContractor)
+                .toList();
     }
     @Mapping(target = "folders", ignore = true)
     @Mapping(target = "departmentProjects", ignore = true)

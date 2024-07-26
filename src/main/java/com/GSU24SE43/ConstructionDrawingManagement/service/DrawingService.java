@@ -122,7 +122,7 @@ public class DrawingService {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
-    public DrawingResponse ApproveDrawing(UUID drawingId){
+    public DrawingResponse approveDrawing(UUID drawingId){
         Drawing drawing = drawingRepository.findById(drawingId)
                 .orElseThrow(() -> new AppException(ErrorCode.DRAWING_NOT_FOUND));
         drawing.setStatus(DrawingStatus.DONE.name());

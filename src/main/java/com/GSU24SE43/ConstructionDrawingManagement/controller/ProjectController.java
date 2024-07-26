@@ -143,11 +143,9 @@ public class ProjectController {
     @Operation(summary = "Delete Project", description = "Delete A Project by ID")
     @DeleteMapping(path = "/delete/{id}")
     public ApiResponse<ProjectResponse> deleteProjectById(@PathVariable UUID id){
-        var projectResponse = projectService.findProjectById(id);
-        projectService.deleteProjectById(id);
         return ApiResponse.<ProjectResponse>builder()
                 .message(SuccessReturnMessage.DELETE_SUCCESS.getMessage())
-                .entity(projectResponse)
+                .entity(projectService.deleteProjectById(id))
                 .build();
     }
 
