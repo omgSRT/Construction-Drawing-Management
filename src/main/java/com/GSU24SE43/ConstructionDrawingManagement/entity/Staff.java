@@ -48,11 +48,6 @@ public class Staff {
 
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
-//    @JsonIgnore
-    List<Project> projects;
-
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties(value = {"staff"}, allowSetters = true)
     List<StaffFolder> staff_folders;
 
 }

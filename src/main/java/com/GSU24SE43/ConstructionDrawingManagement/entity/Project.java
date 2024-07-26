@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.*;
 
@@ -53,10 +55,7 @@ public class Project {
 //    @JsonIgnoreProperties(value = { "project" }, allowSetters = true)
     List<Task> tasks;
 
-    @ManyToOne
-    @JoinColumn(name = "projectId")
-    Staff staff;
-
-    @ManyToMany(mappedBy = "projects")
-    Set<Contractor> contractors;
+    @JsonIgnore
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<ProjectContractor> projectContractors;
 }

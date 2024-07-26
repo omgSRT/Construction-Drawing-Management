@@ -29,5 +29,5 @@ public class ProjectResponse {
     String landPurpose;
     List<Department> departments;
     @JsonIgnoreProperties(value = {"projects"}, allowSetters = true)
-    Set<Contractor> contractors;
+    List<Contractor> contractors;
 }

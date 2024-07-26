@@ -50,7 +50,7 @@ public class ContractorService {
         }
         Contractor contractorWithExistedEmail = contractorRepository.findByEmail(request.getEmail());
         if(contractorWithExistedEmail != null){
-            throw new AppException(ErrorCode.TIN_EXISTED);
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
     }
 
