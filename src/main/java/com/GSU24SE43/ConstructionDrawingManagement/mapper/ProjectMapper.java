@@ -17,6 +17,8 @@ public interface ProjectMapper {
 
     @Mapping(source = "departmentProjects", target = "departments", qualifiedByName = "mapDepartments")
     @Mapping(source = "projectCustomers", target = "customers", qualifiedByName = "mapContractors")
+    @Mapping(source = "landPurpose.name", target = "landPurposeName")
+    @Mapping(source = "landPurpose.description", target = "landPurposeDescription")
     ProjectResponse toProjectResponse(Project project);
 
     @Named("mapDepartments")

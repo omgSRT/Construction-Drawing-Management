@@ -24,4 +24,5 @@ public class ProjectRequest {
     List<UUID> departmentIds;
     @DecimalMin(value = "25", message = "Diện tích tối thiểu là 25 m2")
     double plotArea;
+    UUID landPurposeId;
 }

@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
-public interface ContractorMapper {
+public interface CustomerMapper {
     Customer toCustomer(CustomerRequest request);
     
     CustomerResponse toCustomerResponse(Customer customer);

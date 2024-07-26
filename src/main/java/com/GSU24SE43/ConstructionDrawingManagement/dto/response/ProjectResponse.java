@@ -24,7 +24,8 @@ public class ProjectResponse {
     Date endDate;
     String status;
     double plotArea;
-    String landPurpose;
+    String landPurposeName;
+    String landPurposeDescription;
     List<Department> departments;
     @JsonIgnoreProperties(value = {"projects"}, allowSetters = true)
     List<Customer> customers;

@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -20,4 +21,5 @@ public class ProjectUpdateRequest {
     Date endDate;
     @DecimalMin(value = "25", message = "Diện tích tối thiểu là 25 m2")
     double plotArea;
+    UUID landPurposeId;
 }
