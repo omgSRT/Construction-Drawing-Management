@@ -50,6 +50,22 @@ public class TaskController {
                 .build();
     }
 
+    @Operation(summary = "Create task parent by head", description = "Create task parent by projectId head")
+    @PostMapping("/createTaskParentByProjectIdHead/{projectId}")
+    public ApiResponse<TaskParentCreateByHeadResponse> createTaskParentByProjectIdByHead(@PathVariable UUID projectId,@RequestBody TaskParentCreateByProjectIdByHeadRequest request) {
+        return ApiResponse.<TaskParentCreateByHeadResponse>builder()
+                .entity(taskService.createTaskParentByProjectIdHead(projectId,request))
+                .build();
+    }
+
+    @Operation(summary = "Create task parent by admin", description = "Create task parent by projectId admin")
+    @PostMapping("/createTaskParentByProjectIdAdmin/{projectId}")
+    public ApiResponse<TaskParentCreateResponse> createTaskParentByProjectIdAdmin(@PathVariable UUID projectId,@RequestBody TaskParentCreateRequestByProjectId request) {
+        return ApiResponse.<TaskParentCreateResponse>builder()
+                .entity(taskService.createTaskParentByProjectIdAdmin(projectId, request))
+                .build();
+    }
+
 
 
 //    @Operation(summary = "Update status task parent ", description = "Update status task parent")

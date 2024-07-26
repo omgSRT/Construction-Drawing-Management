@@ -64,9 +64,13 @@ public class AccountService {
             throw new AppException(ErrorCode.ACCOUNT_ARE_EXISTED);
         }
         List<Account> accounts = repository.findAll();
+        if (role.name().equals(Role.HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT.toString())
+                || role.name().equals(Role.HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT.toString())
+                || role.name().equals(Role.HEAD_OF_MvE_DESIGN_DEPARTMENT.toString())
+                || role.name().equals(Role.HEAD_OF_INTERIOR_DESIGN_DEPARTMENT.toString())){
         accounts.forEach(account -> {
             if (account.getRoleName().equals(role.name())) throw new AppException(ErrorCode.DUPLICATE_HEAD);
-        });
+        });}
         Account account = accountMapper.toAccount(request);
         account.setPassword(passwordEncoder.encode(request.getPassword()));
         account.setRoleName(role.name());

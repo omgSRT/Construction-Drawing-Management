@@ -13,6 +13,10 @@ public interface TaskMapper {
     @Mapping(target = "department", ignore = true)
     @Mapping(target = "project", ignore = true)
     Task toTask(TaskParentCreateRequest request);
+
+    @Mapping(target = "department", ignore = true)
+    @Mapping(target = "project", ignore = true)
+    Task toTaskByProjectId(TaskParentCreateRequestByProjectId request);
     @Mapping(target = "project", ignore = true)
     @Mapping(target = "department", ignore = true)
     @Mapping(target = "parentTask", ignore = true)
@@ -35,6 +39,10 @@ public interface TaskMapper {
     @Mapping(target = "parentTask", ignore = true)
     Task toTaskByHead(TaskParentCreateByHeadRequest request);
 
+    @Mapping(target = "project", ignore = true)
+    @Mapping(target = "department", ignore = true)
+    @Mapping(target = "parentTask", ignore = true)
+    Task toTaskProjectIdByHead(TaskParentCreateByProjectIdByHeadRequest request);
     @Mapping(source = "project.id", target = "projectId")
     @Mapping(source = "department.departmentId", target = "departmentId")
     TaskParentCreateByHeadResponse toTaskParentCreateByHeadResponse(Task task);

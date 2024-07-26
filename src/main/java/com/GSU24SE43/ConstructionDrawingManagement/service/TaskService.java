@@ -68,6 +68,32 @@ public class TaskService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    public TaskParentCreateResponse createTaskParentByProjectIdAdmin(UUID projectId, TaskParentCreateRequestByProjectId request) {
+        Project project = checkProject(projectId);
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        checkDateTaskVSProject(request.getBeginDate(), request.getEndDate(), project);
+        validateProjectDate(request.getBeginDate(), request.getEndDate());
+        if (request.getEndDate().before(request.getBeginDate()))
+            throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
+        else {
+            Task task = taskMapper.toTaskByProjectId(request);
+            task.setProject(project);
+            task.setCreateDate(new Date());
+            if (account.getRoleName().equals("ADMIN")) {
+                task.setAccount(account);
+            }
+            task.setStatus(TaskStatus.NO_RECIPIENT.getMessage());
+            taskRepository.save(task);
+
+//            messagingTemplate.convertAndSend("/realtime/notifications", task);
+
+            return taskMapper.toTaskParentCreateResponse(task);
+        }
+    }
+
     private void checkDateTaskVSProject(Date startDate, Date endDate, Project project) {
         if (startDate.before(project.getStartDate()))
             throw new AppException(ErrorCode.WRONG_BEGINDATE);
@@ -157,9 +183,31 @@ public class TaskService {
 
         Date beginDate = request.getBeginDate();
         Date endDate = request.getEndDate();
+        validateProjectDate(beginDate,endDate);
         if (endDate.before(beginDate)) throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
         else {
             Task task = taskMapper.toTaskByHead(request);
+            task.setProject(project);
+            task.setDepartment(account.getStaff().getDepartment());
+            task.setCreateDate(new Date());
+            task.setStatus(TaskStatus.NO_RECIPIENT.getMessage());
+            taskRepository.save(task);
+            return taskMapper.toTaskParentCreateByHeadResponse(task);
+        }
+    }
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT')")
+    public TaskParentCreateByHeadResponse createTaskParentByProjectIdHead(UUID projectId, TaskParentCreateByProjectIdByHeadRequest request) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        Account account = accountRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        Project project = checkProject(projectId);
+
+        Date beginDate = request.getBeginDate();
+        Date endDate = request.getEndDate();
+        validateProjectDate(beginDate,endDate);
+        if (endDate.before(beginDate)) throw new AppException(ErrorCode.WRONG_BEGINDATE_OR_ENDDATE);
+        else {
+            Task task = taskMapper.toTaskProjectIdByHead(request);
             task.setProject(project);
             task.setDepartment(account.getStaff().getDepartment());
             task.setCreateDate(new Date());
@@ -207,6 +255,7 @@ public class TaskService {
         taskRepository.save(taskChild);
         TaskChildCreateByHeadResponse response = taskMapper.toTaskChildCreateByHeadResponse(taskChild);
         response.setPermissions(request.getPermissions());
+        response.setStaffs(staffList);
 //        return taskMapper.toTaskChildCreateByHeadResponse(taskChild);
         return response;
     }
@@ -538,6 +587,7 @@ public class TaskService {
 //                .collect(Collectors.toList());
 //        Set<UUID> list = new HashSet<>();
 //                detailTasks_2.forEach(detailTask -> {list.add(detailTask.getStaff().getStaffId());});
+
         return detailTasks.stream()
                 .map(DetailTask::getTask)
                 .distinct()
@@ -558,9 +608,15 @@ public class TaskService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('HEAD_OF_ARCHITECTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_STRUCTURAL_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_MvE_DESIGN_DEPARTMENT') or hasRole('HEAD_OF_INTERIOR_DESIGN_DEPARTMENT') or hasRole('DESIGNER') or hasRole('COMMANDER')")
     public List<Task> filterTask(UUID id, String title, String status, Date beginDate, Date endDate) {
         List<Task> list = new ArrayList<>();
+        // list 20
+        //        // if(nguoi dng nhap title ) 10
+        //        // if (status) 9 +1
+        // if birthDate 2
+
         if (id != null) {
             list.add(taskRepository.findById(id).orElseThrow(
                     () -> new AppException(ErrorCode.TASK_NOT_FOUND)));
+
         }
         if (title != null && !title.isEmpty()) {
             list = taskRepository.findByTitleContainingIgnoreCase(title);

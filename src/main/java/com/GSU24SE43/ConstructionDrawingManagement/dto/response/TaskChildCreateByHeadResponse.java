@@ -1,6 +1,8 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import com.GSU24SE43.ConstructionDrawingManagement.enums.Permission;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -25,5 +27,7 @@ public class TaskChildCreateByHeadResponse {
     Date beginDate;
     Date endDate;
     List<Permission> permissions;
+    @JsonIgnoreProperties(value = {"account","projects","detailTasks","comments","supervisor","staff_folders"}, allowSetters = true)
+    List<Staff> staffs;
 
 }

@@ -1,5 +1,6 @@
 package com.GSU24SE43.ConstructionDrawingManagement.dto.response;
 
+import com.GSU24SE43.ConstructionDrawingManagement.entity.Staff;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -25,5 +26,5 @@ public class TaskResponseDesigner {
     Date createDate;
     Date beginDate;
     Date endDate;
-    Set<UUID> staffIds;
+    Set<Staff> staffIds;
 }

@@ -57,6 +57,6 @@ public class Project {
     @JoinColumn(name = "projectId")
     Staff staff;
 
-    @ManyToMany(mappedBy = "projects")
+    @ManyToMany(mappedBy = "projects",fetch = FetchType.EAGER)
     Set<Contractor> contractors;
 }
