@@ -10,12 +10,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ContractorResponse {
+public class CustomerResponse {
     UUID contractorId;
     String contractorName;
     String address;
     String phone;
     String email;
-    String taxIdentificationNumber;
-    String businessLicense;
 }

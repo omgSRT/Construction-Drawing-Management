@@ -13,18 +13,18 @@ import java.util.UUID;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class ProjectContractor {
+public class ProjectCustomer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID projectContractorId;
 
     @ManyToOne
     @JoinColumn(name = "projectId")
-    @JsonIgnoreProperties(value = {"projectContractors"}, allowSetters = true)
+    @JsonIgnoreProperties(value = {"projectCustomers"}, allowSetters = true)
     Project project;
 
     @ManyToOne
-    @JoinColumn(name = "contractorId")
-    @JsonIgnoreProperties(value = {"projectContractors"}, allowSetters = true)
-    Contractor contractor;
+    @JoinColumn(name = "customerId")
+    @JsonIgnoreProperties(value = {"projectCustomers"}, allowSetters = true)
+    Customer customer;
 }

@@ -43,41 +43,45 @@ public class FloorDetailService {
         int floorNumber = 1;
 
         List<FloorDetail> floorDetailList = floorDetailRepository.findByProject(project);
-        if(!floorDetailList.isEmpty()){
-            int maxFloorNumber = floorDetailList.get(0).getFloorNumber();
 
-            for (FloorDetail floorDetail : floorDetailList) {
-                if (floorDetail.getFloorNumber() > maxFloorNumber) {
-                    maxFloorNumber = floorDetail.getFloorNumber();
-                }
-            }
+        if (!floorDetailList.isEmpty()) {
+            // Find the maximum floor number
+            int maxFloorNumber = floorDetailList.stream()
+                    .mapToInt(FloorDetail::getFloorNumber)
+                    .max()
+                    .orElse(0);
 
             floorNumber = maxFloorNumber + 1;
+
+            if (floorNumber > project.getMaxFloorNumber()) {
+                throw new AppException(ErrorCode.MAX_FLOOR_EXCEED);
+            }
+
+            // Calculate the total height of all floors
+            double totalHeight = floorDetailList.stream()
+                    .mapToDouble(FloorDetail::getHeight)
+                    .sum();
+
+            if (totalHeight + request.getHeight() > project.getTotalHeight()) { // Ensure newFloorHeight is considered
+                throw new AppException(ErrorCode.MAX_HEIGHT_EXCEED);
+            }
         }
 
         FloorDetail newFloorDetail = floorDetailMapper.toFloorDetail(request);
         newFloorDetail.setProject(project);
         newFloorDetail.setFloorNumber(floorNumber);
+        newFloorDetail.setFloorArea(request.getLength() * request.getWidth());
 
-        boolean check = checkPreviousFloorHasEnoughSpace(project, newFloorDetail);
+        boolean check = checkFloorExceedPlotSpace(project, newFloorDetail);
         if(!check){
-            throw new AppException(ErrorCode.EXCEED_PREVIOUS_FLOOR_AREA);
+            throw new AppException(ErrorCode.EXCEED_PLOT_AREA);
         }
 
         return floorDetailMapper.toFloorDetailResponse(floorDetailRepository.save(newFloorDetail));
     }
 
-    private boolean checkPreviousFloorHasEnoughSpace(Project project, FloorDetail floorDetail){
-        int floorNumber = floorDetail.getFloorNumber() - 1;
-        if(floorNumber == 0){
-            return floorDetail.getAvailableSpace() <= project.getPlotArea();
-        }
-        var previousFloorDetail = checkExistedFloorDetail(project, floorNumber);
-
-        double currentFloorAvailableSpace = floorDetail.getAvailableSpace();
-        double previousFloorAvailableSpace = previousFloorDetail.getAvailableSpace();
-
-        return currentFloorAvailableSpace <= previousFloorAvailableSpace;
+    private boolean checkFloorExceedPlotSpace(Project project, FloorDetail floorDetail){
+        return floorDetail.getAvailableSpace() <= project.getPlotArea();
     }
 
     private FloorDetail checkExistedFloorDetail(Project project, int floorNumber){
@@ -137,6 +141,24 @@ public class FloorDetailService {
     public FloorDetailResponse updateFloorDetailById(UUID floorDetailId, FloorDetailUpdateRequest request){
         var floorDetail = floorDetailRepository.findById(floorDetailId)
                 .orElseThrow(() -> new AppException(ErrorCode.FLOOR_DETAIL_NOT_FOUND));
+
+        boolean check = checkFloorExceedPlotSpace(floorDetail.getProject(), floorDetail);
+        if(!check){
+            throw new AppException(ErrorCode.EXCEED_PLOT_AREA);
+        }
+
+        List<FloorDetail> floorDetailList = floorDetailRepository.findByProject(floorDetail.getProject());
+        if (!floorDetailList.isEmpty()) {
+            // Calculate the total height of all floors
+            double totalHeight = floorDetailList.stream()
+                    .mapToDouble(FloorDetail::getHeight)
+                    .sum();
+
+            if (totalHeight - floorDetail.getHeight() + request.getHeight()
+                    > floorDetail.getProject().getTotalHeight()) {
+                throw new AppException(ErrorCode.MAX_HEIGHT_EXCEED);
+            }
+        }
 
         floorDetailMapper.updateFloorDetail(floorDetail, request);
 

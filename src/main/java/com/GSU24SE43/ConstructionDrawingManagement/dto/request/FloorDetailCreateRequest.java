@@ -14,9 +14,11 @@ import java.util.UUID;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FloorDetailCreateRequest {
-    @DecimalMin(value = "25", message = "Diện tích tối thiểu là 25 m2")
-    double floorArea;
-    @DecimalMin(value = "2.1", message = "Độ cao tối thiểu 1 tầng phải là 2.1 mét")
+    @DecimalMin(value = "0.01", message = "Chiều dài tối thiểu 1 tầng là 0.01 m2")
+    double length;
+    @DecimalMin(value = "0.01", message = "Chiều rộng tối thiểu là 0.01 m2")
+    double width;
+    @DecimalMin(value = "2.1", message = "Độ cao tối thiểu phải là 2.1 mét")
     double height;
     @Min(value = 1, message = "Số lượng phòng phải ít nhất là 1")
     int numberOfRooms;

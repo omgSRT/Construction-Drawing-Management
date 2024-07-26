@@ -1,12 +1,9 @@
 package com.GSU24SE43.ConstructionDrawingManagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import java.util.*;
 
@@ -22,6 +19,7 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
+    private String address;
     private String description;
     private Date creationDate;
     private Date startDate;
@@ -31,7 +29,13 @@ public class Project {
     // Plot area details
     @DecimalMin(value = "25", message = "Diện tích tối thiểu là 25 m2")
     private double plotArea;
-    private String landPurpose;
+    private int maxFloorNumber;
+    @DecimalMin(value = "2.1", message = "Độ cao tối thiểu phải là 2.1 mét")
+    private double totalHeight;
+    private String constructionTerms;
+    //cốt nền (cao độ)
+    @DecimalMin(value = "1.5", message = "Cốt nền tối thiểu phải là 1.5 mét")
+    private double groundElevation;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     List<FloorDetail> floorDetails;
@@ -50,6 +54,10 @@ public class Project {
     @JsonIgnore
     Account account;
 
+    @ManyToOne
+    @JoinColumn(name = "landPurposeId")
+    LandPurpose landPurpose;
+
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
 //    @JsonIgnoreProperties(value = { "project" }, allowSetters = true)
@@ -57,5 +65,5 @@ public class Project {
 
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ProjectContractor> projectContractors;
+    List<ProjectCustomer> projectCustomers;
 }
