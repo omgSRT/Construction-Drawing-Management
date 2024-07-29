@@ -145,7 +145,6 @@ public class ProjectService {
         }
 
         projectMapper.updateProject(project, request);
-        project.setLandPurpose(landPurpose.name());
 
         return projectMapper.toProjectResponse(projectRepository.save(project));
     }
