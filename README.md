@@ -1,2 +1,2 @@
 # Construction Drawing Management
- A Project For Managing Construction Drawings
+ (Unfinished) A Project For Managing Construction Drawings And Writing Tracking Logs For Accessible Administration
