@@ -113,6 +113,7 @@ public enum ErrorCode {
     MIN_GROUND_ELEVATION_EXCEED(10097, "Cốt nền tối thiểu phải là 1.5 mét", HttpStatus.BAD_REQUEST),
     MAX_FLOOR_EXCEED(10098, "Vượt quá giới hạn số tầng của dự án", HttpStatus.BAD_REQUEST),
     MAX_HEIGHT_EXCEED(10098, "Vượt quá giới hạn độ cao toà nhà của dự án", HttpStatus.BAD_REQUEST),
+    LAND_PURPOSE_NOT_FOUND(10099, "Không tìm thấy mục đích sử dụng đất", HttpStatus.BAD_REQUEST),
     ;
 
 

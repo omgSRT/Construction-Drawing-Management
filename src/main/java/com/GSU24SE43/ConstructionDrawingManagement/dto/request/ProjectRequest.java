@@ -20,7 +20,7 @@ public class ProjectRequest {
     String description;
     Date startDate;
     Date endDate;
-    List<UUID> contractorIds;
+    List<UUID> customerIds;
     List<UUID> departmentIds;
     @DecimalMin(value = "25", message = "Diện tích tối thiểu là 25 m2")
     double plotArea;
